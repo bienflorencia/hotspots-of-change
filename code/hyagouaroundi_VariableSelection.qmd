@@ -1,0 +1,312 @@
+---
+title: "Herpailurus yagouaroundi Variable Selection"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+  - R Libraries
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: libraries
+#| message: false
+#| warning: false
+
+library(knitr)
+library(dismo)
+library(gbm)
+library(randomForest)
+library(ranger) # for the Random Forest
+library(terra)
+terraOptions(tempdir='big_data/temp')
+library(sf)
+library(tidyverse)
+```
+
+## 28 Predictors
+
+ - `bio1`: Annual Mean Temperature, from Bioclimatic variables (WorldClim V2.1)
+ - `bio2`: Mean Diurnal Range (Mean of monthly (max temp - min temp)), from Bioclimatic variables (WorldClim V2.1)
+ - `bio3`: Isothermality (BIO2/BIO7) (×100), from Bioclimatic variables (WorldClim V2.1)
+ - `bio4`: Temperature Seasonality (standard deviation ×100), from Bioclimatic variables (WorldClim V2.1)
+ - `bio5`: Max Temperature of Warmest Month, from Bioclimatic variables (WorldClim V2.1)
+ - `bio6`: Min Temperature of Coldest Month, from Bioclimatic variables (WorldClim V2.1)
+ - `bio7`: Temperature Annual Range (BIO5-BIO6), from Bioclimatic variables (WorldClim V2.1)
+ - `bio8`: Mean Temperature of Wettest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio9`: Mean Temperature of Driest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio10`: Mean Temperature of Warmest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio11`: Mean Temperature of Coldest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio12`: Annual Precipitation, from Bioclimatic variables (WorldClim V2.1)
+ - `bio13`: Precipitation of Wettest Month, from Bioclimatic variables (WorldClim V2.1)
+ - `bio14`: Precipitation of Driest Month, from Bioclimatic variables (WorldClim V2.1)
+ - `bio15`: Precipitation Seasonality (Coefficient of Variation), from Bioclimatic variables (WorldClim V2.1)
+ - `bio16`: Precipitation of Wettest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio17`: Precipitation of Driest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio18`: Precipitation of Warmest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `bio19`: Precipitation of Coldest Quarter, from Bioclimatic variables (WorldClim V2.1)
+ - `elev`: Elevation (WorldClim V2.1 SRTM elevation data), from Bioclimatic variables (WorldClim V2.1)
+ - `urban`: Urban and Built-up Lands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1)) 
+ - `barren`: Barren, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1)) 
+ - `water`: Water Bodies, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))
+ - `savanna`: Savannas, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))
+ - `woodysavanna`: Woody savannas, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))
+ - `wetland`: Permanent Wetlands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))
+ - `grass`: Grasslands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))
+ - `npp`: Net Primary Production (NPP) (MODIS TERRA Net_PP_GapFil_Yearly_500m (M*D17A3HGF))
+ - `tree`: Percentage of Tree Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))
+ - `nontree`: Percentage of No Tree Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))
+ - `nonveg`: Percentage of Non Tree Vegetation Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))
+ 
+```{r}
+#| label: predictors-data
+#| echo: true
+#| eval: true
+#| message: false
+bio <- rast('big_data/bio_high.tif')
+elev <- rast('big_data/elev_high.tif')
+urban <- rast('big_data/urban_high.tif') %>% resample(., elev)
+barren  <- rast('big_data/barren_high.tif') %>% resample(., elev)
+water <- rast('big_data/water_high.tif') %>% resample(., elev)
+savanna <- rast('big_data/savanna_high.tif') %>% resample(., elev)
+woodysavanna <- rast('big_data/woodysavanna_high.tif') %>% resample(., elev)
+wetland <- rast('big_data/wetland_high.tif') %>% resample(., elev)
+grass <- rast('big_data/grass_high.tif') %>% resample(., elev)
+npp <- rast('big_data/npp_high.tif') %>% resample(., elev)
+names(npp) <- 'npp'
+tree <- rast('big_data/tree_high.tif') %>% resample(., elev)
+nontree <- rast('big_data/nontree_high.tif') %>% resample(., elev)
+nonveg <- rast('big_data/nonveg_high.tif') %>% resample(., elev)
+
+env <- c(bio, elev, urban, barren, water, 
+         savanna, woodysavanna, wetland, 
+         grass, npp, tree, nontree, nonveg) %>% scale()
+
+rm(bio, elev, urban, barren, water, 
+         savanna, woodysavanna, wetland, 
+         grass, npp, tree, nontree, nonveg)
+
+gc()
+```
+
+## Species' preferences
+
+### Yaguarundí
+
+  -   It occurs in a variety of habitats, from closed primary rainforest to open desert, scrub, and grassland, although in open areas it sticks to patches of dense cover. 
+  -   Caso and Tewes (2007) found that radio-collared jaguarundis used mature forest 53% of the time and pasture-grassland 47% of the time. It is predominantly a lowland species ranging up to 2000 m, although it was reported up to 3200 m in Colombia (Cuervo et al. 1986). 
+  -   Yaguarundís occur at relatively low densities of 1–5/100 km2 in Brazil (Oliveira et al. 2008), but reach densities up to 20/100 km2 in Tamaulipas, Mexico. Although with its wide range the species is classified as Least Concern, habitat loss is a threat, especially for the more open types, which are being converted to large-scale agriculture (IUCN 2008).
+
+
+## Species data
+
+We will use the data for the second period (2014-2020)
+
+```{r}
+#| label: species-data
+#| echo: true
+#| eval: true
+#| message: false
+#| tbl-cap: Presence-absence data for the second period
+
+PA_time1 <- readRDS('data/PA_herpailurus_time1_blobs.rds')%>% ungroup()
+PA_time2 <- readRDS('data/PA_herpailurus_time2_blobs.rds')%>% ungroup()
+
+PA_time1 %>% st_drop_geometry() %>% head() %>% kable()
+PA_time2 %>% st_drop_geometry() %>% head() %>% kable()
+```
+
+
+## Preparation of data for the tests
+
+```{r}
+#| label: prepare-data
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+# combine pre and pos datasets
+PA.data <- st_join(PA_time1, PA_time2 %>% dplyr::select(presence), left = T) %>% 
+  group_by(ID) %>%  
+  mutate(presence=max(presence.x, presence.y, na.rm = T)) 
+
+# calculate area, coordinates, and extract env predictors for each blob
+PA.coords <- st_coordinates(st_centroid(PA.data)) %>% as_tibble()
+PA.area <- as.numeric(PA.data$blobArea) 
+
+PA.env <- terra::extract(x = env, y = vect(PA.data),
+                         fun = mean, rm.na=T) %>% 
+  mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .)))
+
+## the data
+PA <- data.frame(PA.coords,
+                 area = PA.area,
+                 presabs = PA.data$presence,
+                 env = PA.env)
+```
+
+### Correlation between variables
+
+```{r}
+#| label: correlation
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+PA %>% filter(!if_any(everything(), is.na)) %>% dplyr::select(-c(1:5)) %>% cor() %>% kable()
+```
+
+
+## Variable Importance analyses
+
+### Simple GLM
+
+```{r}
+#| label: glm
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+presabs.glm <- PA %>% 
+  dplyr::select(-c(1,2,3,5)) %>% 
+  filter(!is.na(env.elev)&!is.na(env.bio_1))
+
+glm.full<- glm(presabs ~., 
+               family = "binomial", 
+               data = presabs.glm)
+
+summary(glm.full)
+step(glm.full) # step might not work with gam so glm
+```
+
+### Boosted regression trees 
+Boosted regression trees were fitted using packages: gbm and dismo—specifically the gbm.step function in dismo (Hijmans et al., 2017)
+
+```{r}
+#| label: brt
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+# cross-validation optimisation of a boosted regression tree model 
+brt <- gbm.step(data = PA, 
+                 gbm.x = 6:ncol(PA), 
+                 gbm.y = "presabs", 
+                 family = "bernoulli")
+
+summary(brt)
+variables_brt <- brt$contributions[1:6,] %>% pull(var)
+#exploration of shape of relationships
+#gbm.plot(brt, n.plots = 12, plot.layout=c(6, 2))
+```
+
+### Random forest
+
+```{r}
+#| label: rf
+#| echo: true
+#| eval: true
+#| fig-height: 8
+#| warning: false
+
+presabs.rf <- PA %>% 
+  dplyr::select(-c(1,2,3,5)) %>% 
+  mutate(presabs = as.factor(presabs))
+
+rf <- randomForest(presabs ~ .,
+                   data=presabs.rf,
+                   importance=T,
+                   nperm=2, # two permutations per tree to estimate importance
+                   na.action=na.omit,
+                   mtry= 1/3*ncol(presabs.rf)-1)
+
+varImpPlot(rf, type=2)
+variables_rf <- rf$importance %>% as_tibble(rownames = 'var') %>% arrange(desc(MeanDecreaseGini)) %>% head(n=6) %>% pull(var)
+```
+
+### Ranger
+
+```{r}
+#| label: ranger
+#| echo: true
+#| eval: true
+#| fig-height: 8
+#| warning: false
+
+presabs.ranger <- PA %>% 
+  dplyr::select(-c(1,2,3,5)) %>% 
+  filter(!if_any(everything(), is.na)) %>% 
+  mutate(presabs = as.factor(presabs))
+
+## Learn the model:
+ranger <- ranger(presabs ~ ., 
+                 data = presabs.ranger,
+                 num.trees = 150,
+                 mtry = 1/3*ncol(presabs.ranger)-1,
+                 min.node.size = 5,
+                 max.depth = NULL,
+                 write.forest = TRUE,
+                 importance = "impurity")
+
+
+# Get the variable importance
+importance(ranger)
+
+importance(ranger) %>% 
+  as.data.frame(row.names = names(.)) %>% 
+  setNames(c("Importance")) %>% 
+  rownames_to_column("covariate") %>% 
+  # mutate(covariate = case_when(
+  #   covariate == "env.bio_1" ~ "Annual Mean Temperature",
+  # )) %>% 
+  ggplot(aes(x = Importance, y = reorder(covariate, Importance))) +
+  ylab('')+
+  geom_point() + theme_bw()
+
+variables_ranger <- importance(ranger) %>% as_tibble(rownames = 'var') %>% arrange(desc(value)) %>% head(n=6) %>% pull(var)
+```
+
+
+
+## Correlation
+
+Correlation between the six more important variables detected.
+
+  - Boosted regression tree: `r variables_brt`
+  - Random forest: `r variables_rf`
+  - Ranger: `r variables_ranger`
+
+
+```{r}
+#| label: pairs
+#| echo: true
+#| eval: true
+#| fig-height: 8
+#| fig.width: 8
+#| warning: false
+
+selectedVariables <- unique(c(variables_brt, variables_rf, variables_ranger))
+
+PA %>% 
+  filter(!if_any(everything(), is.na)) %>% 
+  dplyr::select(selectedVariables) %>% 
+  pairs()
+
+PA %>% 
+  filter(!if_any(everything(), is.na)) %>% 
+  dplyr::select(selectedVariables)  %>% 
+  cor() %>% kable()
+
+```

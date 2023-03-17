@@ -1,0 +1,2857 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Florencia Grattarola">
+<meta name="dcterms.date" content="2023-03-17">
+
+<title>Herpailurus yagouaroundi Variable Selection</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="hyagouaroundi_VariableSelection_files/libs/clipboard/clipboard.min.js"></script>
+<script src="hyagouaroundi_VariableSelection_files/libs/quarto-html/quarto.js"></script>
+<script src="hyagouaroundi_VariableSelection_files/libs/quarto-html/popper.min.js"></script>
+<script src="hyagouaroundi_VariableSelection_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="hyagouaroundi_VariableSelection_files/libs/quarto-html/anchor.min.js"></script>
+<link href="hyagouaroundi_VariableSelection_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="hyagouaroundi_VariableSelection_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="hyagouaroundi_VariableSelection_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="hyagouaroundi_VariableSelection_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="hyagouaroundi_VariableSelection_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#predictors" id="toc-predictors" class="nav-link active" data-scroll-target="#predictors">28 Predictors</a></li>
+  <li><a href="#species-preferences" id="toc-species-preferences" class="nav-link" data-scroll-target="#species-preferences">Species’ preferences</a>
+  <ul class="collapse">
+  <li><a href="#yaguarundí" id="toc-yaguarundí" class="nav-link" data-scroll-target="#yaguarundí">Yaguarundí</a></li>
+  </ul></li>
+  <li><a href="#species-data" id="toc-species-data" class="nav-link" data-scroll-target="#species-data">Species data</a></li>
+  <li><a href="#preparation-of-data-for-the-tests" id="toc-preparation-of-data-for-the-tests" class="nav-link" data-scroll-target="#preparation-of-data-for-the-tests">Preparation of data for the tests</a>
+  <ul class="collapse">
+  <li><a href="#correlation-between-variables" id="toc-correlation-between-variables" class="nav-link" data-scroll-target="#correlation-between-variables">Correlation between variables</a></li>
+  </ul></li>
+  <li><a href="#variable-importance-analyses" id="toc-variable-importance-analyses" class="nav-link" data-scroll-target="#variable-importance-analyses">Variable Importance analyses</a>
+  <ul class="collapse">
+  <li><a href="#simple-glm" id="toc-simple-glm" class="nav-link" data-scroll-target="#simple-glm">Simple GLM</a></li>
+  <li><a href="#boosted-regression-trees" id="toc-boosted-regression-trees" class="nav-link" data-scroll-target="#boosted-regression-trees">Boosted regression trees</a></li>
+  <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random forest</a></li>
+  <li><a href="#ranger" id="toc-ranger" class="nav-link" data-scroll-target="#ranger">Ranger</a></li>
+  </ul></li>
+  <li><a href="#correlation" id="toc-correlation" class="nav-link" data-scroll-target="#correlation">Correlation</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Herpailurus yagouaroundi Variable Selection</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Florencia Grattarola </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 17, 2023</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<ul>
+<li>R Libraries</li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dismo)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gbm)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ranger) <span class="co"># for the Random Forest</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">terraOptions</span>(<span class="at">tempdir=</span><span class="st">'big_data/temp'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="predictors" class="level2">
+<h2 class="anchored" data-anchor-id="predictors">28 Predictors</h2>
+<ul>
+<li><code>bio1</code>: Annual Mean Temperature, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio2</code>: Mean Diurnal Range (Mean of monthly (max temp - min temp)), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio3</code>: Isothermality (BIO2/BIO7) (×100), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio4</code>: Temperature Seasonality (standard deviation ×100), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio5</code>: Max Temperature of Warmest Month, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio6</code>: Min Temperature of Coldest Month, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio7</code>: Temperature Annual Range (BIO5-BIO6), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio8</code>: Mean Temperature of Wettest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio9</code>: Mean Temperature of Driest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio10</code>: Mean Temperature of Warmest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio11</code>: Mean Temperature of Coldest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio12</code>: Annual Precipitation, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio13</code>: Precipitation of Wettest Month, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio14</code>: Precipitation of Driest Month, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio15</code>: Precipitation Seasonality (Coefficient of Variation), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio16</code>: Precipitation of Wettest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio17</code>: Precipitation of Driest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio18</code>: Precipitation of Warmest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>bio19</code>: Precipitation of Coldest Quarter, from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>elev</code>: Elevation (WorldClim V2.1 SRTM elevation data), from Bioclimatic variables (WorldClim V2.1)</li>
+<li><code>urban</code>: Urban and Built-up Lands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>barren</code>: Barren, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>water</code>: Water Bodies, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>savanna</code>: Savannas, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>woodysavanna</code>: Woody savannas, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>wetland</code>: Permanent Wetlands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>grass</code>: Grasslands, from Land cover LC1 (MODIS TERRA LandCover_Type_Yearly_500m (MCD12Q1))</li>
+<li><code>npp</code>: Net Primary Production (NPP) (MODIS TERRA Net_PP_GapFil_Yearly_500m (M*D17A3HGF))</li>
+<li><code>tree</code>: Percentage of Tree Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))</li>
+<li><code>nontree</code>: Percentage of No Tree Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))</li>
+<li><code>nonveg</code>: Percentage of Non Tree Vegetation Cover, from Vegetation Continuous Fields (MODIS TERRA Veg_Cont_Fields_Yearly_250m (MOD44B))</li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bio <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/bio_high.tif'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>elev <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/elev_high.tif'</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>urban <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/urban_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>barren  <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/barren_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>water <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/water_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>savanna <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/savanna_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>woodysavanna <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/woodysavanna_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>wetland <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/wetland_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>grass <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/grass_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>npp <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/npp_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(npp) <span class="ot">&lt;-</span> <span class="st">'npp'</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>tree <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/tree_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nontree <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/nontree_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nonveg <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'big_data/nonveg_high.tif'</span>) <span class="sc">%&gt;%</span> <span class="fu">resample</span>(., elev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>env <span class="ot">&lt;-</span> <span class="fu">c</span>(bio, elev, urban, barren, water, </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>         savanna, woodysavanna, wetland, </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>         grass, npp, tree, nontree, nonveg) <span class="sc">%&gt;%</span> <span class="fu">scale</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          
+
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: [scale] Estimated disk space needed without compression: 16GB.
+Available: 11 GB.</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(bio, elev, urban, barren, water, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>         savanna, woodysavanna, wetland, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>         grass, npp, tree, nontree, nonveg)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          used  (Mb) gc trigger  (Mb) limit (Mb) max used  (Mb)
+Ncells 4232568 226.1    7292258 389.5         NA  7292258 389.5
+Vcells 6110160  46.7   12255594  93.6     102400  8673948  66.2</code></pre>
+</div>
+</div>
+</section>
+<section id="species-preferences" class="level2">
+<h2 class="anchored" data-anchor-id="species-preferences">Species’ preferences</h2>
+<section id="yaguarundí" class="level3">
+<h3 class="anchored" data-anchor-id="yaguarundí">Yaguarundí</h3>
+<ul>
+<li>It occurs in a variety of habitats, from closed primary rainforest to open desert, scrub, and grassland, although in open areas it sticks to patches of dense cover.</li>
+<li>Caso and Tewes (2007) found that radio-collared jaguarundis used mature forest 53% of the time and pasture-grassland 47% of the time. It is predominantly a lowland species ranging up to 2000 m, although it was reported up to 3200 m in Colombia (Cuervo et al.&nbsp;1986).</li>
+<li>Yaguarundís occur at relatively low densities of 1–5/100 km2 in Brazil (Oliveira et al.&nbsp;2008), but reach densities up to 20/100 km2 in Tamaulipas, Mexico. Although with its wide range the species is classified as Least Concern, habitat loss is a threat, especially for the more open types, which are being converted to large-scale agriculture (IUCN 2008).</li>
+</ul>
+</section>
+</section>
+<section id="species-data" class="level2">
+<h2 class="anchored" data-anchor-id="species-data">Species data</h2>
+<p>We will use the data for the second period (2014-2020)</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/PA_herpailurus_time1_blobs.rds'</span>)<span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/PA_herpailurus_time2_blobs.rds'</span>)<span class="sc">%&gt;%</span> <span class="fu">ungroup</span>()</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="sc">%&gt;%</span> <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: right;">ID</th>
+<th style="text-align: right;">presence</th>
+<th style="text-align: left;">temporalSpan</th>
+<th style="text-align: right;">effort</th>
+<th style="text-align: right;">blobArea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">1365 days</td>
+<td style="text-align: right;">1043</td>
+<td style="text-align: right;">241873943 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">1769 days</td>
+<td style="text-align: right;">2404</td>
+<td style="text-align: right;">537081878 [m^2]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">6222 days</td>
+<td style="text-align: right;">11078</td>
+<td style="text-align: right;">2241827859 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">720 days</td>
+<td style="text-align: right;">1291</td>
+<td style="text-align: right;">162791738 [m^2]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">1769 days</td>
+<td style="text-align: right;">1779</td>
+<td style="text-align: right;">756798182 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">304 days</td>
+<td style="text-align: right;">3300</td>
+<td style="text-align: right;">19990863 [m^2]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="sc">%&gt;%</span> <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: right;">ID</th>
+<th style="text-align: right;">presence</th>
+<th style="text-align: left;">temporalSpan</th>
+<th style="text-align: right;">effort</th>
+<th style="text-align: right;">blobArea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">510 days</td>
+<td style="text-align: right;">11095</td>
+<td style="text-align: right;">2.229446e+09 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">510 days</td>
+<td style="text-align: right;">9265</td>
+<td style="text-align: right;">2.991334e+08 [m^2]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">4745 days</td>
+<td style="text-align: right;">390</td>
+<td style="text-align: right;">2.351660e+08 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">365 days</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">7.849412e+07 [m^2]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">488 days</td>
+<td style="text-align: right;">5344</td>
+<td style="text-align: right;">7.496574e+03 [m^2]</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">488 days</td>
+<td style="text-align: right;">3282</td>
+<td style="text-align: right;">3.298492e+03 [m^2]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Presence-absence data for the second period</p>
+</div>
+</section>
+<section id="preparation-of-data-for-the-tests" class="level2">
+<h2 class="anchored" data-anchor-id="preparation-of-data-for-the-tests">Preparation of data for the tests</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine pre and pos datasets</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>PA.data <span class="ot">&lt;-</span> <span class="fu">st_join</span>(PA_time1, PA_time2 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(presence), <span class="at">left =</span> T) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ID) <span class="sc">%&gt;%</span>  </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">presence=</span><span class="fu">max</span>(presence.x, presence.y, <span class="at">na.rm =</span> T)) </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate area, coordinates, and extract env predictors for each blob</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>PA.coords <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(<span class="fu">st_centroid</span>(PA.data)) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>PA.area <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(PA.data<span class="sc">$</span>blobArea) </span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>PA.env <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(<span class="at">x =</span> env, <span class="at">y =</span> <span class="fu">vect</span>(PA.data),</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>                         <span class="at">fun =</span> mean, <span class="at">rm.na=</span>T) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span><span class="fu">ifelse</span>(<span class="fu">is.nan</span>(.), <span class="cn">NA</span>, .)))</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="do">## the data</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(PA.coords,</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">area =</span> PA.area,</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">presabs =</span> PA.data<span class="sc">$</span>presence,</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">env =</span> PA.env)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="correlation-between-variables" class="level3">
+<h3 class="anchored" data-anchor-id="correlation-between-variables">Correlation between variables</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>PA <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">if_any</span>(<span class="fu">everything</span>(), is.na)) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)) <span class="sc">%&gt;%</span> <span class="fu">cor</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 4%">
+<col style="width: 3%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 2%">
+<col style="width: 3%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">env.bio_1</th>
+<th style="text-align: right;">env.bio_2</th>
+<th style="text-align: right;">env.bio_3</th>
+<th style="text-align: right;">env.bio_4</th>
+<th style="text-align: right;">env.bio_5</th>
+<th style="text-align: right;">env.bio_6</th>
+<th style="text-align: right;">env.bio_7</th>
+<th style="text-align: right;">env.bio_8</th>
+<th style="text-align: right;">env.bio_9</th>
+<th style="text-align: right;">env.bio_10</th>
+<th style="text-align: right;">env.bio_11</th>
+<th style="text-align: right;">env.bio_12</th>
+<th style="text-align: right;">env.bio_13</th>
+<th style="text-align: right;">env.bio_14</th>
+<th style="text-align: right;">env.bio_15</th>
+<th style="text-align: right;">env.bio_16</th>
+<th style="text-align: right;">env.bio_17</th>
+<th style="text-align: right;">env.bio_18</th>
+<th style="text-align: right;">env.bio_19</th>
+<th style="text-align: right;">env.elev</th>
+<th style="text-align: right;">env.urban</th>
+<th style="text-align: right;">env.barren</th>
+<th style="text-align: right;">env.water</th>
+<th style="text-align: right;">env.savanna</th>
+<th style="text-align: right;">env.woodysavanna</th>
+<th style="text-align: right;">env.wetland</th>
+<th style="text-align: right;">env.grass</th>
+<th style="text-align: right;">env.npp</th>
+<th style="text-align: right;">env.tree</th>
+<th style="text-align: right;">env.nontree</th>
+<th style="text-align: right;">env.nonveg</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">env.bio_1</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.9410376</td>
+<td style="text-align: right;">0.9725134</td>
+<td style="text-align: right;">0.2967630</td>
+<td style="text-align: right;">0.4080701</td>
+<td style="text-align: right;">-0.0301558</td>
+<td style="text-align: right;">0.2521650</td>
+<td style="text-align: right;">0.4420920</td>
+<td style="text-align: right;">-0.0420696</td>
+<td style="text-align: right;">-0.1338145</td>
+<td style="text-align: right;">0.2236097</td>
+<td style="text-align: right;">-0.2388933</td>
+<td style="text-align: right;">0.6816248</td>
+<td style="text-align: right;">-0.7074880</td>
+<td style="text-align: right;">0.8380369</td>
+<td style="text-align: right;">0.9212223</td>
+<td style="text-align: right;">-0.5795512</td>
+<td style="text-align: right;">0.8823799</td>
+<td style="text-align: right;">0.8850827</td>
+<td style="text-align: right;">-0.7020268</td>
+<td style="text-align: right;">-0.2166950</td>
+<td style="text-align: right;">-0.1465310</td>
+<td style="text-align: right;">0.2809243</td>
+<td style="text-align: right;">-0.0095489</td>
+<td style="text-align: right;">0.0164349</td>
+<td style="text-align: right;">0.1900006</td>
+<td style="text-align: right;">-0.0951956</td>
+<td style="text-align: right;">-0.4904385</td>
+<td style="text-align: right;">0.2909198</td>
+<td style="text-align: right;">0.2094488</td>
+<td style="text-align: right;">0.3220449</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_2</td>
+<td style="text-align: right;">0.9410376</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.8471842</td>
+<td style="text-align: right;">0.1536103</td>
+<td style="text-align: right;">0.1794770</td>
+<td style="text-align: right;">-0.0069825</td>
+<td style="text-align: right;">0.1415631</td>
+<td style="text-align: right;">0.2199169</td>
+<td style="text-align: right;">-0.0165252</td>
+<td style="text-align: right;">-0.2125705</td>
+<td style="text-align: right;">0.1964657</td>
+<td style="text-align: right;">-0.1900624</td>
+<td style="text-align: right;">0.4609086</td>
+<td style="text-align: right;">-0.4396561</td>
+<td style="text-align: right;">0.9131318</td>
+<td style="text-align: right;">0.8149834</td>
+<td style="text-align: right;">-0.3878905</td>
+<td style="text-align: right;">0.8562405</td>
+<td style="text-align: right;">0.8105774</td>
+<td style="text-align: right;">-0.8204205</td>
+<td style="text-align: right;">-0.2349732</td>
+<td style="text-align: right;">-0.1290118</td>
+<td style="text-align: right;">0.2667949</td>
+<td style="text-align: right;">0.0367209</td>
+<td style="text-align: right;">0.0383423</td>
+<td style="text-align: right;">0.2310969</td>
+<td style="text-align: right;">-0.1597560</td>
+<td style="text-align: right;">-0.5634650</td>
+<td style="text-align: right;">0.2588505</td>
+<td style="text-align: right;">0.2251004</td>
+<td style="text-align: right;">0.3104870</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_3</td>
+<td style="text-align: right;">0.9725134</td>
+<td style="text-align: right;">0.8471842</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.3928613</td>
+<td style="text-align: right;">0.5193192</td>
+<td style="text-align: right;">-0.0002339</td>
+<td style="text-align: right;">0.2753921</td>
+<td style="text-align: right;">0.5581876</td>
+<td style="text-align: right;">-0.0122189</td>
+<td style="text-align: right;">-0.1299641</td>
+<td style="text-align: right;">0.2782420</td>
+<td style="text-align: right;">-0.2910995</td>
+<td style="text-align: right;">0.7982923</td>
+<td style="text-align: right;">-0.8490147</td>
+<td style="text-align: right;">0.7453691</td>
+<td style="text-align: right;">0.9554377</td>
+<td style="text-align: right;">-0.6910522</td>
+<td style="text-align: right;">0.8208304</td>
+<td style="text-align: right;">0.9030990</td>
+<td style="text-align: right;">-0.6039248</td>
+<td style="text-align: right;">-0.1800258</td>
+<td style="text-align: right;">-0.1401912</td>
+<td style="text-align: right;">0.3048157</td>
+<td style="text-align: right;">-0.0332101</td>
+<td style="text-align: right;">0.0016211</td>
+<td style="text-align: right;">0.1339512</td>
+<td style="text-align: right;">-0.1035231</td>
+<td style="text-align: right;">-0.3818775</td>
+<td style="text-align: right;">0.3412311</td>
+<td style="text-align: right;">0.1879507</td>
+<td style="text-align: right;">0.3394448</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_4</td>
+<td style="text-align: right;">0.2967630</td>
+<td style="text-align: right;">0.1536103</td>
+<td style="text-align: right;">0.3928613</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.7978048</td>
+<td style="text-align: right;">0.7241601</td>
+<td style="text-align: right;">-0.4279629</td>
+<td style="text-align: right;">0.8328611</td>
+<td style="text-align: right;">0.7247224</td>
+<td style="text-align: right;">0.3861025</td>
+<td style="text-align: right;">0.7283618</td>
+<td style="text-align: right;">-0.6012154</td>
+<td style="text-align: right;">0.5382832</td>
+<td style="text-align: right;">-0.5161658</td>
+<td style="text-align: right;">-0.0448003</td>
+<td style="text-align: right;">0.5072261</td>
+<td style="text-align: right;">-0.6870360</td>
+<td style="text-align: right;">0.1976613</td>
+<td style="text-align: right;">0.3604026</td>
+<td style="text-align: right;">-0.2848498</td>
+<td style="text-align: right;">0.0336681</td>
+<td style="text-align: right;">-0.1767300</td>
+<td style="text-align: right;">0.3146727</td>
+<td style="text-align: right;">-0.3691657</td>
+<td style="text-align: right;">-0.1278214</td>
+<td style="text-align: right;">-0.1199020</td>
+<td style="text-align: right;">-0.1421615</td>
+<td style="text-align: right;">0.2372008</td>
+<td style="text-align: right;">0.5738663</td>
+<td style="text-align: right;">-0.0462787</td>
+<td style="text-align: right;">0.2550597</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_5</td>
+<td style="text-align: right;">0.4080701</td>
+<td style="text-align: right;">0.1794770</td>
+<td style="text-align: right;">0.5193192</td>
+<td style="text-align: right;">0.7978048</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2432690</td>
+<td style="text-align: right;">0.1286450</td>
+<td style="text-align: right;">0.9847344</td>
+<td style="text-align: right;">0.2349485</td>
+<td style="text-align: right;">0.4209210</td>
+<td style="text-align: right;">0.4409867</td>
+<td style="text-align: right;">-0.3663913</td>
+<td style="text-align: right;">0.6636110</td>
+<td style="text-align: right;">-0.7002886</td>
+<td style="text-align: right;">0.0322553</td>
+<td style="text-align: right;">0.5261694</td>
+<td style="text-align: right;">-0.6554730</td>
+<td style="text-align: right;">0.3305277</td>
+<td style="text-align: right;">0.4021549</td>
+<td style="text-align: right;">-0.1179441</td>
+<td style="text-align: right;">0.0450232</td>
+<td style="text-align: right;">-0.2050553</td>
+<td style="text-align: right;">0.2408302</td>
+<td style="text-align: right;">-0.3398891</td>
+<td style="text-align: right;">-0.0646217</td>
+<td style="text-align: right;">-0.1007284</td>
+<td style="text-align: right;">0.0906502</td>
+<td style="text-align: right;">0.1071877</td>
+<td style="text-align: right;">0.3874699</td>
+<td style="text-align: right;">0.0185454</td>
+<td style="text-align: right;">0.2113346</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_6</td>
+<td style="text-align: right;">-0.0301558</td>
+<td style="text-align: right;">-0.0069825</td>
+<td style="text-align: right;">-0.0002339</td>
+<td style="text-align: right;">0.7241601</td>
+<td style="text-align: right;">0.2432690</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.8239212</td>
+<td style="text-align: right;">0.2798306</td>
+<td style="text-align: right;">0.9959224</td>
+<td style="text-align: right;">0.2094136</td>
+<td style="text-align: right;">0.7680830</td>
+<td style="text-align: right;">-0.6446470</td>
+<td style="text-align: right;">0.1819086</td>
+<td style="text-align: right;">-0.0133588</td>
+<td style="text-align: right;">-0.2279429</td>
+<td style="text-align: right;">0.2190161</td>
+<td style="text-align: right;">-0.4482703</td>
+<td style="text-align: right;">-0.0860579</td>
+<td style="text-align: right;">0.0886227</td>
+<td style="text-align: right;">-0.2763418</td>
+<td style="text-align: right;">-0.0043958</td>
+<td style="text-align: right;">-0.0556343</td>
+<td style="text-align: right;">0.3366258</td>
+<td style="text-align: right;">-0.2999739</td>
+<td style="text-align: right;">-0.0944336</td>
+<td style="text-align: right;">-0.0546352</td>
+<td style="text-align: right;">-0.2967035</td>
+<td style="text-align: right;">0.2916873</td>
+<td style="text-align: right;">0.5563343</td>
+<td style="text-align: right;">0.0210990</td>
+<td style="text-align: right;">0.2561623</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_7</td>
+<td style="text-align: right;">0.2521650</td>
+<td style="text-align: right;">0.1415631</td>
+<td style="text-align: right;">0.2753921</td>
+<td style="text-align: right;">-0.4279629</td>
+<td style="text-align: right;">0.1286450</td>
+<td style="text-align: right;">-0.8239212</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.0969933</td>
+<td style="text-align: right;">-0.8380090</td>
+<td style="text-align: right;">-0.1030469</td>
+<td style="text-align: right;">-0.5529872</td>
+<td style="text-align: right;">0.4822450</td>
+<td style="text-align: right;">0.2047310</td>
+<td style="text-align: right;">-0.3244281</td>
+<td style="text-align: right;">0.2926534</td>
+<td style="text-align: right;">0.0706971</td>
+<td style="text-align: right;">0.1214860</td>
+<td style="text-align: right;">0.2776797</td>
+<td style="text-align: right;">0.1350802</td>
+<td style="text-align: right;">0.2409236</td>
+<td style="text-align: right;">0.0006525</td>
+<td style="text-align: right;">-0.0416881</td>
+<td style="text-align: right;">-0.1903310</td>
+<td style="text-align: right;">0.1878727</td>
+<td style="text-align: right;">0.1607361</td>
+<td style="text-align: right;">0.0234546</td>
+<td style="text-align: right;">0.2110834</td>
+<td style="text-align: right;">-0.2081632</td>
+<td style="text-align: right;">-0.3393455</td>
+<td style="text-align: right;">0.0235826</td>
+<td style="text-align: right;">-0.1459755</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_8</td>
+<td style="text-align: right;">0.4420920</td>
+<td style="text-align: right;">0.2199169</td>
+<td style="text-align: right;">0.5581876</td>
+<td style="text-align: right;">0.8328611</td>
+<td style="text-align: right;">0.9847344</td>
+<td style="text-align: right;">0.2798306</td>
+<td style="text-align: right;">0.0969933</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2717198</td>
+<td style="text-align: right;">0.3909086</td>
+<td style="text-align: right;">0.4786770</td>
+<td style="text-align: right;">-0.4136770</td>
+<td style="text-align: right;">0.6815274</td>
+<td style="text-align: right;">-0.7284358</td>
+<td style="text-align: right;">0.0708025</td>
+<td style="text-align: right;">0.5762819</td>
+<td style="text-align: right;">-0.6921163</td>
+<td style="text-align: right;">0.3499530</td>
+<td style="text-align: right;">0.4498854</td>
+<td style="text-align: right;">-0.1662657</td>
+<td style="text-align: right;">0.0576038</td>
+<td style="text-align: right;">-0.2054772</td>
+<td style="text-align: right;">0.2618781</td>
+<td style="text-align: right;">-0.3206388</td>
+<td style="text-align: right;">-0.0500857</td>
+<td style="text-align: right;">-0.1171249</td>
+<td style="text-align: right;">-0.0004114</td>
+<td style="text-align: right;">0.1210585</td>
+<td style="text-align: right;">0.4380999</td>
+<td style="text-align: right;">-0.0014199</td>
+<td style="text-align: right;">0.2310857</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_9</td>
+<td style="text-align: right;">-0.0420696</td>
+<td style="text-align: right;">-0.0165252</td>
+<td style="text-align: right;">-0.0122189</td>
+<td style="text-align: right;">0.7247224</td>
+<td style="text-align: right;">0.2349485</td>
+<td style="text-align: right;">0.9959224</td>
+<td style="text-align: right;">-0.8380090</td>
+<td style="text-align: right;">0.2717198</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2131532</td>
+<td style="text-align: right;">0.7690611</td>
+<td style="text-align: right;">-0.6380509</td>
+<td style="text-align: right;">0.1689528</td>
+<td style="text-align: right;">-0.0026553</td>
+<td style="text-align: right;">-0.2353018</td>
+<td style="text-align: right;">0.2063046</td>
+<td style="text-align: right;">-0.4372172</td>
+<td style="text-align: right;">-0.0937985</td>
+<td style="text-align: right;">0.0730490</td>
+<td style="text-align: right;">-0.2754929</td>
+<td style="text-align: right;">-0.0046127</td>
+<td style="text-align: right;">-0.0593554</td>
+<td style="text-align: right;">0.3290610</td>
+<td style="text-align: right;">-0.3001513</td>
+<td style="text-align: right;">-0.0989210</td>
+<td style="text-align: right;">-0.0569243</td>
+<td style="text-align: right;">-0.3059837</td>
+<td style="text-align: right;">0.3069575</td>
+<td style="text-align: right;">0.5551067</td>
+<td style="text-align: right;">0.0083033</td>
+<td style="text-align: right;">0.2458748</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_10</td>
+<td style="text-align: right;">-0.1338145</td>
+<td style="text-align: right;">-0.2125705</td>
+<td style="text-align: right;">-0.1299641</td>
+<td style="text-align: right;">0.3861025</td>
+<td style="text-align: right;">0.4209210</td>
+<td style="text-align: right;">0.2094136</td>
+<td style="text-align: right;">-0.1030469</td>
+<td style="text-align: right;">0.3909086</td>
+<td style="text-align: right;">0.2131532</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.0836417</td>
+<td style="text-align: right;">-0.1909741</td>
+<td style="text-align: right;">-0.0328000</td>
+<td style="text-align: right;">0.0174211</td>
+<td style="text-align: right;">-0.4168521</td>
+<td style="text-align: right;">-0.1190670</td>
+<td style="text-align: right;">-0.1493446</td>
+<td style="text-align: right;">0.0888354</td>
+<td style="text-align: right;">-0.3218659</td>
+<td style="text-align: right;">0.1296663</td>
+<td style="text-align: right;">0.2575487</td>
+<td style="text-align: right;">-0.1625231</td>
+<td style="text-align: right;">-0.1344434</td>
+<td style="text-align: right;">-0.2577892</td>
+<td style="text-align: right;">0.0250223</td>
+<td style="text-align: right;">-0.0628819</td>
+<td style="text-align: right;">0.1016193</td>
+<td style="text-align: right;">0.3063098</td>
+<td style="text-align: right;">-0.0024718</td>
+<td style="text-align: right;">-0.1862436</td>
+<td style="text-align: right;">-0.2121246</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_11</td>
+<td style="text-align: right;">0.2236097</td>
+<td style="text-align: right;">0.1964657</td>
+<td style="text-align: right;">0.2782420</td>
+<td style="text-align: right;">0.7283618</td>
+<td style="text-align: right;">0.4409867</td>
+<td style="text-align: right;">0.7680830</td>
+<td style="text-align: right;">-0.5529872</td>
+<td style="text-align: right;">0.4786770</td>
+<td style="text-align: right;">0.7690611</td>
+<td style="text-align: right;">-0.0836417</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.6480797</td>
+<td style="text-align: right;">0.4482400</td>
+<td style="text-align: right;">-0.2869769</td>
+<td style="text-align: right;">0.0167487</td>
+<td style="text-align: right;">0.4780386</td>
+<td style="text-align: right;">-0.6046402</td>
+<td style="text-align: right;">0.0558561</td>
+<td style="text-align: right;">0.3940552</td>
+<td style="text-align: right;">-0.3826257</td>
+<td style="text-align: right;">-0.0806428</td>
+<td style="text-align: right;">-0.0448267</td>
+<td style="text-align: right;">0.4306989</td>
+<td style="text-align: right;">-0.3166075</td>
+<td style="text-align: right;">-0.0767622</td>
+<td style="text-align: right;">-0.0489669</td>
+<td style="text-align: right;">-0.2648641</td>
+<td style="text-align: right;">0.1158628</td>
+<td style="text-align: right;">0.6234826</td>
+<td style="text-align: right;">0.0741045</td>
+<td style="text-align: right;">0.3906984</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_12</td>
+<td style="text-align: right;">-0.2388933</td>
+<td style="text-align: right;">-0.1900624</td>
+<td style="text-align: right;">-0.2910995</td>
+<td style="text-align: right;">-0.6012154</td>
+<td style="text-align: right;">-0.3663913</td>
+<td style="text-align: right;">-0.6446470</td>
+<td style="text-align: right;">0.4822450</td>
+<td style="text-align: right;">-0.4136770</td>
+<td style="text-align: right;">-0.6380509</td>
+<td style="text-align: right;">-0.1909741</td>
+<td style="text-align: right;">-0.6480797</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.3076015</td>
+<td style="text-align: right;">0.3075384</td>
+<td style="text-align: right;">0.1615340</td>
+<td style="text-align: right;">-0.5344862</td>
+<td style="text-align: right;">0.8070542</td>
+<td style="text-align: right;">-0.1695605</td>
+<td style="text-align: right;">-0.3016939</td>
+<td style="text-align: right;">0.4473528</td>
+<td style="text-align: right;">-0.0916723</td>
+<td style="text-align: right;">0.0675451</td>
+<td style="text-align: right;">-0.4338277</td>
+<td style="text-align: right;">0.3453432</td>
+<td style="text-align: right;">0.0343989</td>
+<td style="text-align: right;">-0.1135549</td>
+<td style="text-align: right;">0.3663237</td>
+<td style="text-align: right;">-0.1799779</td>
+<td style="text-align: right;">-0.6702923</td>
+<td style="text-align: right;">-0.0807954</td>
+<td style="text-align: right;">-0.3834173</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_13</td>
+<td style="text-align: right;">0.6816248</td>
+<td style="text-align: right;">0.4609086</td>
+<td style="text-align: right;">0.7982923</td>
+<td style="text-align: right;">0.5382832</td>
+<td style="text-align: right;">0.6636110</td>
+<td style="text-align: right;">0.1819086</td>
+<td style="text-align: right;">0.2047310</td>
+<td style="text-align: right;">0.6815274</td>
+<td style="text-align: right;">0.1689528</td>
+<td style="text-align: right;">-0.0328000</td>
+<td style="text-align: right;">0.4482400</td>
+<td style="text-align: right;">-0.3076015</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.8963275</td>
+<td style="text-align: right;">0.3525274</td>
+<td style="text-align: right;">0.8052552</td>
+<td style="text-align: right;">-0.7827972</td>
+<td style="text-align: right;">0.4984280</td>
+<td style="text-align: right;">0.7359857</td>
+<td style="text-align: right;">-0.2526559</td>
+<td style="text-align: right;">-0.1258845</td>
+<td style="text-align: right;">-0.0504281</td>
+<td style="text-align: right;">0.3448804</td>
+<td style="text-align: right;">-0.1878403</td>
+<td style="text-align: right;">-0.0259867</td>
+<td style="text-align: right;">-0.0211270</td>
+<td style="text-align: right;">-0.0405427</td>
+<td style="text-align: right;">-0.1365617</td>
+<td style="text-align: right;">0.3851563</td>
+<td style="text-align: right;">0.1675506</td>
+<td style="text-align: right;">0.3618206</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_14</td>
+<td style="text-align: right;">-0.7074880</td>
+<td style="text-align: right;">-0.4396561</td>
+<td style="text-align: right;">-0.8490147</td>
+<td style="text-align: right;">-0.5161658</td>
+<td style="text-align: right;">-0.7002886</td>
+<td style="text-align: right;">-0.0133588</td>
+<td style="text-align: right;">-0.3244281</td>
+<td style="text-align: right;">-0.7284358</td>
+<td style="text-align: right;">-0.0026553</td>
+<td style="text-align: right;">0.0174211</td>
+<td style="text-align: right;">-0.2869769</td>
+<td style="text-align: right;">0.3075384</td>
+<td style="text-align: right;">-0.8963275</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.3558617</td>
+<td style="text-align: right;">-0.8089080</td>
+<td style="text-align: right;">0.7850869</td>
+<td style="text-align: right;">-0.5321501</td>
+<td style="text-align: right;">-0.7255363</td>
+<td style="text-align: right;">0.2098700</td>
+<td style="text-align: right;">0.0625274</td>
+<td style="text-align: right;">0.1054304</td>
+<td style="text-align: right;">-0.2547590</td>
+<td style="text-align: right;">0.1005914</td>
+<td style="text-align: right;">0.0273509</td>
+<td style="text-align: right;">0.0110346</td>
+<td style="text-align: right;">0.0301791</td>
+<td style="text-align: right;">0.0754512</td>
+<td style="text-align: right;">-0.3326614</td>
+<td style="text-align: right;">-0.0861978</td>
+<td style="text-align: right;">-0.2696461</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_15</td>
+<td style="text-align: right;">0.8380369</td>
+<td style="text-align: right;">0.9131318</td>
+<td style="text-align: right;">0.7453691</td>
+<td style="text-align: right;">-0.0448003</td>
+<td style="text-align: right;">0.0322553</td>
+<td style="text-align: right;">-0.2279429</td>
+<td style="text-align: right;">0.2926534</td>
+<td style="text-align: right;">0.0708025</td>
+<td style="text-align: right;">-0.2353018</td>
+<td style="text-align: right;">-0.4168521</td>
+<td style="text-align: right;">0.0167487</td>
+<td style="text-align: right;">0.1615340</td>
+<td style="text-align: right;">0.3525274</td>
+<td style="text-align: right;">-0.3558617</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.6361283</td>
+<td style="text-align: right;">-0.0939761</td>
+<td style="text-align: right;">0.7222668</td>
+<td style="text-align: right;">0.7510336</td>
+<td style="text-align: right;">-0.6637565</td>
+<td style="text-align: right;">-0.2760903</td>
+<td style="text-align: right;">-0.0869887</td>
+<td style="text-align: right;">0.1261127</td>
+<td style="text-align: right;">0.1745840</td>
+<td style="text-align: right;">0.0320029</td>
+<td style="text-align: right;">0.1705579</td>
+<td style="text-align: right;">-0.0644949</td>
+<td style="text-align: right;">-0.6021814</td>
+<td style="text-align: right;">0.0514660</td>
+<td style="text-align: right;">0.1769397</td>
+<td style="text-align: right;">0.1983887</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_16</td>
+<td style="text-align: right;">0.9212223</td>
+<td style="text-align: right;">0.8149834</td>
+<td style="text-align: right;">0.9554377</td>
+<td style="text-align: right;">0.5072261</td>
+<td style="text-align: right;">0.5261694</td>
+<td style="text-align: right;">0.2190161</td>
+<td style="text-align: right;">0.0706971</td>
+<td style="text-align: right;">0.5762819</td>
+<td style="text-align: right;">0.2063046</td>
+<td style="text-align: right;">-0.1190670</td>
+<td style="text-align: right;">0.4780386</td>
+<td style="text-align: right;">-0.5344862</td>
+<td style="text-align: right;">0.8052552</td>
+<td style="text-align: right;">-0.8089080</td>
+<td style="text-align: right;">0.6361283</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.8279494</td>
+<td style="text-align: right;">0.7491295</td>
+<td style="text-align: right;">0.9058955</td>
+<td style="text-align: right;">-0.6855713</td>
+<td style="text-align: right;">-0.1521267</td>
+<td style="text-align: right;">-0.1208346</td>
+<td style="text-align: right;">0.4101857</td>
+<td style="text-align: right;">-0.1300865</td>
+<td style="text-align: right;">-0.0044997</td>
+<td style="text-align: right;">0.1555222</td>
+<td style="text-align: right;">-0.2234552</td>
+<td style="text-align: right;">-0.3014121</td>
+<td style="text-align: right;">0.5077015</td>
+<td style="text-align: right;">0.1979630</td>
+<td style="text-align: right;">0.4298546</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_17</td>
+<td style="text-align: right;">-0.5795512</td>
+<td style="text-align: right;">-0.3878905</td>
+<td style="text-align: right;">-0.6910522</td>
+<td style="text-align: right;">-0.6870360</td>
+<td style="text-align: right;">-0.6554730</td>
+<td style="text-align: right;">-0.4482703</td>
+<td style="text-align: right;">0.1214860</td>
+<td style="text-align: right;">-0.6921163</td>
+<td style="text-align: right;">-0.4372172</td>
+<td style="text-align: right;">-0.1493446</td>
+<td style="text-align: right;">-0.6046402</td>
+<td style="text-align: right;">0.8070542</td>
+<td style="text-align: right;">-0.7827972</td>
+<td style="text-align: right;">0.7850869</td>
+<td style="text-align: right;">-0.0939761</td>
+<td style="text-align: right;">-0.8279494</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.4416439</td>
+<td style="text-align: right;">-0.6230108</td>
+<td style="text-align: right;">0.4021612</td>
+<td style="text-align: right;">-0.0043790</td>
+<td style="text-align: right;">0.0926879</td>
+<td style="text-align: right;">-0.4376015</td>
+<td style="text-align: right;">0.2947420</td>
+<td style="text-align: right;">0.0290664</td>
+<td style="text-align: right;">-0.0767054</td>
+<td style="text-align: right;">0.2414482</td>
+<td style="text-align: right;">-0.0487658</td>
+<td style="text-align: right;">-0.6176810</td>
+<td style="text-align: right;">-0.1268283</td>
+<td style="text-align: right;">-0.4104486</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_18</td>
+<td style="text-align: right;">0.8823799</td>
+<td style="text-align: right;">0.8562405</td>
+<td style="text-align: right;">0.8208304</td>
+<td style="text-align: right;">0.1976613</td>
+<td style="text-align: right;">0.3305277</td>
+<td style="text-align: right;">-0.0860579</td>
+<td style="text-align: right;">0.2776797</td>
+<td style="text-align: right;">0.3499530</td>
+<td style="text-align: right;">-0.0937985</td>
+<td style="text-align: right;">0.0888354</td>
+<td style="text-align: right;">0.0558561</td>
+<td style="text-align: right;">-0.1695605</td>
+<td style="text-align: right;">0.4984280</td>
+<td style="text-align: right;">-0.5321501</td>
+<td style="text-align: right;">0.7222668</td>
+<td style="text-align: right;">0.7491295</td>
+<td style="text-align: right;">-0.4416439</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.5900278</td>
+<td style="text-align: right;">-0.6011228</td>
+<td style="text-align: right;">-0.1173252</td>
+<td style="text-align: right;">-0.1748063</td>
+<td style="text-align: right;">0.1828938</td>
+<td style="text-align: right;">-0.0242602</td>
+<td style="text-align: right;">0.0614314</td>
+<td style="text-align: right;">0.2066804</td>
+<td style="text-align: right;">-0.0626925</td>
+<td style="text-align: right;">-0.4180926</td>
+<td style="text-align: right;">0.2098573</td>
+<td style="text-align: right;">0.1483123</td>
+<td style="text-align: right;">0.1990758</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_19</td>
+<td style="text-align: right;">0.8850827</td>
+<td style="text-align: right;">0.8105774</td>
+<td style="text-align: right;">0.9030990</td>
+<td style="text-align: right;">0.3604026</td>
+<td style="text-align: right;">0.4021549</td>
+<td style="text-align: right;">0.0886227</td>
+<td style="text-align: right;">0.1350802</td>
+<td style="text-align: right;">0.4498854</td>
+<td style="text-align: right;">0.0730490</td>
+<td style="text-align: right;">-0.3218659</td>
+<td style="text-align: right;">0.3940552</td>
+<td style="text-align: right;">-0.3016939</td>
+<td style="text-align: right;">0.7359857</td>
+<td style="text-align: right;">-0.7255363</td>
+<td style="text-align: right;">0.7510336</td>
+<td style="text-align: right;">0.9058955</td>
+<td style="text-align: right;">-0.6230108</td>
+<td style="text-align: right;">0.5900278</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.6566464</td>
+<td style="text-align: right;">-0.2410968</td>
+<td style="text-align: right;">-0.0586457</td>
+<td style="text-align: right;">0.3421856</td>
+<td style="text-align: right;">-0.0169333</td>
+<td style="text-align: right;">-0.0238220</td>
+<td style="text-align: right;">0.1222692</td>
+<td style="text-align: right;">-0.1596828</td>
+<td style="text-align: right;">-0.4316812</td>
+<td style="text-align: right;">0.3565863</td>
+<td style="text-align: right;">0.2106317</td>
+<td style="text-align: right;">0.3986601</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.elev</td>
+<td style="text-align: right;">-0.7020268</td>
+<td style="text-align: right;">-0.8204205</td>
+<td style="text-align: right;">-0.6039248</td>
+<td style="text-align: right;">-0.2848498</td>
+<td style="text-align: right;">-0.1179441</td>
+<td style="text-align: right;">-0.2763418</td>
+<td style="text-align: right;">0.2409236</td>
+<td style="text-align: right;">-0.1662657</td>
+<td style="text-align: right;">-0.2754929</td>
+<td style="text-align: right;">0.1296663</td>
+<td style="text-align: right;">-0.3826257</td>
+<td style="text-align: right;">0.4473528</td>
+<td style="text-align: right;">-0.2526559</td>
+<td style="text-align: right;">0.2098700</td>
+<td style="text-align: right;">-0.6637565</td>
+<td style="text-align: right;">-0.6855713</td>
+<td style="text-align: right;">0.4021612</td>
+<td style="text-align: right;">-0.6011228</td>
+<td style="text-align: right;">-0.6566464</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.1658550</td>
+<td style="text-align: right;">0.0866818</td>
+<td style="text-align: right;">-0.2768511</td>
+<td style="text-align: right;">0.0566885</td>
+<td style="text-align: right;">0.0085374</td>
+<td style="text-align: right;">-0.1691051</td>
+<td style="text-align: right;">0.2836709</td>
+<td style="text-align: right;">0.3620809</td>
+<td style="text-align: right;">-0.3690796</td>
+<td style="text-align: right;">-0.1206899</td>
+<td style="text-align: right;">-0.2974812</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.urban</td>
+<td style="text-align: right;">-0.2166950</td>
+<td style="text-align: right;">-0.2349732</td>
+<td style="text-align: right;">-0.1800258</td>
+<td style="text-align: right;">0.0336681</td>
+<td style="text-align: right;">0.0450232</td>
+<td style="text-align: right;">-0.0043958</td>
+<td style="text-align: right;">0.0006525</td>
+<td style="text-align: right;">0.0576038</td>
+<td style="text-align: right;">-0.0046127</td>
+<td style="text-align: right;">0.2575487</td>
+<td style="text-align: right;">-0.0806428</td>
+<td style="text-align: right;">-0.0916723</td>
+<td style="text-align: right;">-0.1258845</td>
+<td style="text-align: right;">0.0625274</td>
+<td style="text-align: right;">-0.2760903</td>
+<td style="text-align: right;">-0.1521267</td>
+<td style="text-align: right;">-0.0043790</td>
+<td style="text-align: right;">-0.1173252</td>
+<td style="text-align: right;">-0.2410968</td>
+<td style="text-align: right;">0.1658550</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.0158734</td>
+<td style="text-align: right;">-0.0640686</td>
+<td style="text-align: right;">-0.0525228</td>
+<td style="text-align: right;">0.0230751</td>
+<td style="text-align: right;">-0.0542490</td>
+<td style="text-align: right;">-0.0910391</td>
+<td style="text-align: right;">0.1381460</td>
+<td style="text-align: right;">-0.0182016</td>
+<td style="text-align: right;">-0.0849122</td>
+<td style="text-align: right;">-0.0974461</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.barren</td>
+<td style="text-align: right;">-0.1465310</td>
+<td style="text-align: right;">-0.1290118</td>
+<td style="text-align: right;">-0.1401912</td>
+<td style="text-align: right;">-0.1767300</td>
+<td style="text-align: right;">-0.2050553</td>
+<td style="text-align: right;">-0.0556343</td>
+<td style="text-align: right;">-0.0416881</td>
+<td style="text-align: right;">-0.2054772</td>
+<td style="text-align: right;">-0.0593554</td>
+<td style="text-align: right;">-0.1625231</td>
+<td style="text-align: right;">-0.0448267</td>
+<td style="text-align: right;">0.0675451</td>
+<td style="text-align: right;">-0.0504281</td>
+<td style="text-align: right;">0.1054304</td>
+<td style="text-align: right;">-0.0869887</td>
+<td style="text-align: right;">-0.1208346</td>
+<td style="text-align: right;">0.0926879</td>
+<td style="text-align: right;">-0.1748063</td>
+<td style="text-align: right;">-0.0586457</td>
+<td style="text-align: right;">0.0866818</td>
+<td style="text-align: right;">-0.0158734</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.0162962</td>
+<td style="text-align: right;">-0.0528109</td>
+<td style="text-align: right;">-0.0239227</td>
+<td style="text-align: right;">-0.0138217</td>
+<td style="text-align: right;">-0.0363060</td>
+<td style="text-align: right;">-0.1036047</td>
+<td style="text-align: right;">-0.0724801</td>
+<td style="text-align: right;">-0.0858789</td>
+<td style="text-align: right;">0.1109447</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.water</td>
+<td style="text-align: right;">0.2809243</td>
+<td style="text-align: right;">0.2667949</td>
+<td style="text-align: right;">0.3048157</td>
+<td style="text-align: right;">0.3146727</td>
+<td style="text-align: right;">0.2408302</td>
+<td style="text-align: right;">0.3366258</td>
+<td style="text-align: right;">-0.1903310</td>
+<td style="text-align: right;">0.2618781</td>
+<td style="text-align: right;">0.3290610</td>
+<td style="text-align: right;">-0.1344434</td>
+<td style="text-align: right;">0.4306989</td>
+<td style="text-align: right;">-0.4338277</td>
+<td style="text-align: right;">0.3448804</td>
+<td style="text-align: right;">-0.2547590</td>
+<td style="text-align: right;">0.1261127</td>
+<td style="text-align: right;">0.4101857</td>
+<td style="text-align: right;">-0.4376015</td>
+<td style="text-align: right;">0.1828938</td>
+<td style="text-align: right;">0.3421856</td>
+<td style="text-align: right;">-0.2768511</td>
+<td style="text-align: right;">-0.0640686</td>
+<td style="text-align: right;">-0.0162962</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.2012987</td>
+<td style="text-align: right;">-0.1001261</td>
+<td style="text-align: right;">0.1514802</td>
+<td style="text-align: right;">-0.1470868</td>
+<td style="text-align: right;">-0.3598024</td>
+<td style="text-align: right;">0.7754893</td>
+<td style="text-align: right;">0.7644739</td>
+<td style="text-align: right;">0.9424604</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.savanna</td>
+<td style="text-align: right;">-0.0095489</td>
+<td style="text-align: right;">0.0367209</td>
+<td style="text-align: right;">-0.0332101</td>
+<td style="text-align: right;">-0.3691657</td>
+<td style="text-align: right;">-0.3398891</td>
+<td style="text-align: right;">-0.2999739</td>
+<td style="text-align: right;">0.1878727</td>
+<td style="text-align: right;">-0.3206388</td>
+<td style="text-align: right;">-0.3001513</td>
+<td style="text-align: right;">-0.2577892</td>
+<td style="text-align: right;">-0.3166075</td>
+<td style="text-align: right;">0.3453432</td>
+<td style="text-align: right;">-0.1878403</td>
+<td style="text-align: right;">0.1005914</td>
+<td style="text-align: right;">0.1745840</td>
+<td style="text-align: right;">-0.1300865</td>
+<td style="text-align: right;">0.2947420</td>
+<td style="text-align: right;">-0.0242602</td>
+<td style="text-align: right;">-0.0169333</td>
+<td style="text-align: right;">0.0566885</td>
+<td style="text-align: right;">-0.0525228</td>
+<td style="text-align: right;">-0.0528109</td>
+<td style="text-align: right;">-0.2012987</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.1431298</td>
+<td style="text-align: right;">-0.1331400</td>
+<td style="text-align: right;">-0.1144710</td>
+<td style="text-align: right;">-0.1017455</td>
+<td style="text-align: right;">-0.4458491</td>
+<td style="text-align: right;">0.1270593</td>
+<td style="text-align: right;">-0.2062720</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.woodysavanna</td>
+<td style="text-align: right;">0.0164349</td>
+<td style="text-align: right;">0.0383423</td>
+<td style="text-align: right;">0.0016211</td>
+<td style="text-align: right;">-0.1278214</td>
+<td style="text-align: right;">-0.0646217</td>
+<td style="text-align: right;">-0.0944336</td>
+<td style="text-align: right;">0.1607361</td>
+<td style="text-align: right;">-0.0500857</td>
+<td style="text-align: right;">-0.0989210</td>
+<td style="text-align: right;">0.0250223</td>
+<td style="text-align: right;">-0.0767622</td>
+<td style="text-align: right;">0.0343989</td>
+<td style="text-align: right;">-0.0259867</td>
+<td style="text-align: right;">0.0273509</td>
+<td style="text-align: right;">0.0320029</td>
+<td style="text-align: right;">-0.0044997</td>
+<td style="text-align: right;">0.0290664</td>
+<td style="text-align: right;">0.0614314</td>
+<td style="text-align: right;">-0.0238220</td>
+<td style="text-align: right;">0.0085374</td>
+<td style="text-align: right;">0.0230751</td>
+<td style="text-align: right;">-0.0239227</td>
+<td style="text-align: right;">-0.1001261</td>
+<td style="text-align: right;">-0.1431298</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.0795861</td>
+<td style="text-align: right;">-0.1390452</td>
+<td style="text-align: right;">0.0352622</td>
+<td style="text-align: right;">-0.0487184</td>
+<td style="text-align: right;">-0.1239828</td>
+<td style="text-align: right;">-0.1180876</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.wetland</td>
+<td style="text-align: right;">0.1900006</td>
+<td style="text-align: right;">0.2310969</td>
+<td style="text-align: right;">0.1339512</td>
+<td style="text-align: right;">-0.1199020</td>
+<td style="text-align: right;">-0.1007284</td>
+<td style="text-align: right;">-0.0546352</td>
+<td style="text-align: right;">0.0234546</td>
+<td style="text-align: right;">-0.1171249</td>
+<td style="text-align: right;">-0.0569243</td>
+<td style="text-align: right;">-0.0628819</td>
+<td style="text-align: right;">-0.0489669</td>
+<td style="text-align: right;">-0.1135549</td>
+<td style="text-align: right;">-0.0211270</td>
+<td style="text-align: right;">0.0110346</td>
+<td style="text-align: right;">0.1705579</td>
+<td style="text-align: right;">0.1555222</td>
+<td style="text-align: right;">-0.0767054</td>
+<td style="text-align: right;">0.2066804</td>
+<td style="text-align: right;">0.1222692</td>
+<td style="text-align: right;">-0.1691051</td>
+<td style="text-align: right;">-0.0542490</td>
+<td style="text-align: right;">-0.0138217</td>
+<td style="text-align: right;">0.1514802</td>
+<td style="text-align: right;">-0.1331400</td>
+<td style="text-align: right;">-0.0795861</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.1178841</td>
+<td style="text-align: right;">-0.3633590</td>
+<td style="text-align: right;">0.1635021</td>
+<td style="text-align: right;">0.2176664</td>
+<td style="text-align: right;">0.2219148</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.grass</td>
+<td style="text-align: right;">-0.0951956</td>
+<td style="text-align: right;">-0.1597560</td>
+<td style="text-align: right;">-0.1035231</td>
+<td style="text-align: right;">-0.1421615</td>
+<td style="text-align: right;">0.0906502</td>
+<td style="text-align: right;">-0.2967035</td>
+<td style="text-align: right;">0.2110834</td>
+<td style="text-align: right;">-0.0004114</td>
+<td style="text-align: right;">-0.3059837</td>
+<td style="text-align: right;">0.1016193</td>
+<td style="text-align: right;">-0.2648641</td>
+<td style="text-align: right;">0.3663237</td>
+<td style="text-align: right;">-0.0405427</td>
+<td style="text-align: right;">0.0301791</td>
+<td style="text-align: right;">-0.0644949</td>
+<td style="text-align: right;">-0.2234552</td>
+<td style="text-align: right;">0.2414482</td>
+<td style="text-align: right;">-0.0626925</td>
+<td style="text-align: right;">-0.1596828</td>
+<td style="text-align: right;">0.2836709</td>
+<td style="text-align: right;">-0.0910391</td>
+<td style="text-align: right;">-0.0363060</td>
+<td style="text-align: right;">-0.1470868</td>
+<td style="text-align: right;">-0.1144710</td>
+<td style="text-align: right;">-0.1390452</td>
+<td style="text-align: right;">-0.1178841</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.1790217</td>
+<td style="text-align: right;">-0.4640792</td>
+<td style="text-align: right;">0.2033894</td>
+<td style="text-align: right;">-0.1011531</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.npp</td>
+<td style="text-align: right;">-0.4904385</td>
+<td style="text-align: right;">-0.5634650</td>
+<td style="text-align: right;">-0.3818775</td>
+<td style="text-align: right;">0.2372008</td>
+<td style="text-align: right;">0.1071877</td>
+<td style="text-align: right;">0.2916873</td>
+<td style="text-align: right;">-0.2081632</td>
+<td style="text-align: right;">0.1210585</td>
+<td style="text-align: right;">0.3069575</td>
+<td style="text-align: right;">0.3063098</td>
+<td style="text-align: right;">0.1158628</td>
+<td style="text-align: right;">-0.1799779</td>
+<td style="text-align: right;">-0.1365617</td>
+<td style="text-align: right;">0.0754512</td>
+<td style="text-align: right;">-0.6021814</td>
+<td style="text-align: right;">-0.3014121</td>
+<td style="text-align: right;">-0.0487658</td>
+<td style="text-align: right;">-0.4180926</td>
+<td style="text-align: right;">-0.4316812</td>
+<td style="text-align: right;">0.3620809</td>
+<td style="text-align: right;">0.1381460</td>
+<td style="text-align: right;">-0.1036047</td>
+<td style="text-align: right;">-0.3598024</td>
+<td style="text-align: right;">-0.1017455</td>
+<td style="text-align: right;">0.0352622</td>
+<td style="text-align: right;">-0.3633590</td>
+<td style="text-align: right;">-0.1790217</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.0236512</td>
+<td style="text-align: right;">-0.5329573</td>
+<td style="text-align: right;">-0.4770617</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.tree</td>
+<td style="text-align: right;">0.2909198</td>
+<td style="text-align: right;">0.2588505</td>
+<td style="text-align: right;">0.3412311</td>
+<td style="text-align: right;">0.5738663</td>
+<td style="text-align: right;">0.3874699</td>
+<td style="text-align: right;">0.5563343</td>
+<td style="text-align: right;">-0.3393455</td>
+<td style="text-align: right;">0.4380999</td>
+<td style="text-align: right;">0.5551067</td>
+<td style="text-align: right;">-0.0024718</td>
+<td style="text-align: right;">0.6234826</td>
+<td style="text-align: right;">-0.6702923</td>
+<td style="text-align: right;">0.3851563</td>
+<td style="text-align: right;">-0.3326614</td>
+<td style="text-align: right;">0.0514660</td>
+<td style="text-align: right;">0.5077015</td>
+<td style="text-align: right;">-0.6176810</td>
+<td style="text-align: right;">0.2098573</td>
+<td style="text-align: right;">0.3565863</td>
+<td style="text-align: right;">-0.3690796</td>
+<td style="text-align: right;">-0.0182016</td>
+<td style="text-align: right;">-0.0724801</td>
+<td style="text-align: right;">0.7754893</td>
+<td style="text-align: right;">-0.4458491</td>
+<td style="text-align: right;">-0.0487184</td>
+<td style="text-align: right;">0.1635021</td>
+<td style="text-align: right;">-0.4640792</td>
+<td style="text-align: right;">-0.0236512</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2874209</td>
+<td style="text-align: right;">0.7347511</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.nontree</td>
+<td style="text-align: right;">0.2094488</td>
+<td style="text-align: right;">0.2251004</td>
+<td style="text-align: right;">0.1879507</td>
+<td style="text-align: right;">-0.0462787</td>
+<td style="text-align: right;">0.0185454</td>
+<td style="text-align: right;">0.0210990</td>
+<td style="text-align: right;">0.0235826</td>
+<td style="text-align: right;">-0.0014199</td>
+<td style="text-align: right;">0.0083033</td>
+<td style="text-align: right;">-0.1862436</td>
+<td style="text-align: right;">0.0741045</td>
+<td style="text-align: right;">-0.0807954</td>
+<td style="text-align: right;">0.1675506</td>
+<td style="text-align: right;">-0.0861978</td>
+<td style="text-align: right;">0.1769397</td>
+<td style="text-align: right;">0.1979630</td>
+<td style="text-align: right;">-0.1268283</td>
+<td style="text-align: right;">0.1483123</td>
+<td style="text-align: right;">0.2106317</td>
+<td style="text-align: right;">-0.1206899</td>
+<td style="text-align: right;">-0.0849122</td>
+<td style="text-align: right;">-0.0858789</td>
+<td style="text-align: right;">0.7644739</td>
+<td style="text-align: right;">0.1270593</td>
+<td style="text-align: right;">-0.1239828</td>
+<td style="text-align: right;">0.2176664</td>
+<td style="text-align: right;">0.2033894</td>
+<td style="text-align: right;">-0.5329573</td>
+<td style="text-align: right;">0.2874209</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.7781441</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.nonveg</td>
+<td style="text-align: right;">0.3220449</td>
+<td style="text-align: right;">0.3104870</td>
+<td style="text-align: right;">0.3394448</td>
+<td style="text-align: right;">0.2550597</td>
+<td style="text-align: right;">0.2113346</td>
+<td style="text-align: right;">0.2561623</td>
+<td style="text-align: right;">-0.1459755</td>
+<td style="text-align: right;">0.2310857</td>
+<td style="text-align: right;">0.2458748</td>
+<td style="text-align: right;">-0.2121246</td>
+<td style="text-align: right;">0.3906984</td>
+<td style="text-align: right;">-0.3834173</td>
+<td style="text-align: right;">0.3618206</td>
+<td style="text-align: right;">-0.2696461</td>
+<td style="text-align: right;">0.1983887</td>
+<td style="text-align: right;">0.4298546</td>
+<td style="text-align: right;">-0.4104486</td>
+<td style="text-align: right;">0.1990758</td>
+<td style="text-align: right;">0.3986601</td>
+<td style="text-align: right;">-0.2974812</td>
+<td style="text-align: right;">-0.0974461</td>
+<td style="text-align: right;">0.1109447</td>
+<td style="text-align: right;">0.9424604</td>
+<td style="text-align: right;">-0.2062720</td>
+<td style="text-align: right;">-0.1180876</td>
+<td style="text-align: right;">0.2219148</td>
+<td style="text-align: right;">-0.1011531</td>
+<td style="text-align: right;">-0.4770617</td>
+<td style="text-align: right;">0.7347511</td>
+<td style="text-align: right;">0.7781441</td>
+<td style="text-align: right;">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="variable-importance-analyses" class="level2">
+<h2 class="anchored" data-anchor-id="variable-importance-analyses">Variable Importance analyses</h2>
+<section id="simple-glm" class="level3">
+<h3 class="anchored" data-anchor-id="simple-glm">Simple GLM</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>presabs.glm <span class="ot">&lt;-</span> PA <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.elev)<span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_1))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>glm.full<span class="ot">&lt;-</span> <span class="fu">glm</span>(presabs <span class="sc">~</span>., </span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">family =</span> <span class="st">"binomial"</span>, </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">data =</span> presabs.glm)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(glm.full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = presabs ~ ., family = "binomial", data = presabs.glm)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.5906  -0.5565  -0.3660   0.5872   2.6073  
+
+Coefficients:
+                   Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)      -5.975e+00  1.601e+01  -0.373 0.709062    
+env.bio_1         4.831e+00  7.149e+00   0.676 0.499174    
+env.bio_2         1.514e+01  8.267e+00   1.832 0.066982 .  
+env.bio_3        -2.646e+01  1.407e+01  -1.880 0.060078 .  
+env.bio_4         3.323e+00  1.973e+00   1.684 0.092227 .  
+env.bio_5        -1.280e+00  1.677e+00  -0.763 0.445418    
+env.bio_6        -3.682e-01  1.605e+00  -0.229 0.818524    
+env.bio_7         6.037e-01  5.059e-01   1.193 0.232798    
+env.bio_8        -1.428e-01  2.133e+00  -0.067 0.946624    
+env.bio_9        -6.187e-01  2.017e+00  -0.307 0.759054    
+env.bio_10       -2.738e-01  4.004e-01  -0.684 0.494102    
+env.bio_11       -4.777e-01  5.018e-01  -0.952 0.341120    
+env.bio_12        7.895e+00  1.953e+00   4.043 5.28e-05 ***
+env.bio_13       -1.860e+00  1.201e+00  -1.548 0.121514    
+env.bio_14       -7.006e+00  8.031e+00  -0.872 0.383030    
+env.bio_15       -1.168e+06  1.243e+06  -0.939 0.347479    
+env.bio_16        1.957e+06  2.083e+06   0.939 0.347480    
+env.bio_17        1.663e+06  1.770e+06   0.939 0.347484    
+env.bio_18        3.343e-01  9.756e-01   0.343 0.731879    
+env.bio_19        1.463e+00  1.169e+00   1.252 0.210482    
+env.elev          7.781e-01  9.405e-01   0.827 0.408086    
+env.urban         9.464e-01  2.510e-01   3.771 0.000163 ***
+env.barren       -2.276e+01  8.084e+01  -0.282 0.778322    
+env.water        -3.700e-01  4.016e-01  -0.921 0.356903    
+env.savanna       4.780e-02  2.428e-01   0.197 0.843935    
+env.woodysavanna  3.473e-01  2.383e-01   1.458 0.144936    
+env.wetland      -7.097e-02  1.598e-01  -0.444 0.657052    
+env.grass        -5.978e-01  3.563e-01  -1.678 0.093346 .  
+env.npp           1.356e+00  3.512e-01   3.861 0.000113 ***
+env.tree          1.069e-01  5.556e-01   0.192 0.847374    
+env.nontree       2.110e-02  5.279e-01   0.040 0.968118    
+env.nonveg        5.186e-01  6.678e-01   0.777 0.437412    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 645.61  on 539  degrees of freedom
+Residual deviance: 438.55  on 508  degrees of freedom
+AIC: 502.55
+
+Number of Fisher Scoring iterations: 12</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">step</span>(glm.full) <span class="co"># step might not work with gam so glm</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Start:  AIC=502.55
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_6 + env.bio_7 + env.bio_8 + env.bio_9 + env.bio_10 + 
+    env.bio_11 + env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + 
+    env.bio_16 + env.bio_17 + env.bio_18 + env.bio_19 + env.elev + 
+    env.urban + env.barren + env.water + env.savanna + env.woodysavanna + 
+    env.wetland + env.grass + env.npp + env.tree + env.nontree + 
+    env.nonveg
+
+                   Df Deviance    AIC
+- env.nontree       1   438.55 500.55
+- env.bio_8         1   438.55 500.55
+- env.tree          1   438.59 500.59
+- env.savanna       1   438.59 500.59
+- env.bio_6         1   438.60 500.60
+- env.bio_9         1   438.64 500.64
+- env.bio_18        1   438.67 500.67
+- env.wetland       1   438.77 500.77
+- env.bio_1         1   439.00 501.00
+- env.bio_10        1   439.02 501.02
+- env.bio_5         1   439.13 501.13
+- env.barren        1   439.13 501.13
+- env.nonveg        1   439.14 501.14
+- env.elev          1   439.26 501.26
+- env.bio_14        1   439.32 501.32
+- env.water         1   439.40 501.40
+- env.bio_17        1   439.43 501.43
+- env.bio_16        1   439.43 501.43
+- env.bio_15        1   439.43 501.43
+- env.bio_11        1   439.52 501.52
+- env.bio_7         1   439.99 501.99
+- env.bio_19        1   440.09 502.09
+&lt;none&gt;                  438.55 502.55
+- env.woodysavanna  1   440.67 502.67
+- env.bio_13        1   440.98 502.98
+- env.grass         1   441.43 503.43
+- env.bio_4         1   441.47 503.47
+- env.bio_3         1   442.14 504.14
+- env.bio_2         1   442.16 504.16
+- env.npp           1   455.54 517.54
+- env.urban         1   456.68 518.68
+- env.bio_12        1   457.14 519.14
+
+Step:  AIC=500.55
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_6 + env.bio_7 + env.bio_8 + env.bio_9 + env.bio_10 + 
+    env.bio_11 + env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + 
+    env.bio_16 + env.bio_17 + env.bio_18 + env.bio_19 + env.elev + 
+    env.urban + env.barren + env.water + env.savanna + env.woodysavanna + 
+    env.wetland + env.grass + env.npp + env.tree + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_8         1   438.55 498.55
+- env.savanna       1   438.59 498.59
+- env.tree          1   438.60 498.60
+- env.bio_6         1   438.60 498.60
+- env.bio_9         1   438.64 498.64
+- env.bio_18        1   438.67 498.67
+- env.wetland       1   438.77 498.77
+- env.bio_1         1   439.00 499.00
+- env.bio_10        1   439.03 499.03
+- env.bio_5         1   439.13 499.13
+- env.barren        1   439.16 499.16
+- env.elev          1   439.30 499.30
+- env.bio_14        1   439.33 499.33
+- env.bio_17        1   439.44 499.44
+- env.bio_16        1   439.44 499.44
+- env.bio_15        1   439.44 499.44
+- env.bio_11        1   439.54 499.54
+- env.water         1   439.56 499.56
+- env.nonveg        1   439.75 499.75
+- env.bio_7         1   439.99 499.99
+- env.bio_19        1   440.11 500.11
+&lt;none&gt;                  438.55 500.55
+- env.woodysavanna  1   440.67 500.67
+- env.bio_13        1   441.04 501.04
+- env.grass         1   441.45 501.45
+- env.bio_4         1   441.48 501.48
+- env.bio_2         1   442.16 502.16
+- env.bio_3         1   442.19 502.19
+- env.npp           1   456.88 516.88
+- env.urban         1   457.60 517.60
+- env.bio_12        1   457.97 517.97
+
+Step:  AIC=498.55
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_6 + env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + 
+    env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + 
+    env.bio_17 + env.bio_18 + env.bio_19 + env.elev + env.urban + 
+    env.barren + env.water + env.savanna + env.woodysavanna + 
+    env.wetland + env.grass + env.npp + env.tree + env.nonveg
+
+                   Df Deviance    AIC
+- env.savanna       1   438.60 496.60
+- env.bio_6         1   438.61 496.61
+- env.tree          1   438.61 496.61
+- env.bio_9         1   438.65 496.65
+- env.bio_18        1   438.67 496.67
+- env.wetland       1   438.77 496.77
+- env.bio_1         1   439.04 497.04
+- env.bio_10        1   439.04 497.04
+- env.barren        1   439.17 497.17
+- env.bio_14        1   439.34 497.34
+- env.elev          1   439.34 497.34
+- env.bio_17        1   439.44 497.44
+- env.bio_16        1   439.44 497.44
+- env.bio_15        1   439.44 497.44
+- env.bio_11        1   439.55 497.55
+- env.water         1   439.57 497.57
+- env.nonveg        1   439.76 497.76
+- env.bio_7         1   440.00 498.00
+- env.bio_19        1   440.11 498.11
+- env.bio_5         1   440.35 498.35
+&lt;none&gt;                  438.55 498.55
+- env.woodysavanna  1   440.67 498.67
+- env.bio_13        1   441.06 499.06
+- env.grass         1   441.70 499.70
+- env.bio_3         1   442.20 500.20
+- env.bio_2         1   442.22 500.22
+- env.bio_4         1   442.75 500.75
+- env.npp           1   457.33 515.33
+- env.urban         1   457.64 515.64
+- env.bio_12        1   458.16 516.16
+
+Step:  AIC=496.6
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_6 + env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + 
+    env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + 
+    env.bio_17 + env.bio_18 + env.bio_19 + env.elev + env.urban + 
+    env.barren + env.water + env.woodysavanna + env.wetland + 
+    env.grass + env.npp + env.tree + env.nonveg
+
+                   Df Deviance    AIC
+- env.tree          1   438.62 494.62
+- env.bio_6         1   438.65 494.65
+- env.bio_9         1   438.70 494.70
+- env.bio_18        1   438.73 494.73
+- env.wetland       1   438.87 494.87
+- env.bio_1         1   439.05 495.05
+- env.bio_10        1   439.11 495.11
+- env.barren        1   439.25 495.25
+- env.bio_14        1   439.37 495.37
+- env.elev          1   439.43 495.43
+- env.bio_17        1   439.47 495.47
+- env.bio_16        1   439.47 495.47
+- env.bio_15        1   439.47 495.47
+- env.water         1   439.58 495.58
+- env.bio_11        1   439.58 495.58
+- env.nonveg        1   439.92 495.92
+- env.bio_7         1   440.07 496.07
+- env.bio_19        1   440.16 496.16
+- env.bio_5         1   440.42 496.42
+&lt;none&gt;                  438.60 496.60
+- env.woodysavanna  1   440.80 496.80
+- env.bio_13        1   441.70 497.70
+- env.bio_3         1   442.21 498.21
+- env.bio_2         1   442.33 498.33
+- env.bio_4         1   442.83 498.83
+- env.grass         1   443.61 499.61
+- env.npp           1   457.33 513.33
+- env.urban         1   457.81 513.81
+- env.bio_12        1   459.76 515.76
+
+Step:  AIC=494.62
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_6 + env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + 
+    env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + 
+    env.bio_17 + env.bio_18 + env.bio_19 + env.elev + env.urban + 
+    env.barren + env.water + env.woodysavanna + env.wetland + 
+    env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_6         1   438.67 492.67
+- env.bio_9         1   438.72 492.72
+- env.bio_18        1   438.76 492.76
+- env.wetland       1   438.88 492.88
+- env.bio_1         1   439.13 493.13
+- env.bio_10        1   439.16 493.16
+- env.barren        1   439.26 493.26
+- env.elev          1   439.46 493.46
+- env.bio_14        1   439.48 493.48
+- env.bio_17        1   439.50 493.50
+- env.bio_16        1   439.50 493.50
+- env.bio_15        1   439.50 493.50
+- env.water         1   439.59 493.59
+- env.bio_11        1   439.59 493.59
+- env.nonveg        1   440.10 494.10
+- env.bio_7         1   440.12 494.12
+- env.bio_19        1   440.17 494.17
+- env.bio_5         1   440.50 494.50
+&lt;none&gt;                  438.62 494.62
+- env.woodysavanna  1   440.82 494.82
+- env.bio_13        1   441.97 495.97
+- env.bio_2         1   442.48 496.48
+- env.bio_3         1   442.70 496.70
+- env.bio_4         1   443.18 497.18
+- env.grass         1   445.06 499.06
+- env.urban         1   457.81 511.81
+- env.npp           1   459.69 513.69
+- env.bio_12        1   459.97 513.97
+
+Step:  AIC=492.67
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + env.bio_12 + 
+    env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + env.bio_17 + 
+    env.bio_18 + env.bio_19 + env.elev + env.urban + env.barren + 
+    env.water + env.woodysavanna + env.wetland + env.grass + 
+    env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_18        1   438.80 490.80
+- env.wetland       1   438.91 490.91
+- env.bio_1         1   439.14 491.14
+- env.bio_10        1   439.19 491.19
+- env.barren        1   439.31 491.31
+- env.elev          1   439.46 491.46
+- env.bio_14        1   439.52 491.52
+- env.bio_17        1   439.55 491.55
+- env.bio_16        1   439.55 491.55
+- env.bio_15        1   439.55 491.55
+- env.bio_11        1   439.61 491.61
+- env.water         1   439.61 491.61
+- env.bio_7         1   440.12 492.12
+- env.nonveg        1   440.15 492.15
+- env.bio_19        1   440.18 492.18
+- env.bio_5         1   440.58 492.58
+&lt;none&gt;                  438.67 492.67
+- env.bio_9         1   440.82 492.82
+- env.woodysavanna  1   440.87 492.87
+- env.bio_13        1   441.98 493.98
+- env.bio_2         1   442.60 494.60
+- env.bio_3         1   442.70 494.70
+- env.bio_4         1   443.27 495.27
+- env.grass         1   445.11 497.11
+- env.urban         1   457.81 509.81
+- env.bio_12        1   460.33 512.33
+- env.npp           1   460.34 512.34
+
+Step:  AIC=490.8
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + env.bio_12 + 
+    env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + env.bio_17 + 
+    env.bio_19 + env.elev + env.urban + env.barren + env.water + 
+    env.woodysavanna + env.wetland + env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.wetland       1   439.06 489.06
+- env.bio_10        1   439.24 489.24
+- env.bio_1         1   439.34 489.34
+- env.barren        1   439.45 489.45
+- env.elev          1   439.67 489.67
+- env.bio_17        1   439.67 489.67
+- env.bio_16        1   439.67 489.67
+- env.bio_15        1   439.67 489.67
+- env.bio_14        1   439.71 489.71
+- env.bio_11        1   439.71 489.71
+- env.water         1   439.73 489.73
+- env.nonveg        1   440.25 490.25
+- env.bio_7         1   440.28 490.28
+- env.bio_19        1   440.44 490.44
+- env.bio_5         1   440.71 490.71
+&lt;none&gt;                  438.80 490.80
+- env.woodysavanna  1   440.92 490.92
+- env.bio_9         1   440.97 490.97
+- env.bio_13        1   442.19 492.19
+- env.bio_2         1   442.90 492.90
+- env.bio_3         1   442.97 492.97
+- env.bio_4         1   443.36 493.36
+- env.grass         1   445.35 495.35
+- env.urban         1   457.97 507.97
+- env.npp           1   460.35 510.35
+- env.bio_12        1   460.81 510.81
+
+Step:  AIC=489.06
+presabs ~ env.bio_1 + env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + 
+    env.bio_7 + env.bio_9 + env.bio_10 + env.bio_11 + env.bio_12 + 
+    env.bio_13 + env.bio_14 + env.bio_15 + env.bio_16 + env.bio_17 + 
+    env.bio_19 + env.elev + env.urban + env.barren + env.water + 
+    env.woodysavanna + env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_1         1   439.49 487.49
+- env.bio_10        1   439.53 487.53
+- env.barren        1   439.64 487.64
+- env.elev          1   439.85 487.85
+- env.water         1   439.87 487.87
+- env.bio_17        1   439.92 487.92
+- env.bio_16        1   439.92 487.92
+- env.bio_15        1   439.92 487.92
+- env.bio_11        1   439.96 487.96
+- env.bio_14        1   439.98 487.98
+- env.nonveg        1   440.34 488.34
+- env.bio_7         1   440.46 488.46
+- env.bio_19        1   440.92 488.92
+- env.bio_5         1   440.96 488.96
+&lt;none&gt;                  439.06 489.06
+- env.bio_9         1   441.37 489.37
+- env.woodysavanna  1   441.39 489.39
+- env.bio_13        1   442.22 490.22
+- env.bio_3         1   443.09 491.09
+- env.bio_2         1   443.45 491.45
+- env.bio_4         1   443.72 491.72
+- env.grass         1   445.35 493.35
+- env.urban         1   458.36 506.36
+- env.bio_12        1   460.82 508.82
+- env.npp           1   462.28 510.28
+
+Step:  AIC=487.49
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_10 + env.bio_11 + env.bio_12 + env.bio_13 + 
+    env.bio_14 + env.bio_15 + env.bio_16 + env.bio_17 + env.bio_19 + 
+    env.elev + env.urban + env.barren + env.water + env.woodysavanna + 
+    env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_10        1   439.87 485.87
+- env.barren        1   440.07 486.07
+- env.bio_14        1   440.13 486.13
+- env.water         1   440.33 486.33
+- env.bio_17        1   440.38 486.38
+- env.bio_16        1   440.38 486.38
+- env.bio_15        1   440.38 486.38
+- env.bio_11        1   440.40 486.40
+- env.elev          1   440.53 486.53
+- env.nonveg        1   440.67 486.67
+- env.bio_7         1   440.72 486.72
+- env.bio_5         1   441.36 487.36
+&lt;none&gt;                  439.49 487.49
+- env.bio_19        1   441.63 487.63
+- env.woodysavanna  1   441.93 487.93
+- env.bio_9         1   442.63 488.63
+- env.bio_13        1   442.88 488.88
+- env.bio_3         1   443.35 489.35
+- env.bio_4         1   444.58 490.58
+- env.bio_2         1   444.98 490.98
+- env.grass         1   445.36 491.36
+- env.urban         1   458.77 504.77
+- env.npp           1   462.63 508.63
+- env.bio_12        1   464.07 510.07
+
+Step:  AIC=485.87
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_11 + env.bio_12 + env.bio_13 + env.bio_14 + 
+    env.bio_15 + env.bio_16 + env.bio_17 + env.bio_19 + env.elev + 
+    env.urban + env.barren + env.water + env.woodysavanna + env.grass + 
+    env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_11        1   440.41 484.41
+- env.barren        1   440.47 484.47
+- env.bio_14        1   440.58 484.58
+- env.bio_17        1   440.74 484.74
+- env.bio_16        1   440.74 484.74
+- env.bio_15        1   440.74 484.74
+- env.water         1   440.75 484.75
+- env.elev          1   440.93 484.93
+- env.bio_7         1   441.00 485.00
+- env.nonveg        1   441.19 485.19
+- env.bio_5         1   441.73 485.73
+&lt;none&gt;                  439.87 485.87
+- env.woodysavanna  1   442.20 486.20
+- env.bio_19        1   442.20 486.20
+- env.bio_9         1   442.80 486.80
+- env.bio_13        1   443.59 487.59
+- env.bio_3         1   443.70 487.70
+- env.bio_4         1   444.74 488.74
+- env.bio_2         1   445.06 489.06
+- env.grass         1   445.83 489.83
+- env.urban         1   458.77 502.77
+- env.npp           1   462.74 506.74
+- env.bio_12        1   464.21 508.21
+
+Step:  AIC=484.41
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + 
+    env.bio_16 + env.bio_17 + env.bio_19 + env.elev + env.urban + 
+    env.barren + env.water + env.woodysavanna + env.grass + env.npp + 
+    env.nonveg
+
+                   Df Deviance    AIC
+- env.barren        1   440.98 482.98
+- env.bio_14        1   440.99 482.99
+- env.bio_17        1   441.18 483.18
+- env.bio_16        1   441.18 483.18
+- env.bio_15        1   441.18 483.18
+- env.elev          1   441.40 483.40
+- env.water         1   441.41 483.41
+- env.nonveg        1   441.97 483.97
+- env.bio_7         1   442.03 484.03
+&lt;none&gt;                  440.41 484.41
+- env.woodysavanna  1   442.70 484.70
+- env.bio_19        1   442.71 484.71
+- env.bio_5         1   443.07 485.07
+- env.bio_9         1   443.68 485.68
+- env.bio_3         1   443.80 485.80
+- env.bio_13        1   444.73 486.73
+- env.bio_2         1   445.38 487.38
+- env.bio_4         1   445.69 487.69
+- env.grass         1   446.22 488.22
+- env.urban         1   460.81 502.81
+- env.npp           1   464.93 506.93
+- env.bio_12        1   465.46 507.46
+
+Step:  AIC=482.98
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_14 + env.bio_15 + 
+    env.bio_16 + env.bio_17 + env.bio_19 + env.elev + env.urban + 
+    env.water + env.woodysavanna + env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_14        1   441.52 481.52
+- env.bio_17        1   441.69 481.69
+- env.bio_16        1   441.69 481.69
+- env.bio_15        1   441.69 481.69
+- env.water         1   441.76 481.76
+- env.elev          1   442.10 482.10
+- env.nonveg        1   442.31 482.31
+- env.bio_7         1   442.53 482.53
+&lt;none&gt;                  440.98 482.98
+- env.woodysavanna  1   443.27 483.27
+- env.bio_19        1   443.30 483.30
+- env.bio_5         1   443.50 483.50
+- env.bio_9         1   444.00 484.00
+- env.bio_3         1   444.16 484.16
+- env.bio_13        1   445.23 485.23
+- env.bio_2         1   445.93 485.93
+- env.bio_4         1   445.99 485.99
+- env.grass         1   446.69 486.69
+- env.urban         1   462.45 502.45
+- env.bio_12        1   465.66 505.66
+- env.npp           1   467.70 507.70
+
+Step:  AIC=481.52
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + 
+    env.bio_17 + env.bio_19 + env.elev + env.urban + env.water + 
+    env.woodysavanna + env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.bio_17        1   442.21 480.21
+- env.bio_16        1   442.21 480.21
+- env.bio_15        1   442.21 480.21
+- env.water         1   442.30 480.30
+- env.elev          1   442.67 480.67
+- env.nonveg        1   442.97 480.97
+- env.bio_7         1   443.36 481.36
+&lt;none&gt;                  441.52 481.52
+- env.bio_19        1   443.89 481.89
+- env.bio_5         1   444.18 482.18
+- env.woodysavanna  1   444.31 482.31
+- env.bio_9         1   444.50 482.50
+- env.bio_13        1   445.62 483.62
+- env.bio_4         1   446.72 484.72
+- env.grass         1   447.82 485.82
+- env.bio_3         1   453.13 491.13
+- env.bio_12        1   466.34 504.34
+- env.urban         1   469.57 507.57
+- env.npp           1   476.28 514.28
+- env.bio_2         1   480.30 518.30
+
+Step:  AIC=480.21
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + 
+    env.bio_19 + env.elev + env.urban + env.water + env.woodysavanna + 
+    env.grass + env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.water         1   442.89 478.89
+- env.elev          1   443.28 479.28
+- env.nonveg        1   443.59 479.59
+- env.bio_7         1   443.80 479.80
+&lt;none&gt;                  442.21 480.21
+- env.bio_5         1   444.62 480.62
+- env.bio_19        1   444.70 480.70
+- env.woodysavanna  1   444.81 480.81
+- env.bio_9         1   445.20 481.20
+- env.bio_13        1   445.75 481.75
+- env.bio_4         1   447.04 483.04
+- env.grass         1   448.31 484.31
+- env.bio_16        1   451.76 487.76
+- env.bio_3         1   453.31 489.31
+- env.bio_12        1   466.36 502.36
+- env.urban         1   471.31 507.31
+- env.bio_15        1   476.31 512.31
+- env.npp           1   477.37 513.37
+- env.bio_2         1   480.59 516.59
+
+Step:  AIC=478.89
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + 
+    env.bio_19 + env.elev + env.urban + env.woodysavanna + env.grass + 
+    env.npp + env.nonveg
+
+                   Df Deviance    AIC
+- env.nonveg        1   443.72 477.72
+- env.elev          1   443.82 477.82
+- env.bio_7         1   444.35 478.35
+&lt;none&gt;                  442.89 478.89
+- env.bio_5         1   445.19 479.19
+- env.bio_19        1   445.39 479.39
+- env.woodysavanna  1   445.52 479.52
+- env.bio_9         1   445.92 479.92
+- env.bio_13        1   446.05 480.05
+- env.bio_4         1   447.54 481.54
+- env.grass         1   448.69 482.69
+- env.bio_16        1   451.93 485.93
+- env.bio_3         1   453.48 487.48
+- env.bio_12        1   466.36 500.36
+- env.urban         1   471.64 505.64
+- env.bio_15        1   476.35 510.35
+- env.npp           1   477.37 511.37
+- env.bio_2         1   480.59 514.59
+
+Step:  AIC=477.72
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + 
+    env.bio_19 + env.elev + env.urban + env.woodysavanna + env.grass + 
+    env.npp
+
+                   Df Deviance    AIC
+- env.elev          1   444.68 476.68
+- env.bio_7         1   445.06 477.06
+- env.bio_5         1   445.50 477.50
+&lt;none&gt;                  443.72 477.72
+- env.bio_19        1   445.89 477.89
+- env.woodysavanna  1   446.08 478.08
+- env.bio_9         1   446.24 478.24
+- env.bio_13        1   446.45 478.45
+- env.bio_4         1   447.70 479.70
+- env.grass         1   450.31 482.31
+- env.bio_16        1   452.26 484.26
+- env.bio_3         1   453.78 485.78
+- env.bio_12        1   466.48 498.48
+- env.urban         1   471.65 503.65
+- env.bio_15        1   477.27 509.27
+- env.bio_2         1   481.71 513.71
+- env.npp           1   488.04 520.04
+
+Step:  AIC=476.68
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_5 + env.bio_7 + 
+    env.bio_9 + env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + 
+    env.bio_19 + env.urban + env.woodysavanna + env.grass + env.npp
+
+                   Df Deviance    AIC
+- env.bio_5         1   446.37 476.37
+- env.bio_19        1   446.61 476.61
+- env.bio_9         1   446.66 476.66
+&lt;none&gt;                  444.68 476.68
+- env.bio_7         1   446.79 476.79
+- env.bio_13        1   447.10 477.10
+- env.woodysavanna  1   447.34 477.34
+- env.bio_4         1   448.30 478.30
+- env.grass         1   451.11 481.11
+- env.bio_16        1   452.65 482.65
+- env.bio_3         1   454.05 484.05
+- env.bio_12        1   467.02 497.02
+- env.urban         1   472.72 502.72
+- env.bio_15        1   477.36 507.36
+- env.bio_2         1   485.55 515.55
+- env.npp           1   488.05 518.05
+
+Step:  AIC=476.37
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_7 + env.bio_9 + 
+    env.bio_12 + env.bio_13 + env.bio_15 + env.bio_16 + env.bio_19 + 
+    env.urban + env.woodysavanna + env.grass + env.npp
+
+                   Df Deviance    AIC
+- env.bio_7         1   447.11 475.11
+- env.bio_9         1   447.11 475.11
+- env.bio_13        1   448.28 476.28
+- env.bio_19        1   448.35 476.35
+&lt;none&gt;                  446.37 476.37
+- env.woodysavanna  1   449.06 477.06
+- env.bio_4         1   449.65 477.65
+- env.bio_16        1   452.77 480.77
+- env.bio_3         1   454.05 482.05
+- env.grass         1   457.23 485.23
+- env.bio_12        1   467.06 495.06
+- env.urban         1   475.82 503.82
+- env.bio_15        1   478.32 506.32
+- env.bio_2         1   487.30 515.30
+- env.npp           1   489.78 517.78
+
+Step:  AIC=475.11
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_9 + env.bio_12 + 
+    env.bio_13 + env.bio_15 + env.bio_16 + env.bio_19 + env.urban + 
+    env.woodysavanna + env.grass + env.npp
+
+                   Df Deviance    AIC
+- env.bio_13        1   448.54 474.54
+&lt;none&gt;                  447.11 475.11
+- env.bio_19        1   449.34 475.34
+- env.woodysavanna  1   450.32 476.32
+- env.bio_4         1   450.95 476.95
+- env.bio_9         1   451.66 477.66
+- env.bio_16        1   453.26 479.26
+- env.bio_3         1   455.02 481.02
+- env.grass         1   459.05 485.05
+- env.bio_12        1   467.52 493.52
+- env.urban         1   477.35 503.35
+- env.bio_15        1   479.17 505.17
+- env.bio_2         1   491.06 517.06
+- env.npp           1   494.83 520.83
+
+Step:  AIC=474.54
+presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_9 + env.bio_12 + 
+    env.bio_15 + env.bio_16 + env.bio_19 + env.urban + env.woodysavanna + 
+    env.grass + env.npp
+
+                   Df Deviance    AIC
+&lt;none&gt;                  448.54 474.54
+- env.bio_19        1   450.61 474.61
+- env.woodysavanna  1   451.67 475.67
+- env.bio_4         1   451.91 475.91
+- env.bio_9         1   453.47 477.47
+- env.bio_16        1   454.41 478.41
+- env.bio_3         1   455.03 479.03
+- env.grass         1   460.98 484.98
+- env.urban         1   479.47 503.47
+- env.bio_2         1   491.70 515.70
+- env.bio_12        1   496.51 520.51
+- env.npp           1   496.69 520.69
+- env.bio_15        1   498.41 522.41</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:  glm(formula = presabs ~ env.bio_2 + env.bio_3 + env.bio_4 + env.bio_9 + 
+    env.bio_12 + env.bio_15 + env.bio_16 + env.bio_19 + env.urban + 
+    env.woodysavanna + env.grass + env.npp, family = "binomial", 
+    data = presabs.glm)
+
+Coefficients:
+     (Intercept)         env.bio_2         env.bio_3         env.bio_4  
+         -1.6947            8.9112           -6.6247            0.9164  
+       env.bio_9        env.bio_12        env.bio_15        env.bio_16  
+         -0.7992            4.9456           -8.5901            7.0541  
+      env.bio_19         env.urban  env.woodysavanna         env.grass  
+          1.2151            1.0101            0.3607           -0.7554  
+         env.npp  
+          1.3239  
+
+Degrees of Freedom: 539 Total (i.e. Null);  527 Residual
+Null Deviance:      645.6 
+Residual Deviance: 448.5    AIC: 474.5</code></pre>
+</div>
+</div>
+</section>
+<section id="boosted-regression-trees" class="level3">
+<h3 class="anchored" data-anchor-id="boosted-regression-trees">Boosted regression trees</h3>
+<p>Boosted regression trees were fitted using packages: gbm and dismo—specifically the gbm.step function in dismo (Hijmans et al., 2017)</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cross-validation optimisation of a boosted regression tree model </span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>brt <span class="ot">&lt;-</span> <span class="fu">gbm.step</span>(<span class="at">data =</span> PA, </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gbm.x =</span> <span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(PA), </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">gbm.y =</span> <span class="st">"presabs"</span>, </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">family =</span> <span class="st">"bernoulli"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ 
+ GBM STEP - version 2.9 
+ 
+Performing cross-validation optimisation of a boosted regression tree model 
+for NA and using a family of bernoulli 
+Using 548 observations and 31 predictors 
+creating 10 initial models of 50 trees 
+
+ folds are stratified by prevalence 
+total mean deviance =  1.198 
+tolerance is fixed at  0.0012 
+ntrees resid. dev. 
+50    1.0725 
+now adding trees... 
+100   1.0035 
+150   0.9609 
+200   0.9319 
+250   0.913 
+300   0.8978 
+350   0.8862 
+400   0.877 
+450   0.8691 
+500   0.862 
+550   0.8551 
+600   0.8501 
+650   0.8445 
+700   0.8401 
+750   0.8368 
+800   0.833 
+850   0.829 
+900   0.8272 
+950   0.8253 
+1000   0.8239 
+1050   0.8234 
+1100   0.8204 
+1150   0.819 
+1200   0.8175 
+1250   0.817 
+1300   0.8166 
+1350   0.8153 
+1400   0.8134 
+1450   0.8136 
+1500   0.8139 
+1550   0.813 
+1600   0.8121 
+1650   0.8131 
+1700   0.8122 
+1750   0.8127 
+1800   0.8136 
+1850   0.8131 
+1900   0.8137 
+1950   0.8139 
+2000   0.8139 
+2050   0.8137 
+2100   0.8137 
+2150   0.8133 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_VariableSelection_files/figure-html/brt-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+mean total deviance = 1.198 
+mean residual deviance = 0.631 
+ 
+estimated cv deviance = 0.812 ; se = 0.032 
+ 
+training data correlation = 0.751 
+cv correlation =  0.613 ; se = 0.024 
+ 
+training data AUC score = 0.929 
+cv AUC score = 0.862 ; se = 0.016 
+ 
+elapsed time -  0.08 minutes </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(brt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_VariableSelection_files/figure-html/brt-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                              var     rel.inf
+env.npp                   env.npp 18.49681819
+env.urban               env.urban 15.40699941
+env.bio_10             env.bio_10  9.37813558
+env.woodysavanna env.woodysavanna  8.53977118
+env.bio_7               env.bio_7  7.94038224
+env.bio_15             env.bio_15  6.35582156
+env.bio_19             env.bio_19  5.42586514
+env.bio_13             env.bio_13  4.11255668
+env.bio_8               env.bio_8  3.16524999
+env.bio_4               env.bio_4  3.10952000
+env.bio_12             env.bio_12  2.30268194
+env.nonveg             env.nonveg  2.29412579
+env.grass               env.grass  2.24381963
+env.bio_9               env.bio_9  2.02658719
+env.bio_5               env.bio_5  1.64496960
+env.bio_3               env.bio_3  1.55363146
+env.bio_6               env.bio_6  1.52782486
+env.bio_11             env.bio_11  1.30231125
+env.bio_14             env.bio_14  1.28301899
+env.bio_1               env.bio_1  0.73190493
+env.tree                 env.tree  0.38849212
+env.elev                 env.elev  0.18810235
+env.nontree           env.nontree  0.15167804
+env.savanna           env.savanna  0.15012484
+env.bio_18             env.bio_18  0.11142922
+env.bio_16             env.bio_16  0.08154654
+env.bio_2               env.bio_2  0.05554320
+env.bio_17             env.bio_17  0.03108808
+env.barren             env.barren  0.00000000
+env.water               env.water  0.00000000
+env.wetland           env.wetland  0.00000000</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>variables_brt <span class="ot">&lt;-</span> brt<span class="sc">$</span>contributions[<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>,] <span class="sc">%&gt;%</span> <span class="fu">pull</span>(var)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co">#exploration of shape of relationships</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co">#gbm.plot(brt, n.plots = 12, plot.layout=c(6, 2))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest">Random forest</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>presabs.rf <span class="ot">&lt;-</span> PA <span class="sc">%&gt;%</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">presabs =</span> <span class="fu">as.factor</span>(presabs))</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(presabs <span class="sc">~</span> .,</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">data=</span>presabs.rf,</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">importance=</span>T,</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">nperm=</span><span class="dv">2</span>, <span class="co"># two permutations per tree to estimate importance</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">na.action=</span>na.omit,</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">mtry=</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span><span class="sc">*</span><span class="fu">ncol</span>(presabs.rf)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="fu">varImpPlot</span>(rf, <span class="at">type=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_VariableSelection_files/figure-html/rf-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>variables_rf <span class="ot">&lt;-</span> rf<span class="sc">$</span>importance <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">'var'</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(MeanDecreaseGini)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="at">n=</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="ranger" class="level3">
+<h3 class="anchored" data-anchor-id="ranger">Ranger</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>presabs.ranger <span class="ot">&lt;-</span> PA <span class="sc">%&gt;%</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">5</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">if_any</span>(<span class="fu">everything</span>(), is.na)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">presabs =</span> <span class="fu">as.factor</span>(presabs))</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Learn the model:</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>ranger <span class="ot">&lt;-</span> <span class="fu">ranger</span>(presabs <span class="sc">~</span> ., </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> presabs.ranger,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">num.trees =</span> <span class="dv">150</span>,</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">mtry =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">3</span><span class="sc">*</span><span class="fu">ncol</span>(presabs.ranger)<span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">min.node.size =</span> <span class="dv">5</span>,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">max.depth =</span> <span class="cn">NULL</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">write.forest =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">importance =</span> <span class="st">"impurity"</span>)</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the variable importance</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(ranger)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>       env.bio_1        env.bio_2        env.bio_3        env.bio_4 
+      3.87018209       5.12368336       4.14021268       6.73869300 
+       env.bio_5        env.bio_6        env.bio_7        env.bio_8 
+      6.36314414       5.71953604       9.02978701       5.94268445 
+       env.bio_9       env.bio_10       env.bio_11       env.bio_12 
+      5.79950036      13.94933246       4.37327793       9.08882515 
+      env.bio_13       env.bio_14       env.bio_15       env.bio_16 
+      6.74710104       5.14543325       7.08453115       4.45970749 
+      env.bio_17       env.bio_18       env.bio_19         env.elev 
+      5.68896228       4.64094577       5.48742945       5.59858028 
+       env.urban       env.barren        env.water      env.savanna 
+     18.17363257       0.08208715       0.75868383       3.43484522 
+env.woodysavanna      env.wetland        env.grass          env.npp 
+     11.39427963       1.37953988       4.50922318      22.82630894 
+        env.tree      env.nontree       env.nonveg 
+      5.24863984       5.51846100      11.07709507 </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(ranger) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>(<span class="at">row.names =</span> <span class="fu">names</span>(.)) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setNames</span>(<span class="fu">c</span>(<span class="st">"Importance"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rownames_to_column</span>(<span class="st">"covariate"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># mutate(covariate = case_when(</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">#   covariate == "env.bio_1" ~ "Annual Mean Temperature",</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># )) %&gt;% </span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Importance, <span class="at">y =</span> <span class="fu">reorder</span>(covariate, Importance))) <span class="sc">+</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">''</span>)<span class="sc">+</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_VariableSelection_files/figure-html/ranger-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>variables_ranger <span class="ot">&lt;-</span> <span class="fu">importance</span>(ranger) <span class="sc">%&gt;%</span> <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">'var'</span>) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(value)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="at">n=</span><span class="dv">6</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(var)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="correlation" class="level2">
+<h2 class="anchored" data-anchor-id="correlation">Correlation</h2>
+<p>Correlation between the six more important variables detected.</p>
+<ul>
+<li>Boosted regression tree: env.npp, env.urban, env.bio_10, env.woodysavanna, env.bio_7, env.bio_15</li>
+<li>Random forest: env.npp, env.urban, env.bio_10, env.woodysavanna, env.nonveg, env.bio_7</li>
+<li>Ranger: env.npp, env.urban, env.bio_10, env.woodysavanna, env.nonveg, env.bio_12</li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>selectedVariables <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(variables_brt, variables_rf, variables_ranger))</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>PA <span class="sc">%&gt;%</span> </span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">if_any</span>(<span class="fu">everything</span>(), is.na)) <span class="sc">%&gt;%</span> </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(selectedVariables) <span class="sc">%&gt;%</span> </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_VariableSelection_files/figure-html/pairs-1.png" class="img-fluid" width="768"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>PA <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">if_any</span>(<span class="fu">everything</span>(), is.na)) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(selectedVariables)  <span class="sc">%&gt;%</span> </span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>() <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">env.npp</th>
+<th style="text-align: right;">env.urban</th>
+<th style="text-align: right;">env.bio_10</th>
+<th style="text-align: right;">env.woodysavanna</th>
+<th style="text-align: right;">env.bio_7</th>
+<th style="text-align: right;">env.bio_15</th>
+<th style="text-align: right;">env.nonveg</th>
+<th style="text-align: right;">env.bio_12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">env.npp</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.1381460</td>
+<td style="text-align: right;">0.3063098</td>
+<td style="text-align: right;">0.0352622</td>
+<td style="text-align: right;">-0.2081632</td>
+<td style="text-align: right;">-0.6021814</td>
+<td style="text-align: right;">-0.4770617</td>
+<td style="text-align: right;">-0.1799779</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.urban</td>
+<td style="text-align: right;">0.1381460</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2575487</td>
+<td style="text-align: right;">0.0230751</td>
+<td style="text-align: right;">0.0006525</td>
+<td style="text-align: right;">-0.2760903</td>
+<td style="text-align: right;">-0.0974461</td>
+<td style="text-align: right;">-0.0916723</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_10</td>
+<td style="text-align: right;">0.3063098</td>
+<td style="text-align: right;">0.2575487</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.0250223</td>
+<td style="text-align: right;">-0.1030469</td>
+<td style="text-align: right;">-0.4168521</td>
+<td style="text-align: right;">-0.2121246</td>
+<td style="text-align: right;">-0.1909741</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.woodysavanna</td>
+<td style="text-align: right;">0.0352622</td>
+<td style="text-align: right;">0.0230751</td>
+<td style="text-align: right;">0.0250223</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.1607361</td>
+<td style="text-align: right;">0.0320029</td>
+<td style="text-align: right;">-0.1180876</td>
+<td style="text-align: right;">0.0343989</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.bio_7</td>
+<td style="text-align: right;">-0.2081632</td>
+<td style="text-align: right;">0.0006525</td>
+<td style="text-align: right;">-0.1030469</td>
+<td style="text-align: right;">0.1607361</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.2926534</td>
+<td style="text-align: right;">-0.1459755</td>
+<td style="text-align: right;">0.4822450</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_15</td>
+<td style="text-align: right;">-0.6021814</td>
+<td style="text-align: right;">-0.2760903</td>
+<td style="text-align: right;">-0.4168521</td>
+<td style="text-align: right;">0.0320029</td>
+<td style="text-align: right;">0.2926534</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">0.1983887</td>
+<td style="text-align: right;">0.1615340</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">env.nonveg</td>
+<td style="text-align: right;">-0.4770617</td>
+<td style="text-align: right;">-0.0974461</td>
+<td style="text-align: right;">-0.2121246</td>
+<td style="text-align: right;">-0.1180876</td>
+<td style="text-align: right;">-0.1459755</td>
+<td style="text-align: right;">0.1983887</td>
+<td style="text-align: right;">1.0000000</td>
+<td style="text-align: right;">-0.3834173</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">env.bio_12</td>
+<td style="text-align: right;">-0.1799779</td>
+<td style="text-align: right;">-0.0916723</td>
+<td style="text-align: right;">-0.1909741</td>
+<td style="text-align: right;">0.0343989</td>
+<td style="text-align: right;">0.4822450</td>
+<td style="text-align: right;">0.1615340</td>
+<td style="text-align: right;">-0.3834173</td>
+<td style="text-align: right;">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+<script src="hyagouaroundi_VariableSelection_files/libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

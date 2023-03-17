@@ -1,0 +1,712 @@
+---
+title: "The Yaguarundí Model Outputs"
+execute-dir: project
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+  - R Libraries
+
+```{r}
+#| message: false
+#| label: libraries
+library(patchwork)
+library(mcmcplots)
+library(ggmcmc)
+library(tidybayes)
+library(tmap)
+tmap_mode("plot")
+library(terra)
+library(sf)
+sf::sf_use_s2(FALSE)
+library(tidyverse)
+# options
+options(scipen = 999)
+```
+
+## Data
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+Latam_projected <- st_read('../../yaguarundi_IDM/data/Latam_vector.shp', quiet = T)
+Latam_countries <- sf::st_read('../../yaguarundi_IDM/data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam <- st_union(st_make_valid(Latam_projected))
+
+Latam_no_islands <- bind_rows(list(Latam_countries %>%
+                                     filter(type!='Indeterminate' & type!='Dependency' & type!='Lease') %>%
+                                     mutate(iso_a2=ifelse(name_en=='France', 'GF', iso_a2)) %>%
+                                     mutate(name_en=ifelse(name_en=='France', 'French Guiana', name_en)) %>%
+                                     filter(!iso_a2 %in% c('EC','SX', 'NL', 'HT', 'DO', 'CU', 'CW', 'AW','BS', 
+                                                           'TT', 'GD', 'VC', 'BB', 'LC', 'DM', 'AG', 'KN', 'JM')),
+                                   Latam_countries %>%
+                                     filter(name=='Ecuador') %>% 
+                                     st_cast('POLYGON', quiet=T) %>% 
+                                     mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
+                                     head(n=1) %>% dplyr::select(-area))) %>% st_union()
+
+Latam.raster <- terra::rast('../../yaguarundi_IDM/data/Latam_raster.tif')
+Latam.raster.countries <- terra::rast('../../yaguarundi_IDM/data/Latam_raster_countries.tif')
+```
+
+  -   IUCN range distribution
+  
+```{r}
+#| label: iucn-map
+#| echo: true
+#| eval: true
+#| message: false
+#| fig-cap: "IUCN distribution in red. Expert range map (the offset) in grey"
+
+yaguarundi_IUCN <- sf::st_read('../../yaguarundi_IDM/data/yaguarundi_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+yaguarundi_expertMap <- readRDS('../data/yaguarundi_expertMap.rds')
+
+MAP.IUCN <- tm_graticules(alpha = 0.3) +
+    tm_shape(Latam_countries) +
+    tm_fill(col='grey90') +
+    tm_borders(col='grey60', alpha = 0.4) +
+    tm_shape(yaguarundi_expertMap) +
+    tm_fill(col='grey20', alpha = 0.4, labels = 'expert range map') +
+    tm_shape(yaguarundi_IUCN) +
+    tm_fill(col='red', alpha = 0.4, labels = 'IUCN') +
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+MAP.IUCN 
+```
+
+
+  - Species data and covariates
+
+```{r}
+#| label: data
+#| echo: true
+#| eval: true
+#| message: false
+
+PA_pre <- readRDS('../data/data_yaguarundi_PA_pre.rds') %>% 
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev)) # remove NA's
+PA_post <- readRDS('../data/data_yaguarundi_PA_pos.rds') %>% 
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev)) # remove NA's
+
+# Presence-only data
+PO_pre <- readRDS('../data/data_yaguarundi_PO_pre.rds') %>% 
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
+PO_post  <- readRDS('../data/data_yaguarundi_PO_pos.rds') %>% 
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
+
+PA_pre_post <- rbind(PA_pre %>% mutate(time=0), PA_post %>% mutate(time=1)) 
+PO_pre_post <- rbind(PO_pre %>% mutate(time=0), PO_post %>% mutate(time=1)) 
+```
+
+  -   Model output
+  
+```{r}
+#| label: model-output
+#| echo: true
+#| eval: true
+#| message: false
+
+fitted.model <- readRDS('../big_data/yaguarundi_out_8S_model_withoutExpert.rds')
+# as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
+fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
+```
+
+
+## Model diagnostics
+
+The `fitted.model` is an object of class `rjags`. 
+
+```{r}
+#| label: fitted-model
+#| echo: true
+#| eval: true
+#| message: false
+
+# labels for the linear predictor `b`
+L.fitted.model.b <- plab("b", list(Covariate = c('Intercept', 'env.npp', 'env.bio_15', 
+                   'env.bio_7', 'env.elev', sprintf('spline%i', 1:18))))
+
+# tibble object for the linear predictor `b` extracted from the rjags fitted model
+fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, par_labels = L.fitted.model.b, family="^b\\[")
+
+# diagnostics
+# ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/yaguarundi_model_diagnostics.pdf", param_page=3)
+```
+
+### Traceplot
+  
+```{r}
+#| label: traceplot
+#| echo: true
+#| eval: true
+#| message: false
+#| fig-height: 50
+
+ggs_traceplot(fitted.model.ggs.b)
+```
+
+### Rhat
+  
+```{r}
+#| label: rhat
+#| echo: true
+#| eval: true
+#| message: false
+
+ggs_Rhat(fitted.model.ggs.b)
+```
+
+### Probability of occurrence of the yaguarundi
+For each pre- and post-periods, and the difference (post-pre)
+
+```{r}
+#| label: predictions-map
+#| echo: true
+#| eval: true
+#| message: false
+
+P.pred <- fitted.model$BUGSoutput$mean$P.pred
+preds <- data.frame(PO_pre_post, P.pred)
+preds0 <- preds[preds$time == 0,]
+preds1 <- preds[preds$time == 1,]
+
+rast <- Latam.raster
+rast[] <- NA
+rast0 <- rast1 <- terra::rast(rast)
+
+rast0[preds0$pixel] <- preds0$P.pred
+rast1[preds1$pixel] <- preds1$P.pred
+
+rast0 <- rast0 %>% terra::mask(., vect(Latam_no_islands))
+rast1 <- rast1 %>% terra::mask(., vect(Latam_no_islands))
+names(rast0) <- 'pre'
+names(rast1) <- 'post'
+
+# Map of the of the probability of occurrence in the first period (pre: 2000-2013)
+preMAP <- tm_graticules(alpha = 0.3) +  
+    tm_shape(rast0) +
+    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
+    tm_shape(Latam_countries) +
+    tm_borders(col='grey60', alpha = 0.4) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+# Map of the of the probability of occurrence in the second period (post: 2014-2021)
+posMAP <- tm_graticules(alpha = 0.3) +  
+    tm_shape(rast1) +
+    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
+    tm_shape(Latam_countries) +
+    tm_borders(col='grey60', alpha = 0.4) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+# Map of the of the change in the probability of occurrence (post - pre)
+diffMAP <- tm_graticules(alpha = 0.3) + 
+    tm_shape(rast1 - rast0) +
+    tm_raster(palette = 'PiYG', midpoint = 0, style= "cont", ) +
+    tm_shape(Latam_countries) +
+    tm_borders(col='grey60', alpha = 0.4) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+preMAP
+posMAP
+diffMAP
+
+# tmap_save(preMAP, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/preMAP.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
+# tmap_save(posMAP, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/posMAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
+# tmap_save(diffMAP, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/diffMAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
+```
+
+### Standard deviation (SD) of the probability of occurrence of
+```{r}
+#| label: sd-maps
+#| echo: true
+#| eval: true
+#| message: false
+
+P.pred.sd <- fitted.model$BUGSoutput$sd$P.pred
+preds.sd <- data.frame(PO_pre_post, P.pred.sd)
+
+preds0.sd <- preds.sd[preds.sd$time == 0,]
+preds1.sd <- preds.sd[preds.sd$time == 1,]
+
+rast.sd <- terra::rast(Latam.raster)
+rast.sd[] <- NA
+rast0.sd <- rast1.sd <- terra::rast(rast.sd)
+
+rast0.sd[preds0.sd$pixel] <- preds0.sd$P.pred.sd
+rast1.sd[preds1.sd$pixel] <- preds1.sd$P.pred.sd
+
+rast0.sd <- rast0.sd %>% terra::mask(., vect(Latam_no_islands))
+rast1.sd <- rast1.sd %>% terra::mask(., vect(Latam_no_islands))
+names(rast0.sd) <- 'pre.sd'
+names(rast1.sd) <- 'post.sd'
+
+# Map of the SD of the probability of occurrence of the area pre 
+preMAP.sd <- tm_graticules(alpha = 0.3) +  
+    tm_shape(rast0.sd) +
+    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
+    tm_shape(Latam_countries) +
+    tm_borders(alpha = 0.3) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+# Map of the SD of the probability of occurrence of the area post
+posMAP.sd <-  tm_graticules(alpha = 0.3) +  
+    tm_shape(rast1.sd) +
+    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
+    tm_shape(Latam_countries) +
+    tm_borders(alpha = 0.3) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+preMAP.sd
+posMAP.sd
+
+# tmap_save(preMAP.sd, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/preMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
+# tmap_save(posMAP.sd, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/posMAPsd.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
+```
+
+### Bivariate map
+Map of the difference including the Standard deviation (SD) of the probability of occurrence as the transparency of the layer.  
+
+```{r}
+#| label: SD
+#| echo: true
+#| eval: true
+#| message: false
+
+library(cols4all)
+library(pals)
+library(classInt)
+library(stars)
+
+bivcol = function(pal, nx = 3, ny = 3){
+  tit = substitute(pal)
+  if (is.function(pal))
+    pal = pal()
+  ncol = length(pal)
+  if (missing(nx))
+    nx = sqrt(ncol)
+  if (missing(ny))
+    ny = nx
+  image(matrix(1:ncol, nrow = ny), axes = FALSE, col = pal, asp = 1)
+  mtext(tit)
+}
+
+yaguarundi.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
+# bivcol(t(apply(yaguarundi.pal.pu_gn_bivd, 2, rev)))
+
+yaguarundi.pal <- c(t(apply(yaguarundi.pal.pu_gn_bivd, 2, rev)))
+
+###
+
+pred.P.sd <- fitted.model$BUGSoutput$sd$delta.Grid
+preds.sd <- data.frame(PO_pre_post, pred.P.sd=rep(pred.P.sd, 2))
+
+rast.sd <- terra::rast(Latam.raster)
+rast.sd[] <- NA
+rast.sd <- terra::rast(rast.sd)
+
+rast.sd[preds.sd$pixel] <- preds.sd$pred.P.sd
+rast.sd <- rast.sd %>% terra::mask(., vect(Latam_no_islands))
+names(rast.sd) <- c('diff')
+
+# Map of the SD of the probability of occurrence of the area post
+delta.GridMAP.sd <-  tm_graticules(alpha = 0.3) +  
+    tm_shape(rast.sd) +
+    tm_raster(palette = 'Greys', midpoint = NA, style= "cont")  + 
+    tm_shape(Latam_countries) +
+    tm_borders(alpha = 0.3) + 
+    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+delta.GridMAP.sd
+
+# tmap_save(delta.GridMAP.sd, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/deltaGridMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
+
+rast.stars <- c(stars::st_as_stars(rast1-rast0), 
+                stars::st_as_stars(rast.sd))
+names(rast.stars) <- c('diff', 'sd')
+
+par(mfrow=c(2,2))
+hist(rast0)
+hist(rast1)
+hist(rast.stars['diff'])
+hist(rast.stars['sd'])
+par(mfrow=c(1,1))
+
+add_new_var = function(x, var1, var2, nbins1, nbins2, style1, style2,fixedBreaks1, fixedBreaks2){
+  class1 = suppressWarnings(findCols(classIntervals(c(x[[var1]]), 
+                                                    n = nbins1, 
+                                                    style = style1,
+                                                    fixedBreaks1=fixedBreaks1)))
+  
+  class2 = suppressWarnings(findCols(classIntervals(c(x[[var2]]), 
+                                                    n = nbins2, 
+                                                    style = style2,
+                                                    fixedBreaks=fixedBreaks2)))
+  
+  x$new_var = class1 + nbins1 * (class2 - 1)
+  return(x)
+}
+
+rast.bivariate = add_new_var(rast.stars,
+                             var1 = "diff", 
+                             var2 = "sd",
+                             nbins1 = 3, 
+                             nbins2 = 5, 
+                             style1 = "fixed",
+                             fixedBreaks1=c(-1,-0.05, 0.05, 1),
+                             style2 = "fixed",
+                             fixedBreaks2=c(0, 0.05, 0.1, 0.15, 0.2, 0.3))
+
+
+# See missing classes and update palette
+all_classes <- seq(1,15,1)
+rast_classes <- as_tibble(rast.bivariate['new_var']) %>% 
+    distinct(new_var) %>% filter(!is.na(new_var)) %>% pull()
+absent_classes <- all_classes[!(all_classes %in% rast_classes)]
+yaguarundi.new.pal <- yaguarundi.pal[-c(absent_classes)]
+
+# Map of the of the change in the probability of occurrence (post - pre)
+# according to the mean SD of the probability of occurrence  (mean(post.sd, pre.sd))
+
+diffMAP.SD <- tm_graticules(alpha = 0.3) + 
+  tm_shape(rast.bivariate) +
+  tm_raster("new_var", style= "cat", palette = yaguarundi.new.pal) +
+  tm_shape(Latam_countries) +
+  tm_borders(col='grey60', alpha = 0.4) + 
+  tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
+
+diffMAP.SD
+
+# tmap_save(diffMAP.SD, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/diffMAPSD.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
+```
+
+### Countries thinning
+
+```{r}
+#| label: country-thining
+#| echo: true
+#| eval: true
+#| message: false
+
+countryLevels <- cats(Latam.raster.countries)[[1]] #%>% mutate(value=value+1)
+rasterLevels <- levels(as.factor(PO_pre_post$country))
+countries <- countryLevels %>% filter(value %in% rasterLevels) %>% mutate(numLevel=1:27)
+
+fitted.model.ggs.alpha <- ggmcmc::ggs(fitted.model.mcmc, family="^alpha")
+ci.alpha <- ci(fitted.model.ggs.alpha)
+
+country_acce <- bind_rows(ci.alpha[28,], 
+          tibble(countries, ci.alpha[1:27,])) %>% 
+  dplyr::select(-c(value, numLevel))
+
+#accessibility range for predictions
+accessValues <- seq (0,0.5,by=0.01)
+
+#get common steepness
+commonSlope <- country_acce$median[country_acce$Parameter=="alpha1"]
+
+#write function to get predictions for a given country
+getPreds <- function(country){
+  #get country intercept
+  countryIntercept = country_acce$median[country_acce$country==country & !is.na(country_acce$country)]
+  #return all info
+  data.frame(country = country,
+             access = accessValues,
+             preds= countryIntercept * exp(((-1 * commonSlope)*accessValues)))
+}
+
+allPredictions <- country_acce %>%
+                  filter(!is.na(country)) %>%
+                  filter(country %in% Latam_countries$iso_a2) %>% 
+                  pull(country) %>%
+                  map_dfr(getPreds)
+
+allPredictions <- left_join(as_tibble(allPredictions), 
+                            Latam_countries %>% select(country=iso_a2, name_en) %>% 
+                              st_drop_geometry(), by='country') %>% 
+  filter(country!='VG' & country!= 'TT' & country!= 'FK' & country!='AW')
+
+# just for exploration - easier to see which county is doing which
+acce_country <- ggplot(allPredictions)+
+    geom_line(aes(x = access, y  = preds, colour = name_en), show.legend = F) + 
+    viridis::scale_color_viridis(option = 'turbo', discrete=TRUE) +
+    theme_bw() + 
+    facet_wrap(~name_en, ncol = 5) + 
+    ylab("Probability of retention") + xlab("Accessibility")
+
+acce_country
+ggsave(plot = acce_country, filename='../../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/acce_country.svg', 
+       device = 'svg', width=10, height=10, dpi=300)
+
+
+# all countries
+acce_allcountries <- ggplot(allPredictions)+
+  geom_line(aes(x = access, y  = preds, colour = name_en), show.legend = F)+
+  viridis::scale_color_viridis(option = 'turbo', discrete=TRUE) +
+  theme_bw() + 
+  ylab("Probability of retention") + xlab("Accessibility")
+
+acce_allcountries
+```
+
+### Effect of the environmental covariates on the intensity of the point process
+
+```{r}
+#| label: parameters-caterpillar-plot
+#| echo: true
+#| eval: true
+#| message: false
+
+caterpiller.params <- fitted.model.ggs.b %>%
+  filter(grepl('env', Parameter)) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.npp', 'net primary production',
+                                    ifelse(Parameter=='env.elev', 'elevation',
+                                           ifelse(Parameter=='env.bio_7', 'temperature annual range',
+                                                  ifelse(Parameter=='env.bio_15', 'precipitation seasonality', Parameter)))))) %>% 
+  ggs_caterpillar(line=0) + 
+  theme_light() + 
+  labs(y='', x='Posterior densities')
+
+caterpiller.params
+
+# ggsave(plot = caterpiller.params, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/caterpiller.params.svg', device = 'svg', width=6, height=5, dpi=300)
+```
+
+### Boxplot of posterior densities of the predicted area in both time periods
+
+```{r}
+#| label: areas-boxplots
+#| echo: true
+#| eval: true
+#| message: false
+
+fitted.model.ggs.A <- ggmcmc::ggs(fitted.model.mcmc,  family="^A")
+
+# CI
+ggmcmc::ci(fitted.model.ggs.A)
+fitted.model$BUGSoutput$summary['A.post',]
+# fitted.model$BUGSoutput$mean$A.post
+fitted.model$BUGSoutput$summary['A.pre',]
+# fitted.model$BUGSoutput$mean$A.pre
+
+# boxplot
+range.boxplot <- ggs_caterpillar(fitted.model.ggs.A, horizontal=FALSE, ) + theme_light(base_size = 14) +
+    labs(y='', x='Area (number of 100x100 km grid-cells)')
+
+range.boxplot
+ 
+# ggsave(plot = range.boxplot, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/range.boxplot.svg', device = 'svg', width=5, height=5, dpi=300)
+
+
+# CI 
+range.ci <- ggmcmc::ci(fitted.model.ggs.A) %>% 
+    mutate(Parameter = fct_rev(Parameter)) %>% 
+    ggplot(aes(x = Parameter, y = median, ymin = low, ymax = high)) + 
+    geom_boxplot(orientation = 'y', size=1) + 
+    stat_summary(fun=mean, geom="point", 
+                 shape=19, size=4, show.legend=FALSE) + 
+    theme_light(base_size = 14) +
+    labs(x='', y='Area (number of 100x100 km grid-cells)')
+
+range.ci
+# ggsave(plot = range.ci, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/range.ci.svg', device = 'svg', width=5, height=5, dpi=300)
+```
+
+
+### Posterior distribution of range change (Area).
+
+```{r}
+#| label: hpd-range-change
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+fitted.model.ggs.delta.A <- ggmcmc::ggs(fitted.model.mcmc,  family="^delta.A")
+
+# CI
+ggmcmc::ci(fitted.model.ggs.delta.A)
+fitted.model$BUGSoutput$summary['delta.A',]
+
+#densitiy
+delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
+    summarise(area=median(value)) %>% 
+    ggplot(aes(area)) + 
+    geom_density(col='grey30', fill='black', alpha = 0.3, size=1) + 
+    scale_y_continuous(breaks=c(0,0.0025,0.005, 0.0075, 0.01, 0.0125)) +
+    geom_abline(intercept = 0, slope=1, linetype=2, size=1) + 
+    # vertical lines at 95% CI
+    stat_boxplot(geom = "vline", aes(xintercept = ..xmax..), size=0.5, col='red') +
+    stat_boxplot(geom = "vline", aes(xintercept = ..xmiddle..), size=0.5, col='red') +
+    stat_boxplot(geom = "vline", aes(xintercept = ..xmin..), size=0.5, col='red') +
+    theme_light(base_size = 14, base_line_size = 0.2) +
+    labs(y='Probability density', x=expression(Delta*'Area'))
+
+delta.A.plot
+
+# ggsave(plot = delta.A.plot, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/delta.A.plot.svg', device = 'svg', width=5, height=5, dpi=300)
+```
+
+
+## Posterior predictive checks
+
+### PO
+
+```{r}
+#| label: posterior-predictive-PO
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+counts <- PO_pre_post$count
+counts.new <- fitted.model$BUGSoutput$mean$y.PO.new
+lambda <- fitted.model$BUGSoutput$mean$lambda
+pred.PO <- data.frame(counts, counts.new, lambda)
+
+# fitted.model$BUGSoutput$summary['fit.PO',]
+# fitted.model$BUGSoutput$summary['fit.PO.new',]
+
+pp.PO <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
+    geom_point(size=3, shape=21)  + 
+    xlim(c(0, 100)) +  
+    ylim(c(0, 50)) +
+    labs(x='observed', y=expression(lambda), title='Presence-only') +
+    geom_abline(col='red') +
+    theme_bw() 
+
+pp.PO.log10 <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
+    geom_point(size=3, shape=21)  + 
+    scale_x_log10(limits=c(0.01, 100)) + 
+    scale_y_log10(limits=c(0.01, 100)) + 
+    coord_fixed(ratio=1) + 
+    labs(x='observed (log scale)', y=expression(lambda*'(log scale)'), title='log10 scale') +
+    geom_abline(col='red') +
+    theme_bw() 
+
+# pp.PO.sqrt <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
+#     geom_point(size=3, shape=21)  + 
+#     scale_x_sqrt() + 
+#     scale_y_sqrt() + 
+#     coord_fixed(ratio=1) + 
+#     labs(x='observed (sqrt scale)', y='lambda (sqrt scale)', title='sqrt scale') +
+#     geom_abline(col='red') +
+#     theme_bw()
+
+pp.PO | pp.PO.log10
+#pp.PO.sqrt
+
+# ggsave(plot = pp.PO | pp.PO.log10, filename='../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/pp.PO.svg', device = 'svg', width=7, height=5, dpi=300)
+```
+
+Residual Diagnostics
+
+```{r}
+#| label: residual-diagnostics-PO
+#| echo: true
+#| eval: true
+#| message: false
+
+library(DHARMa)
+
+simulations <- fitted.model$BUGSoutput$sims.list$y.PO.new
+pred <- apply(fitted.model$BUGSoutput$sims.list$lambda, 2, median)
+dim(simulations)
+
+sim <- createDHARMa(simulatedResponse = t(simulations),
+                    observedResponse = PO_pre_post$count,
+                    fittedPredictedResponse = pred,
+                    integerResponse = T)
+
+plotSimulatedResiduals(sim)
+
+```
+
+### PA
+
+```{r}
+#| label: posterior-predictive-PA
+#| echo: true
+#| eval: true
+#| message: false
+
+presabs <- PA_pre_post$presabs
+psi <- fitted.model$BUGSoutput$mean$psi
+pred.PA <- data.frame(presabs, psi)
+
+r2_tjur <- round(fitted.model$BUGSoutput$mean$r2_tjur, 3)
+fitted.model$BUGSoutput$summary['r2_tjur',]
+
+pp.PA <- ggplot(pred.PA, aes(x=presabs, y=psi, col=presabs)) +
+    geom_jitter(height = 0, width = .05, size=1)  +
+    scale_x_continuous(breaks=seq(0,1,0.25)) + scale_colour_binned() +
+    labs(x='observed', y=expression(psi), title='Presence-absence') +
+    stat_summary(
+        fun = mean,
+        geom = "errorbar",
+        aes(ymax = ..y.., ymin = ..y..),
+        width = 0.2, size=2) +
+    theme_bw() + theme(legend.position = 'none')+
+    annotate(geom="text", x=0.5, y=0.5,
+             label=paste('Tjur R-squared = ', r2_tjur))
+
+pp.PA
+
+# ggsave(plot = pp.PA, filename='../../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/pp.PA.svg', device = 'svg', width=5, height=5, dpi=300)
+```
+
+### Grid-level change
+
+```{r}
+#| label: grid-level-change
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+range_change <- as_tibble(rast1[PO_post$pixel] - rast0[PO_post$pixel]) %>% rename(range=post)
+numRecord_change <- as_tibble(PO_post$count - PO_pre$count) %>% rename(numRecord=value)
+
+grid.level.change <- bind_cols(range_change, numRecord_change) %>% 
+    mutate(nonzero=ifelse(numRecord==0, '0', '>=1')) %>% 
+    ggplot() +
+    geom_point(aes(y=range, x=numRecord, col=nonzero), size=1) +
+    geom_vline(xintercept=0, linetype=2, size=0.5) + 
+    geom_hline(yintercept=0, linetype=2, size=0.5) + 
+    labs(y = expression('Predicted grid-level range change (Ppred'['time2']*'-Ppred'['time1']*')'),
+         x= expression('Grid-level range change in number of records (Nrecords'['time2']*'-Nrecords'['time1']*')'),
+         col = 'Number of records\nper grid cell') +
+    theme_bw(base_size = 14)
+
+# grid.level.change.log <- bind_cols(range_change, numRecord_change) %>% 
+#     mutate(nonzero=ifelse(numRecord==0, '0', '>=1')) %>% 
+#     ggplot() +
+#     geom_point(aes(y=range, x=numRecord, col=nonzero), size=1) +
+#     scale_x_log10() +
+#     geom_vline(xintercept=0, linetype=2, size=0.5) + 
+#     geom_hline(yintercept=0, linetype=2, size=0.5) + 
+#     labs(y = expression('Predicted grid-level range change (Ppred'['time2']*'-Ppred'['time1']*')'),
+#          x= expression('Grid-level range change in number of records (Nrecords'['time2']*'-Nrecords'['time1']*') (log scale)'),
+#          col = 'Number of records\nper grid cell') +
+#     theme_bw(base_size = 14)
+
+grid.level.change
+
+# ggsave(plot = grid.level.change, filename='../../../Dropbox/yaguarundi_JBI/resubmission_2023/figs/svg_figures/grid.level.change.svg', device = 'svg', width=8, height=8, dpi=300)
+
+```
+
