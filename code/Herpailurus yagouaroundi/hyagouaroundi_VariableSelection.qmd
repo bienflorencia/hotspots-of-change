@@ -7,6 +7,7 @@ format:
     smooth-scroll: true
     html-math-method: katex
     code-fold: true
+self-contained: true
 editor: source
 author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
@@ -117,8 +118,8 @@ We will use the data for the second period (2014-2020)
 #| message: false
 #| tbl-cap: Presence-absence data for the second period
 
-PA_time1 <- readRDS('data/PA_herpailurus_time1_blobs.rds')%>% ungroup()
-PA_time2 <- readRDS('data/PA_herpailurus_time2_blobs.rds')%>% ungroup()
+PA_time1 <- readRDS('data/PA_hyagouaroundi_time1_blobs.rds')%>% ungroup()
+PA_time2 <- readRDS('data/PA_hyagouaroundi_time2_blobs.rds')%>% ungroup()
 
 PA_time1 %>% st_drop_geometry() %>% head() %>% kable()
 PA_time2 %>% st_drop_geometry() %>% head() %>% kable()
@@ -309,4 +310,5 @@ PA %>%
   dplyr::select(selectedVariables)  %>% 
   cor() %>% kable()
 
+gc()
 ```

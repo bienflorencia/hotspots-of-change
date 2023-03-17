@@ -37,16 +37,16 @@ library(tidyverse)
 #| warning: false
 
 # Presence-absence data
-PA_time1 <- readRDS('data/data_yaguarundi_PA_time1.rds') %>%
+PA_time1 <- readRDS('data/data_hyagouaroundi_PA_time1.rds') %>%
   filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev)) # remove NA's
-PA_time2 <- readRDS('data/data_yaguarundi_PA_time2.rds') %>%
+PA_time2 <- readRDS('data/data_hyagouaroundi_PA_time2.rds') %>%
   filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev)) # remove NA's
 
 
 # Presence-only data
-PO_time1 <- readRDS('data/data_yaguarundi_PO_time1.rds') %>%
+PO_time1 <- readRDS('data/data_hyagouaroundi_PO_time1.rds') %>%
   filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_yaguarundi_PO_time2.rds')  %>%
+PO_time2  <- readRDS('data/data_hyagouaroundi_PO_time2.rds')  %>%
   filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
 
 
