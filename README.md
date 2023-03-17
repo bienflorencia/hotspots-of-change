@@ -8,6 +8,8 @@ This repository includes the data, code, model and outputs for our pre-print on 
 
 **Species**: jaguarundi (*Herpailurus yagouaroundi*), ocelot (*Leopardus pardalis*), margay (*Leopardus wiedii*), coati (*Nasua nasua*), crab-eating fox (*Cerdocyon thous*), maned wolf (*Chrysocyon brachyurus*), tayra (*Eira barbara*), and giant river otter (*Pteronura brasiliensis*).  
 
+![](/docs/readme.png)
+
 ### Find here
 
   - [Data](/data): PA and PO data to run the model + spatial data  

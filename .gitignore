@@ -39,9 +39,6 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-# pkgdown site
-docs/
-
 # translation temp files
 po/*~
 
@@ -55,3 +52,4 @@ rsconnect/
 # temporary rasters from big_data
 /big_data/
 /code/_draft/
+docs/figs/
