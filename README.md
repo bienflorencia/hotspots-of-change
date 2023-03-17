@@ -6,7 +6,7 @@
 
 This repository includes the data, code, model and outputs for our pre-print on the use of integrated species distribution models (ISDMs) to study the change in the geograhic distribution range of eight charismatic Neotropical carnivores.
 
-**Species**: jaguarundi (*Herpailurus yagouaroundi*), ocelot (*Leopardus pardalis*), margay (*Leopardus wiedii*), coati (*Nasua nasua*), crab-eating fox (*Cerdocyon thous*), maned wolf (*Chrysocyon brachyurus*), tayra (*Eira barbara*), and giant river otter (*Pteronura brasiliensis*).  
+**Species**: jaguarundi (*Herpailurus yagouaroundi*), ocelot (*Leopardus pardalis*), crab-eating fox (*Cerdocyon thous*), maned wolf (*Chrysocyon brachyurus*), tayra (*Eira barbara*), margay (*Leopardus wiedii*), coati (*Nasua nasua*), maned wolf (*Chrysocyon brachyurus*), and giant river otter (*Pteronura brasiliensis*).  
 
 ![](/docs/readme.png)
 
