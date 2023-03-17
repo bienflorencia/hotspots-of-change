@@ -210,8 +210,8 @@ calculate_PA_sp_blobs <- function(PA, blobs, sp, time){
 }
 
 # Herpailurus yagouaroundi
-PA_herpailurus_time1_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time1, 'Herpailurus yagouaroundi', 'time1')
-PA_herpailurus_time2_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time2, 'Herpailurus yagouaroundi', 'time2')
+PA_hyagouaroundi_time1_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time1, 'Herpailurus yagouaroundi', 'time1')
+PA_hyagouaroundi_time2_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time2, 'Herpailurus yagouaroundi', 'time2')
 ```
 
 #### Plots
@@ -223,8 +223,8 @@ PA_herpailurus_time2_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time2, 
 #| message: false
 #| warning: false
 
-data_PA_time1_time2 <- rbind(PA_herpailurus_time1_blobs %>% mutate(period='time1'), 
-                             PA_herpailurus_time2_blobs %>% mutate(period='time2'))
+data_PA_time1_time2 <- rbind(PA_hyagouaroundi_time1_blobs %>% mutate(period='time1'), 
+                             PA_hyagouaroundi_time2_blobs %>% mutate(period='time2'))
 
 gg_PA_time1 <- ggplot() + 
     geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
@@ -304,8 +304,8 @@ calculate_PO_sp_period_raster <- function(PO, sp, raster, time){
 }
 
 # Herpailurus yagouaroundi
-PO_herpailurus_time1_raster <- calculate_PO_sp_period_raster(PO, 'Herpailurus yagouaroundi', Latam.raster, 'time1')
-PO_herpailurus_time2_raster <- calculate_PO_sp_period_raster(PO, 'Herpailurus yagouaroundi', Latam.raster, 'time2')
+PO_hyagouaroundi_time1_raster <- calculate_PO_sp_period_raster(PO, 'Herpailurus yagouaroundi', Latam.raster, 'time1')
+PO_hyagouaroundi_time2_raster <- calculate_PO_sp_period_raster(PO, 'Herpailurus yagouaroundi', Latam.raster, 'time2')
 ```
 
 #### Plots
@@ -402,49 +402,49 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
 #| warning: false
 
 # calculate area in each raster cell
-PO_herpailurus.area <- terra::cellSize(PO_herpailurus_time1_raster[[1]], unit='m', transform=F) %>% 
+PO_hyagouaroundi.area <- terra::cellSize(PO_hyagouaroundi_time1_raster[[1]], unit='m', transform=F) %>% 
   classify(cbind(NaN, NA)) %>% terra::values()
 
 # calculate coordinates for each raster cell
-PO_herpailurus.coords <- terra::xyFromCell(PO_herpailurus_time1_raster, cell=1:ncell(PO_herpailurus_time1_raster)) %>% as.data.frame()
-names(PO_herpailurus.coords) <- c('X', 'Y')
+PO_hyagouaroundi.coords <- terra::xyFromCell(PO_hyagouaroundi_time1_raster, cell=1:ncell(PO_hyagouaroundi_time1_raster)) %>% as.data.frame()
+names(PO_hyagouaroundi.coords) <- c('X', 'Y')
 
 # number of cells in the rasters (both the same)
-PO_herpailurus.cell <- 1:ncell(PO_herpailurus_time1_raster)
+PO_hyagouaroundi.cell <- 1:ncell(PO_hyagouaroundi_time1_raster)
 
 # with the environmental variables values for each cell
-PO_herpailurus.env <- env_100k_resampled[] # scaled values
+PO_hyagouaroundi.env <- env_100k_resampled[] # scaled values
 
 # with the mean accessibility value for each cell
-PO_herpailurus.acce <- acce_100k_resampled # scaled values
+PO_hyagouaroundi.acce <- acce_100k_resampled # scaled values
 
 # calculate point count in each raster cell
-PO_herpailurus_time1.count <- PO_herpailurus_time1_raster %>%
+PO_hyagouaroundi_time1.count <- PO_hyagouaroundi_time1_raster %>%
     classify(cbind(NaN, NA)) %>% terra::values() %>% as_tibble %>% 
   dplyr::select(count)
 
-PO_herpailurus_time2.count <- PO_herpailurus_time2_raster %>%
+PO_hyagouaroundi_time2.count <- PO_hyagouaroundi_time2_raster %>%
     classify(cbind(NaN, NA)) %>% terra::values() %>% as_tibble %>% 
   dplyr::select(count)
 
-PO_herpailurus.countries <- Latam.raster.countries %>% classify(cbind(NaN, NA))
+PO_hyagouaroundi.countries <- Latam.raster.countries %>% classify(cbind(NaN, NA))
 
 # save time1 and time2 datasets 
-PO_herpailurus_time1.model.data <- data.frame(PO_herpailurus.coords,
-                                            pixel = PO_herpailurus.cell[],
-                                            area = PO_herpailurus.area,
-                                            pt.count = PO_herpailurus_time1.count,
-                                            env = PO_herpailurus.env,
-                                            acce = PO_herpailurus.acce[], 
-                                            country = PO_herpailurus.countries[])
+PO_hyagouaroundi_time1.model.data <- data.frame(PO_hyagouaroundi.coords,
+                                            pixel = PO_hyagouaroundi.cell[],
+                                            area = PO_hyagouaroundi.area,
+                                            pt.count = PO_hyagouaroundi_time1.count,
+                                            env = PO_hyagouaroundi.env,
+                                            acce = PO_hyagouaroundi.acce[], 
+                                            country = PO_hyagouaroundi.countries[])
 
-PO_herpailurus_time2.model.data <- data.frame(PO_herpailurus.coords,
-                                            pixel = PO_herpailurus.cell[],
-                                            area = PO_herpailurus.area,
-                                            pt.count = PO_herpailurus_time2.count,
-                                            env = PO_herpailurus.env,
-                                            acce = PO_herpailurus.acce[], 
-                                            country = PO_herpailurus.countries[])
+PO_hyagouaroundi_time2.model.data <- data.frame(PO_hyagouaroundi.coords,
+                                            pixel = PO_hyagouaroundi.cell[],
+                                            area = PO_hyagouaroundi.area,
+                                            pt.count = PO_hyagouaroundi_time2.count,
+                                            env = PO_hyagouaroundi.env,
+                                            acce = PO_hyagouaroundi.acce[], 
+                                            country = PO_hyagouaroundi.countries[])
 
 ```
 
@@ -457,8 +457,8 @@ Check data
 #| message: false
 #| warning: false
 
-head(PO_herpailurus_time1.model.data) %>% kable()
-head(PO_herpailurus_time2.model.data) %>% kable()
+head(PO_hyagouaroundi_time1.model.data) %>% kable()
+head(PO_hyagouaroundi_time2.model.data) %>% kable()
 ```
 
 ### Presence-absence data 
@@ -470,14 +470,14 @@ head(PO_herpailurus_time2.model.data) %>% kable()
 #| warning: false
 
 # calculate area, coordinates, and point count in each raster cell
-PA_herpailurus.area.time1 <- as.numeric(PA_herpailurus_time1_blobs$blobArea) 
-PA_herpailurus.area.time2 <- as.numeric(PA_herpailurus_time2_blobs$blobArea) 
+PA_hyagouaroundi.area.time1 <- as.numeric(PA_hyagouaroundi_time1_blobs$blobArea) 
+PA_hyagouaroundi.area.time2 <- as.numeric(PA_hyagouaroundi_time2_blobs$blobArea) 
 
-PA_herpailurus.coords.time1 <- st_coordinates(st_centroid(PA_herpailurus_time1_blobs)) %>% as_tibble()
-PA_herpailurus.coords.time2 <- st_coordinates(st_centroid(PA_herpailurus_time2_blobs)) %>% as_tibble()
+PA_hyagouaroundi.coords.time1 <- st_coordinates(st_centroid(PA_hyagouaroundi_time1_blobs)) %>% as_tibble()
+PA_hyagouaroundi.coords.time2 <- st_coordinates(st_centroid(PA_hyagouaroundi_time2_blobs)) %>% as_tibble()
 
-PA_herpailurus.pixel.time1 <- terra::cells(PO_herpailurus_time1_raster, vect(st_centroid(PA_herpailurus_time1_blobs))) 
-PA_herpailurus.pixel.time2 <- terra::cells(PO_herpailurus_time2_raster, vect(st_centroid(PA_herpailurus_time2_blobs))) 
+PA_hyagouaroundi.pixel.time1 <- terra::cells(PO_hyagouaroundi_time1_raster, vect(st_centroid(PA_hyagouaroundi_time1_blobs))) 
+PA_hyagouaroundi.pixel.time2 <- terra::cells(PO_hyagouaroundi_time2_raster, vect(st_centroid(PA_hyagouaroundi_time2_blobs))) 
 
 # mode to calculate the most frequent value for the blob - this needs to be changed to getting the %are for each landcover
 mode_raster  <- function(x, na.rm = FALSE) {
@@ -486,25 +486,25 @@ mode_raster  <- function(x, na.rm = FALSE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-PA_herpailurus.env.time1 <- terra::extract(x = env, y = vect(PA_herpailurus_time1_blobs), fun = mean, rm.na=T) %>% 
+PA_hyagouaroundi.env.time1 <- terra::extract(x = env, y = vect(PA_hyagouaroundi_time1_blobs), fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_herpailurus.env.time2 <- terra::extract(x = env, y = vect(PA_herpailurus_time2_blobs), fun = mean, rm.na=T) %>% 
+PA_hyagouaroundi.env.time2 <- terra::extract(x = env, y = vect(PA_hyagouaroundi_time2_blobs), fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_herpailurus_time1.model.data <- data.frame(pixel = PA_herpailurus.pixel.time1, 
-                                            PA_herpailurus.coords.time1,
-                                            area = PA_herpailurus.area.time1,
-                                            presabs = PA_herpailurus_time1_blobs$presence,
-                                            effort = PA_herpailurus_time1_blobs$effort,
-                                            env = PA_herpailurus.env.time1[,2:5])
+PA_hyagouaroundi_time1.model.data <- data.frame(pixel = PA_hyagouaroundi.pixel.time1, 
+                                            PA_hyagouaroundi.coords.time1,
+                                            area = PA_hyagouaroundi.area.time1,
+                                            presabs = PA_hyagouaroundi_time1_blobs$presence,
+                                            effort = PA_hyagouaroundi_time1_blobs$effort,
+                                            env = PA_hyagouaroundi.env.time1[,2:5])
 
-PA_herpailurus_time2.model.data <- data.frame(pixel = PA_herpailurus.pixel.time2, 
-                                            PA_herpailurus.coords.time2,
-                                            area = PA_herpailurus.area.time2,
-                                            presabs = PA_herpailurus_time2_blobs$presence,
-                                            effort = PA_herpailurus_time2_blobs$effort,
-                                            env = PA_herpailurus.env.time2[,2:5])
+PA_hyagouaroundi_time2.model.data <- data.frame(pixel = PA_hyagouaroundi.pixel.time2, 
+                                            PA_hyagouaroundi.coords.time2,
+                                            area = PA_hyagouaroundi.area.time2,
+                                            presabs = PA_hyagouaroundi_time2_blobs$presence,
+                                            effort = PA_hyagouaroundi_time2_blobs$effort,
+                                            env = PA_hyagouaroundi.env.time2[,2:5])
 
 ```
 
@@ -517,8 +517,8 @@ PA_herpailurus_time2.model.data <- data.frame(pixel = PA_herpailurus.pixel.time2
 #| message: false
 #| warning: false
 
-head(PA_herpailurus_time1.model.data) %>% kable()
-head(PA_herpailurus_time2.model.data) %>% kable()
+head(PA_hyagouaroundi_time1.model.data) %>% kable()
+head(PA_hyagouaroundi_time2.model.data) %>% kable()
 ```
 
 
@@ -533,18 +533,18 @@ head(PA_herpailurus_time2.model.data) %>% kable()
 #| warning: false
 #| code-fold: false
 
-saveRDS(PO_herpailurus_time1.model.data, 'data/data_yaguarundi_PO_time1.rds')
-saveRDS(PO_herpailurus_time2.model.data, 'data/data_yaguarundi_PO_time2.rds')
-saveRDS(PA_herpailurus_time1.model.data, 'data/data_yaguarundi_PA_time1.rds')
-saveRDS(PA_herpailurus_time2.model.data, 'data/data_yaguarundi_PA_time2.rds')
+saveRDS(PO_hyagouaroundi_time1.model.data, 'data/data_hyagouaroundi_PO_time1.rds')
+saveRDS(PO_hyagouaroundi_time2.model.data, 'data/data_hyagouaroundi_PO_time2.rds')
+saveRDS(PA_hyagouaroundi_time1.model.data, 'data/data_hyagouaroundi_PA_time1.rds')
+saveRDS(PA_hyagouaroundi_time2.model.data, 'data/data_hyagouaroundi_PA_time2.rds')
 
 # blobs
-saveRDS(PA_herpailurus_time1_blobs, 'data/PA_herpailurus_time1_blobs.rds')
-saveRDS(PA_herpailurus_time2_blobs, 'data/PA_herpailurus_time2_blobs.rds')
+saveRDS(PA_hyagouaroundi_time1_blobs, 'data/PA_hyagouaroundi_time1_blobs.rds')
+saveRDS(PA_hyagouaroundi_time2_blobs, 'data/PA_hyagouaroundi_time2_blobs.rds')
 
 # presence-only rasters
-terra::writeRaster(PO_herpailurus_time1_raster, 'data/PO_herpailurus_time1_raster.tif', overwrite=TRUE)
-terra::writeRaster(PO_herpailurus_time2_raster, 'data/PO_herpailurus_time2_raster.tif', overwrite=TRUE)
+terra::writeRaster(PO_hyagouaroundi_time1_raster, 'data/PO_hyagouaroundi_time1_raster.tif', overwrite=TRUE)
+terra::writeRaster(PO_hyagouaroundi_time2_raster, 'data/PO_hyagouaroundi_time2_raster.tif', overwrite=TRUE)
 
 ```
 
@@ -576,8 +576,8 @@ getRangeIQR <- function(env_PX){
 
 # covariates for PA
 env_PA <- terra::extract(x = env, 
-                         y = rbind(vect(PA_herpailurus_time1_blobs), 
-                                   vect(PA_herpailurus_time2_blobs)), 
+                         y = rbind(vect(PA_hyagouaroundi_time1_blobs), 
+                                   vect(PA_hyagouaroundi_time2_blobs)), 
                                      fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) 
 
