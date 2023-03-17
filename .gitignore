@@ -54,4 +54,4 @@ rsconnect/
 
 # temporary rasters from big_data
 /big_data/
-/code/draft/
+/code/_draft/
