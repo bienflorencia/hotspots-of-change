@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio12`, `npp`, and `nonveg`.
+Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio12`, `npp`, and `nontree`.
 
 ## Species data (PA & PO)
 
@@ -348,9 +348,9 @@ gg_PO_time1 + gg_PO_time2
 ## Covariates data
 
  - `bio7`: Temperature Annual Range
- - `bio12`: Precipitation Seasonality
+ - `bio10`: Mean Temperature of Warmest Quarter
  - `npp`: Net Primary Production (NPP)
- - `nonveg`: Elevation
+ - `nontree`: Percentage of No Tree Cover
 
 ``` {r}
 #| echo: true
@@ -360,15 +360,15 @@ gg_PO_time1 + gg_PO_time2
 #| warning: false
 
 bio <- rast(here::here('big_data/bio_high.tif'))
-nonveg <- rast(here::here('big_data/nonveg_high.tif'))
-nonveg <- resample(nonveg, bio, method='bilinear') 
-names(nonveg) <- 'nonveg'
+nontree <- rast(here::here('big_data/nontree_high.tif'))
+nontree <- resample(nontree, bio, method='bilinear') 
+names(nontree) <- 'nontree'
 npp <- rast(here::here('big_data/npp_high.tif'))
 npp <- resample(npp, bio, method='bilinear') 
 names(npp) <- 'npp'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_12')]], nonveg, npp) %>% 
+env <- c(bio[[c('bio_7','bio_10')]], nontree, npp) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -611,7 +611,7 @@ for (i in 1:ncol(env_PO)){
 
 ### Covariates
 
-bio7, bio12, npp and nonveg
+bio7, bio10, npp and nontree
 
 ```{r}
 #| echo: true
@@ -627,8 +627,8 @@ library(patchwork)
 env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
   classify(cbind(NaN, NA))
 
-nonveg.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["nonveg"]]) +
+nontree.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["nontree"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
@@ -648,15 +648,15 @@ bio_7.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_12.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_12"]]) +
+bio_10.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_10"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-nonveg.plot 
+nontree.plot 
 npp.plot
 bio_7.plot
-bio_12.plot
+bio_10.plot
 ```
