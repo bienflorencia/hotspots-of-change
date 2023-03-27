@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio12`, `npp`, and `nontree`.
+Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio10`, `npp`, and `nontree`.
 
 ## Species data (PA & PO)
 
