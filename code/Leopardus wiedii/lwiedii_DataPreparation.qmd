@@ -22,6 +22,7 @@ Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio12`, `npp`,
 ```{r}
 #| message: false
 #| label: libraries
+#| warning: false
 library(knitr)
 library(lubridate)
 library(tmap)
