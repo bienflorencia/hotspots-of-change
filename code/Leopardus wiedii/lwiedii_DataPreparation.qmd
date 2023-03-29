@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio10`, `npp`, and `nontree`.
+Analysis for the *Leopardus wiedii*, with the covariates `bio7`, `bio4`, `npp`, and `nontree`.
 
 ## Species data (PA & PO)
 
@@ -349,7 +349,7 @@ gg_PO_time1 + gg_PO_time2
 ## Covariates data
 
  - `bio7`: Temperature Annual Range
- - `bio10`: Mean Temperature of Warmest Quarter
+ - `bio4`: Mean Temperature of Warmest Quarter
  - `npp`: Net Primary Production (NPP)
  - `nontree`: Percentage of No Tree Cover
 
@@ -369,7 +369,7 @@ npp <- resample(npp, bio, method='bilinear')
 names(npp) <- 'npp'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_10')]], nontree, npp) %>% 
+env <- c(bio[[c('bio_7','bio_4')]], nontree, npp) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -612,7 +612,7 @@ for (i in 1:ncol(env_PO)){
 
 ### Covariates
 
-bio7, bio10, npp and nontree
+bio7, bio4, npp and nontree
 
 ```{r}
 #| echo: true
@@ -649,8 +649,8 @@ bio_7.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_10.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_10"]]) +
+bio_4.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_4"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
@@ -659,5 +659,5 @@ bio_10.plot <- tm_graticules(alpha = 0.3) +
 nontree.plot 
 npp.plot
 bio_7.plot
-bio_10.plot
+bio_4.plot
 ```
