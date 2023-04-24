@@ -12,12 +12,17 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
+Model outputs for *Leopardus wiedii*.  
+
+
   - R Libraries
 
 ```{r}
+#| label: libraries
 #| message: false
 #| warning: false
-#| label: libraries
+#| code-fold: false
+
 library(patchwork)
 library(mcmcplots)
 library(ggmcmc)
@@ -32,16 +37,13 @@ library(tidyverse)
 options(scipen = 999)
 ```
 
-## Data
-
   - Basemaps
 
 ```{r}
 #| label: basemaps
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
+#| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
 Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
@@ -60,44 +62,18 @@ Latam_no_islands <- bind_rows(list(Latam_countries %>%
                                      mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
                                      head(n=1) %>% dplyr::select(-area))) %>% st_union()
 
+lwiedii_IUCN <- sf::st_read('big_data/margay_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
-
-  -   IUCN range distribution
-  
-```{r}
-#| label: iucn-map
-#| echo: true
-#| eval: false
-#| message: false
-#| warning: false
-#| fig-cap: "IUCN distribution in red. Expert range map (the offset) in grey"
-
-lwiedii_IUCN <- sf::st_read('big_data/margay_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-
-MAP.IUCN <- tm_graticules(alpha = 0.3) +
-    tm_shape(Latam_countries) +
-    tm_fill(col='grey90') +
-    tm_borders(col='grey60', alpha = 0.4) +
-    # tm_shape(yaguarundi_expertMap) +
-    # tm_fill(col='grey20', alpha = 0.4, labels = 'expert range map') +
-    tm_shape(lwiedii_IUCN) +
-    tm_fill(col='red', alpha = 0.4, labels = 'IUCN') +
-    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
-
-MAP.IUCN 
-```
-
 
   - Species data and covariates
 
 ```{r}
 #| label: data
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
+#| code-fold: false
 
 PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>% 
   filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree)) # remove NA's
@@ -114,14 +90,13 @@ PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
 ```
 
-  -   Model output
+  -   Read model
   
 ```{r}
 #| label: model-output
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
+#| code-fold: false
 
 fitted.model <- readRDS('D:/Flo/HNC_models/lwiedii_model.rds') # deleted after model output
 
@@ -136,8 +111,6 @@ The `fitted.model` is an object of class `rjags`.
 
 ```{r}
 #| label: fitted-model
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -162,8 +135,6 @@ ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/lwiedii_model_diagnostics.pdf", pa
   
 ```{r}
 #| label: traceplot
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 #| fig-height: 50
@@ -182,8 +153,9 @@ ggs_traceplot(fitted.model.ggs.b)
 ggs_Rhat(fitted.model.ggs.b)
 ```
 
-### Probability of occurrence of the Leopardus wiedii
-For each pre- and time2-periods, and the difference (time2-pre)
+### Probability of occurrence of *Leopardus wiedii*
+
+For each period: time1 and time2, and their difference (time2-time1)
 
 ```{r}
 #| label: predictions-map
@@ -242,7 +214,8 @@ diffMAP
 # tmap_save(diffMAP, filename='docs/figs/lwiedii_diffMAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
 ```
 
-### Standard deviation (SD) of the probability of occurrence of
+### Standard deviation (SD) of the probability of occurrence of *Leopardus wiedii*
+
 ```{r}
 #| label: sd-maps
 #| echo: true
@@ -292,6 +265,7 @@ time2MAP.sd
 ```
 
 ### Bivariate map
+
 Map of the difference including the Standard deviation (SD) of the probability of occurrence as the transparency of the layer.  
 
 ```{r}
@@ -345,7 +319,6 @@ delta.GridMAP.sd <-  tm_graticules(alpha = 0.3) +
 
 delta.GridMAP.sd
 
-# tmap_save(delta.GridMAP.sd, filename='docs/figs/lwiedii_deltaGridMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 
 rast.stars <- c(stars::st_as_stars(rast2-rast1), stars::st_as_stars(rast.sd))
 names(rast.stars) <- c('diff', 'sd')
@@ -405,6 +378,7 @@ diffMAP.SD <- tm_graticules(alpha = 0.3) +
 
 diffMAP.SD
 
+# tmap_save(delta.GridMAP.sd, filename='docs/figs/lwiedii_deltaGridMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 # tmap_save(diffMAP.SD, filename='docs/figs/lwiedii_diffMAPSD.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 ```
 
@@ -412,8 +386,6 @@ diffMAP.SD
 
 ```{r}
 #| label: country-thining
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -465,9 +437,7 @@ acce_country <- ggplot(allPredictions)+
 
 acce_country
 
-# ggsave(plot = acce_country, filename='../docs/figs/acce_country.svg', 
-#        device = 'svg', width=10, height=10, dpi=300)
-
+# ggsave(plot = acce_country, filename='../docs/figs/acce_country.svg', device = 'svg', width=10, height=10, dpi=300)
 
 # all countries
 acce_allcountries <- ggplot(allPredictions) +
@@ -483,8 +453,6 @@ acce_allcountries
 
 ```{r}
 #| label: parameters-caterpillar-plot
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -507,8 +475,6 @@ caterpiller.params
 
 ```{r}
 #| label: areas-boxplots
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -548,8 +514,6 @@ range.ci
 
 ```{r}
 #| label: hpd-range-change
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -587,8 +551,6 @@ delta.A.plot
 
 ```{r}
 #| label: posterior-predictive-PO
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -618,7 +580,6 @@ pp.PO.log10 <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
     theme_bw() 
 
 pp.PO | pp.PO.log10
-#pp.PO.sqrt
 
 # ggsave(plot = pp.PO | pp.PO.log10, filename='docs/figs/lwiedii_pp.PO.svg', device = 'svg', width=7, height=5, dpi=300)
 ```
@@ -627,8 +588,6 @@ pp.PO | pp.PO.log10
 
 ```{r}
 #| label: residual-diagnostics-PO
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -653,8 +612,6 @@ plotSimulatedResiduals(sim)
 
 ```{r}
 #| label: tjur2-PA
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -707,15 +664,12 @@ sum((sens[-1]+sens[-length(sens)])/2 * -diff(fpr)) # auc
 
 # 
 jagsresults(fitted.model, 'auc')[, '50%']
-
 ```
 
 ### Grid-level change
 
 ```{r}
 #| label: grid-level-change
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -736,6 +690,5 @@ grid.level.change <- bind_cols(range_change, numRecord_change) %>%
 grid.level.change
 
 # ggsave(plot = grid.level.change, filename='../docs/figs/grid.level.change.svg', device = 'svg', width=8, height=8, dpi=300)
-
 ```
 

@@ -12,29 +12,28 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Leopardus wiedii*, with new covariates: `npp`, `nontree`, `bio7`, and `bio4`.
+Model run for *Leopardus wiedii* with the data prepared in the previous step (including species and covariates data).  
 
-## Load the data
-
-# Libraries
+  - R Libraries
 
 ```{r}
 #| label: libraries
 #| message: false
 #| warning: false
+#| code-fold: false
+
 library(sf)
 library(R2jags) # interface to JAGS
 library(tidyverse)
 ```
 
-### Data
+## Data
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: load-data
 #| message: false
 #| warning: false
+#| code-fold: false
 
 # Presence-absence data
 PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>%
@@ -42,18 +41,15 @@ PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>%
 PA_time2 <- readRDS('data/data_lwiedii_PA_time2.rds') %>%
   filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree)) # remove NA's
 
-
 # Presence-only data
 PO_time1 <- readRDS('data/data_lwiedii_PO_time1.rds') %>%
   filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lwiedii_PO_time2.rds')  %>%
   filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 
-
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
 ```
-
 
 ## Splines
 
@@ -62,8 +58,6 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
   -   Fit the **GAM model**.  
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: gam-model
 #| message: false
 #| warning: false
@@ -87,8 +81,6 @@ summary(model.gam)
   -   Get the **jagam splines** values: using `mgcv::jagam`.  
   
 ```{r}
-#| echo: true
-#| eval: true
 #| label: jagam-splines
 #| message: false
 #| warning: false
@@ -113,8 +105,6 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 ## Prepare data for JAGS
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: data-for-jags
 #| message: false
 #| warning: false
@@ -183,8 +173,6 @@ jags.data <- list(n.PA = nrow(PA_time1_time2),
 ## Specify the model in BUGS language
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: BUGS-model
 #| message: false
 #| warning: false
@@ -323,8 +311,6 @@ cat('model
 ## Inits function
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: inits
 #| message: false
 #| warning: false
@@ -340,11 +326,10 @@ jags.inits <- function(model = model.gam)
 ## Fit the model
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: run
 #| message: false
 #| warning: false
+#| eval: true
 
 start.time <- Sys.time()
 
@@ -368,5 +353,4 @@ time.taken <- end.time - start.time
 time.taken
 
 saveRDS(lwiedii_model, 'D:/Flo/HNC_models/lwiedii_model.rds')
-
 ```

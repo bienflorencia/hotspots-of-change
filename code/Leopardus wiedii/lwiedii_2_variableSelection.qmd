@@ -13,14 +13,15 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
+Variable Selection for  *Leopardus wiedii*, using the data generated in the previous step.
+
   - R Libraries
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: libraries
 #| message: false
 #| warning: false
+#| code-fold: false
 
 library(knitr)
 library(dismo)
@@ -69,9 +70,10 @@ library(tidyverse)
  
 ```{r}
 #| label: predictors-data
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
+#| results: hide
+
 bio <- rast('big_data/bio_high.tif')
 elev <- rast('big_data/elev_high.tif')
 urban <- rast('big_data/urban_high.tif') %>% resample(., elev)
@@ -100,10 +102,6 @@ gc()
 
 ## Species' preferences
 
-### Leopardus wiedii
-
-## Species data
-
 We will use the data from both periods
 
 ```{r}
@@ -121,7 +119,7 @@ PA_time2 %>% st_drop_geometry() %>% head() %>% kable()
 ```
 
 
-## Preparation of data for the tests
+### Preparation of data for the tests
 
 ```{r}
 #| label: prepare-data
@@ -187,7 +185,8 @@ step(glm.full) # step might not work with gam so glm
 ```
 
 ### Boosted regression trees 
-Boosted regression trees were fitted using packages: gbm and dismo—specifically the gbm.step function in dismo (Hijmans et al., 2017)
+
+Boosted regression trees were fitted using packages: `gbm` and `dismo` — specifically the `gbm.step()` function (Hijmans et al., 2017)
 
 ```{r}
 #| label: brt
@@ -274,8 +273,6 @@ importance(ranger) %>%
 variables_ranger <- importance(ranger) %>% as_tibble(rownames = 'var') %>% arrange(desc(value)) %>% head(n=6) %>% pull(var)
 ```
 
-
-
 ## Correlation
 
 Correlation between the six more important variables detected.
@@ -283,7 +280,6 @@ Correlation between the six more important variables detected.
   - Boosted regression tree: `r variables_brt`
   - Random forest: `r variables_rf`
   - Ranger: `r variables_ranger`
-
 
 ```{r}
 #| label: pairs
