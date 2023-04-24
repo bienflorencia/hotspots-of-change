@@ -2,7 +2,7 @@
 
 For each species, the following order should be followed:
 
-  1. The first code to run is the '[species_1_dataGeneration.qmd]()'. Four new files will be created: 
+  1. The first code to run is the '[species_1_dataGeneration.qmd](/species/species_1_dataGeneration.qmd)'. Four new files will be created: 
   
     - PA blobs for time1 and time2 (`PA_species_time1_blobs` and `PA_species_time2_blobs`)
     - PO rasters for time1 and time2 (`PO_species_time1_raster` and `PO_species_time2_raster`).  
