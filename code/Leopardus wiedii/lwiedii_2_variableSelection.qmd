@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Variable Selection for  *Leopardus wiedii*, using the data generated in the previous step.
+Variable Selection for *Leopardus wiedii*, using the data generated in the previous step.
 
   - R Libraries
 
