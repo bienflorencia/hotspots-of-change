@@ -1,5 +1,5 @@
 ---
-title: "Leopardus wiedii Model Outputs"
+title: "SPECIES Model Outputs"
 format: 
   html:
     toc: true
@@ -12,7 +12,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Model outputs for *Leopardus wiedii*.  
+Model outputs for *SPECIES*.  
 
 
   - R Libraries
@@ -62,7 +62,7 @@ Latam_no_islands <- bind_rows(list(Latam_countries %>%
                                      mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
                                      head(n=1) %>% dplyr::select(-area))) %>% st_union()
 
-lwiedii_IUCN <- sf::st_read('big_data/margay_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+SPECIES_IUCN <- sf::st_read('big_data/SPECIES_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
@@ -75,16 +75,16 @@ Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 #| warning: false
 #| code-fold: false
 
-PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree)) # remove NA's
-PA_time2 <- readRDS('data/data_lwiedii_PA_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree)) # remove NA's
+PA_time1 <- readRDS('data/data_SPECIES_PA_time1.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
+PA_time2 <- readRDS('data/data_SPECIES_PA_time2.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
 
 # Presence-only data
-PO_time1 <- readRDS('data/data_lwiedii_PO_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_lwiedii_PO_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
+PO_time1 <- readRDS('data/data_SPECIES_PO_time1.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+PO_time2  <- readRDS('data/data_SPECIES_PO_time2.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -98,7 +98,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-fitted.model <- readRDS('D:/Flo/HNC_models/lwiedii_model.rds') # deleted after model output
+fitted.model <- readRDS('big_data/SPECIES_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
@@ -117,10 +117,10 @@ The `fitted.model` is an object of class `rjags`.
 # labels for the linear predictor `b`
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
-                                            'env.npp',
-                                            'env.bio_4',
-                                            'env.bio_7', 
-                                            'env.nontree', sprintf('spline%i', 1:18)))) # changes with n.spl
+                                            'cov.1',
+                                            'cov.2',
+                                            'cov.3', 
+                                            'cov.4', sprintf('spline%i', 1:18)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -128,7 +128,7 @@ fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc,
                                   family="^b\\[")
 
 # diagnostics
-ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/lwiedii_model_diagnostics.pdf", param_page=3)
+ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/SPECIES_model_diagnostics.pdf", param_page=3)
 ```
 
 ### Traceplot
@@ -153,7 +153,7 @@ ggs_traceplot(fitted.model.ggs.b)
 ggs_Rhat(fitted.model.ggs.b)
 ```
 
-### Probability of occurrence of *Leopardus wiedii*
+### Probability of occurrence of *SPECIES*
 
 For each period: time1 and time2, and their difference (time2-time1)
 
@@ -208,13 +208,9 @@ diffMAP <- tm_graticules(alpha = 0.3) +
 time1MAP
 time2MAP
 diffMAP
-
-# tmap_save(time1MAP, filename='docs/figs/lwiedii_time1MAP.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
-# tmap_save(time2MAP, filename='docs/figs/lwiedii_time2MAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
-# tmap_save(diffMAP, filename='docs/figs/lwiedii_diffMAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
 ```
 
-### Standard deviation (SD) of the probability of occurrence of *Leopardus wiedii*
+### Standard deviation (SD) of the probability of occurrence of *SPECIES*
 
 ```{r}
 #| label: sd-maps
@@ -259,9 +255,6 @@ time2MAP.sd <-  tm_graticules(alpha = 0.3) +
 
 time1MAP.sd
 time2MAP.sd
-
-# tmap_save(time1MAP.sd, filename='docs/figs/lwiedii_time1MAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
-# tmap_save(time2MAP.sd, filename='docs/figs/lwiedii_time2MAPsd.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
 ```
 
 ### Bivariate map
@@ -293,8 +286,8 @@ bivcol = function(pal, nx = 3, ny = 3){
   mtext(tit)
 }
 
-lwiedii.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
-lwiedii.pal <- c(t(apply(lwiedii.pal.pu_gn_bivd, 2, rev)))
+SPECIES.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
+SPECIES.pal <- c(t(apply(SPECIES.pal.pu_gn_bivd, 2, rev)))
 
 ###
 
@@ -363,23 +356,20 @@ rast_classes <- as_tibble(rast.bivariate['new_var']) %>%
 absent_classes <- all_classes[!(all_classes %in% rast_classes)]
 
 if (length(absent_classes)==0){
-  lwiedii.new.pal <- lwiedii.pal
-} else lwiedii.new.pal <- lwiedii.pal[-c(absent_classes[i])]
+  SPECIES.new.pal <- SPECIES.pal
+} else SPECIES.new.pal <- SPECIES.pal[-c(absent_classes[i])]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
 
 diffMAP.SD <- tm_graticules(alpha = 0.3) + 
   tm_shape(rast.bivariate) +
-  tm_raster("new_var", style= "cat", palette = lwiedii.new.pal) +
+  tm_raster("new_var", style= "cat", palette = SPECIES.new.pal) +
   tm_shape(Latam_countries) +
   tm_borders(col='grey60', alpha = 0.4) + 
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 diffMAP.SD
-
-# tmap_save(delta.GridMAP.sd, filename='docs/figs/lwiedii_deltaGridMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
-# tmap_save(diffMAP.SD, filename='docs/figs/lwiedii_diffMAPSD.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 ```
 
 ### Countries thinning
@@ -437,8 +427,6 @@ acce_country <- ggplot(allPredictions)+
 
 acce_country
 
-# ggsave(plot = acce_country, filename='../docs/figs/acce_country.svg', device = 'svg', width=10, height=10, dpi=300)
-
 # all countries
 acce_allcountries <- ggplot(allPredictions) +
   geom_line(aes(x = access, y  = preds, colour = name_en), show.legend = F)+
@@ -458,17 +446,15 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.npp', 'net primary production',
-                                    ifelse(Parameter=='env.nontree', 'percentage of no tree cover',
-                                           ifelse(Parameter=='env.bio_7', 'temperature annual range',
-                                                  ifelse(Parameter=='env.bio_4', 'mean temperature of warmest quarter', Parameter)))))) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='cov.1', 'covariate 1 name',
+                                    ifelse(Parameter=='cov.4', 'covariate 2 name',
+                                           ifelse(Parameter=='cov.3', 'covariate 3 name',
+                                                  ifelse(Parameter=='cov.2', 'covariate 4 name', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')
 
 caterpiller.params
-
-# ggsave(plot = caterpiller.params, filename='docs/figs/lwiedii_caterpiller.params.svg', device = 'svg', width=6, height=5, dpi=300)
 ```
 
 ### Boxplot of posterior densities of the predicted area in both time periods
@@ -493,8 +479,6 @@ range.boxplot <- ggs_caterpillar(fitted.model.ggs.A, horizontal=FALSE, ) + theme
 
 range.boxplot
  
-# ggsave(plot = range.boxplot, filename='docs/figs/lwiedii_range.boxplot.svg', device = 'svg', width=5, height=5, dpi=300)
-
 # CI 
 range.ci <- ggmcmc::ci(fitted.model.ggs.A) %>% 
     mutate(Parameter = fct_rev(Parameter)) %>% 
@@ -506,7 +490,6 @@ range.ci <- ggmcmc::ci(fitted.model.ggs.A) %>%
     labs(x='', y='Area (number of 100x100 km grid-cells)')
 
 range.ci
-# ggsave(plot = range.ci, filename='docs/figs/lwiedii_range.ci.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 
@@ -538,8 +521,6 @@ delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
     labs(y='Probability density', x=expression(Delta*'Area'))
 
 delta.A.plot
-
-# ggsave(plot = delta.A.plot, filename='docs/figs/lwiedii_delta.A.plot.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 
@@ -581,7 +562,6 @@ pp.PO.log10 <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
 
 pp.PO | pp.PO.log10
 
-# ggsave(plot = pp.PO | pp.PO.log10, filename='docs/figs/lwiedii_pp.PO.svg', device = 'svg', width=7, height=5, dpi=300)
 ```
 
 #### Residual Diagnostics
@@ -637,7 +617,6 @@ pp.PA <- ggplot(pred.PA, aes(x=presabs, y=psi, col=presabs)) +
 
 pp.PA
 
-# ggsave(plot = pp.PA, filename='../docs/figs/pp.PA.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 #### AUC
@@ -689,6 +668,5 @@ grid.level.change <- bind_cols(range_change, numRecord_change) %>%
 
 grid.level.change
 
-# ggsave(plot = grid.level.change, filename='../docs/figs/grid.level.change.svg', device = 'svg', width=8, height=8, dpi=300)
 ```
 
