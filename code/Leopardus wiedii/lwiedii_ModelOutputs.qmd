@@ -100,15 +100,15 @@ MAP.IUCN
 #| warning: false
 
 PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_12) & !is.na(env.nonveg)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree)) # remove NA's
 PA_time2 <- readRDS('data/data_lwiedii_PA_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_12) & !is.na(env.nonveg)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree)) # remove NA's
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_lwiedii_PO_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_12) & !is.na(env.nonveg) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lwiedii_PO_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_12) & !is.na(env.nonveg) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_4) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -145,9 +145,9 @@ The `fitted.model` is an object of class `rjags`.
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
                                             'env.npp',
-                                            'env.bio_12',
+                                            'env.bio_4',
                                             'env.bio_7', 
-                                            'env.nonveg', sprintf('spline%i', 1:18)))) # changes with n.spl
+                                            'env.nontree', sprintf('spline%i', 1:18)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -388,7 +388,10 @@ all_classes <- seq(1,15,1)
 rast_classes <- as_tibble(rast.bivariate['new_var']) %>% 
     distinct(new_var) %>% filter(!is.na(new_var)) %>% pull()
 absent_classes <- all_classes[!(all_classes %in% rast_classes)]
-lwiedii.new.pal <- lwiedii.pal[-c(absent_classes)]
+
+if (length(absent_classes)==0){
+  lwiedii.new.pal <- lwiedii.pal
+} else lwiedii.new.pal <- lwiedii.pal[-c(absent_classes[i])]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
@@ -488,9 +491,9 @@ acce_allcountries
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
   mutate(Parameter=as.factor(ifelse(Parameter=='env.npp', 'net primary production',
-                                    ifelse(Parameter=='env.nonveg', 'percentage of non tree vegetation cover',
+                                    ifelse(Parameter=='env.nontree', 'percentage of no tree cover',
                                            ifelse(Parameter=='env.bio_7', 'temperature annual range',
-                                                  ifelse(Parameter=='env.bio_12', 'annual precipitation', Parameter)))))) %>% 
+                                                  ifelse(Parameter=='env.bio_4', 'mean temperature of warmest quarter', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')

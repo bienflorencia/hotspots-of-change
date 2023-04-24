@@ -12,7 +12,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Leopardus wiedii*, with new covariates: `npp`, `nonveg`, `bio7`, and `bio12`.
+Analysis for the *Leopardus wiedii*, with new covariates: `npp`, `nontree`, `bio7`, and `bio4`.
 
 ## Load the data
 
@@ -38,16 +38,16 @@ library(tidyverse)
 
 # Presence-absence data
 PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_12) & !is.na(env.bio_7) & !is.na(env.nonveg)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree)) # remove NA's
 PA_time2 <- readRDS('data/data_lwiedii_PA_time2.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_12) & !is.na(env.bio_7) & !is.na(env.nonveg)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree)) # remove NA's
 
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_lwiedii_PO_time1.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_12) & !is.na(env.bio_7) & !is.na(env.nonveg) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lwiedii_PO_time2.rds')  %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_12) & !is.na(env.bio_7) & !is.na(env.nonveg) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.npp) &!is.na(env.bio_4) & !is.na(env.bio_7) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
@@ -71,9 +71,9 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 k = 9
 
 gam.formula <- formula(count ~ env.npp + 
-                               env.bio_12 + 
+                               env.bio_4 + 
                                env.bio_7 + 
-                               env.nonveg +
+                               env.nontree +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
 
@@ -121,17 +121,17 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 
 PA.X <- cbind('(Intercept)'= 1, 
               'env.npp' = PA_time1_time2$env.npp,
-              'env.bio_12' = PA_time1_time2$env.bio_12,
+              'env.bio_4' = PA_time1_time2$env.bio_4,
               'env.bio_7' = PA_time1_time2$env.bio_7,
-              'env.nonveg' = PA_time1_time2$env.nonveg,
+              'env.nontree' = PA_time1_time2$env.nontree,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
               'env.npp' = PO_time1_time2$env.npp,
-              'env.bio_12' = PO_time1_time2$env.bio_12,
+              'env.bio_4' = PO_time1_time2$env.bio_4,
               'env.bio_7' = PO_time1_time2$env.bio_7,
-              'env.nonveg' = PO_time1_time2$env.nonveg,
+              'env.nontree' = PO_time1_time2$env.nontree,
               jagam.PO.time1, 
               jagam.PO.time2)
 
@@ -348,8 +348,6 @@ jags.inits <- function(model = model.gam)
 
 start.time <- Sys.time()
 
-# jags.data <- readRDS('data/tmp_jags_data.rds')
-
 lwiedii_model <- R2jags::jags(data=jags.data,
                                  model.file='models/lwiedii_model.txt',
                                 parameters.to.save=c('b', 'P.pred', 
@@ -360,9 +358,9 @@ lwiedii_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=100000,
+                                n.iter=200000,
                                 n.thin=10,
-                                n.burnin=10000,
+                                n.burnin=20000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
