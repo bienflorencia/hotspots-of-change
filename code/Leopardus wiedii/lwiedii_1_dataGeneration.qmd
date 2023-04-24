@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data generation for  *Leopardus wiedii* (blobs and rasters).
+Data generation for *Leopardus wiedii* (blobs and rasters).
 
   - R Libraries
 
