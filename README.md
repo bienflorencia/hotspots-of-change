@@ -14,6 +14,8 @@ This repository includes the data, code, model and outputs for our pre-print on 
   - [Docs](/docs): model definitions + diagnostics + outputs + figures 
 
 
-**Species**: jaguarundi (*Herpailurus yagouaroundi*), ocelot (*Leopardus pardalis*), crab-eating fox (*Cerdocyon thous*), maned wolf (*Chrysocyon brachyurus*), tayra (*Eira barbara*), margay (*Leopardus wiedii*), coati (*Nasua nasua*), maned wolf (*Chrysocyon brachyurus*), and giant river otter (*Pteronura brasiliensis*).  
+### Species
 
 ![](/docs/readme.png)
+
+Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @hhulsberg, ocelot (*Leopardus pardalis*) by @cotingidae, crab-eating fox (*Cerdocyon thous*) by @farpost, maned wolf (*Chrysocyon brachyurus*), tayra (*Eira barbara*) by @christoph_moning, margay (*Leopardus wiedii*) by @bigsam, coati (*Nasua nasua*), maned wolf (*Chrysocyon brachyurus*) by @constanzamcl, and giant river otter (*Pteronura brasiliensis*).  
