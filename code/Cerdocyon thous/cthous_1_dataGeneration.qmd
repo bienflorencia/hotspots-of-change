@@ -1,0 +1,343 @@
+---
+title: "SPECIES Data Generation"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+self-contained: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+Data generation for *SPECIES* (blobs and rasters).
+
+  - R Libraries
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
+library(patchwork)
+library(knitr)
+library(lubridate)
+library(terra)
+library(sf)
+sf::sf_use_s2(FALSE)
+library(tidyverse)
+```
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| message: false
+#| warning: false
+#| code-fold: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
+Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam <- st_union(st_make_valid(Latam_projected))
+Latam.raster <- terra::rast('data/Latam_raster.tif')
+Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+SPECIES_IUCN <- sf::st_read('big_data/SPECIES_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+```
+
+  - Dataset
+
+```{r}
+#| label: data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+data_carnivores_PO <- read_csv('data/data_PO.csv')
+data_carnivores_PA <- read_csv('data/data_PA.csv')
+```
+
+Check data for each years on example species
+
+```{r}
+#| label: data-check
+#| message: false
+#| warning: false
+#| tbl-cap: 
+#|   - 'PO data'
+#|   - 'PA data'
+
+# Presence-only
+data_carnivores_PO %>% filter(species == 'SPECIES') %>% filter(year>=2000) %>% 
+  mutate(period=ifelse(year<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
+  group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
+
+# Presence-absence
+data_carnivores_PA %>% filter(species == 'SPECIES' & presence ==1) %>% 
+  mutate(period=ifelse(year(date_start)<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
+  group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
+```
+
+
+## Presence-absence data
+
+### Create blobs
+
+Blobs contain data on total effort, total temporal span, a list of the records IDs that are included for the blob and an area size of the combined areas.
+
+```{r}
+#| label: blobs
+#| message: false
+#| warning: false
+
+data_PA_GIS <- data_carnivores_PA %>% 
+  filter(species == 'SPECIES') %>% 
+  mutate(year=lubridate::year(date_end)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  as.data.frame() %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  st_set_crs(4326) 
+
+PA <- st_transform(data_PA_GIS, crs=equalareaCRS)
+
+# create a blob for all sites
+# blobs are definded as areas where some sampling was done over the entire period
+periodStart <- ymd('2000-01-01')
+periodEnd <- ymd('2014-01-01')
+periodMax <- ymd('2020-12-31')
+
+PA_allsites <- PA %>%
+  mutate(start_date=as_date(ifelse(date_end-date_start<0, date_end, date_start)),
+         end_date=as_date(ifelse(date_end-date_start<0, date_start, date_end))) %>%
+  mutate(span=interval(date_start, date_end),
+         target= interval(periodEnd, today()),
+         period=ifelse(span %within% target, 'time2', 'time1')) %>% 
+  distinct(independentLocation, period, .keep_all = T) 
+
+PA_allsites_buff <- st_buffer(PA_allsites, sqrt(PA_allsites$area_m2/pi))
+
+blobs_time1 <- PA_allsites_buff %>% filter(period=='time1') %>% 
+  st_union() %>% st_cast('POLYGON') %>% st_sf('ID'= 1:length(.)) 
+blobs_time2 <- PA_allsites_buff %>% filter(period=='time2') %>% 
+  st_union() %>% st_cast('POLYGON') %>% st_sf('ID'= 1:length(.)) 
+
+# to calculate the effort in days for each blob, we need to differenciate the two periods
+PA_allsites_effort_and_time  <- PA %>%
+  mutate(start_date=as_date(ifelse(date_end-date_start<0, date_end, date_start)),
+         end_date=as_date(ifelse(date_end-date_start<0, date_start, date_end))) %>%
+  mutate(span=interval(date_start, date_end),
+         target= interval(periodEnd, today()),
+         period=ifelse(span %within% target, 'time2', 'time1')) %>% 
+  group_by(independentLocation, independentYearSpan, area_m2) %>%
+  summarise(effort=max(effort),
+            period=paste(unique(period)),
+            recordIDs=paste(unique(recordID), collapse = ';'),
+            maxEndDate=max(end_date),
+            minStartDate=min(start_date)) %>% 
+  mutate(maxTemporalSpan= maxEndDate-minStartDate)
+
+# to calculate the effort in days for each blob, we need to differenciate the two periods
+blobs_efforttime_time1 <- st_join(blobs_time1, 
+                            PA_allsites_effort_and_time %>% filter(period=='time1'),
+                            left=TRUE)  %>% 
+  group_by(ID) %>% 
+  summarise(effort=sum(effort),
+            temporalSpan=sum(maxTemporalSpan),
+            recordIDs=paste(unique(recordIDs), collapse = ';')) %>% 
+  mutate(blobArea=st_area(.)) 
+
+
+blobs_efforttime_time2 <- st_join(blobs_time2, 
+                                PA_allsites_effort_and_time %>% filter(period=='time2'),
+                                left=TRUE)  %>% 
+  group_by(ID) %>% 
+  summarise(effort=sum(effort),
+            temporalSpan=sum(maxTemporalSpan),
+            recordIDs=paste(unique(recordIDs), collapse = ';')) %>% 
+  mutate(blobArea=st_area(.))
+
+```
+
+### Calculate PA blobs
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: PA-data
+#| message: false
+#| warning: false
+
+# function  to create blobs for time1 and time2 for each species
+calculate_PA_sp_blobs <- function(PA, blobs, sp, time){
+  periodStart <- ymd('2000-01-01')
+  periodEnd <- ymd('2014-01-01')
+  df_period <- PA %>% filter(species==sp & presence==1) %>% 
+    filter(date_start>=periodStart) %>% 
+    mutate(span=interval(date_start, date_end),
+           target=interval(periodEnd, today()),
+           period=ifelse(span %within% target, 'time2', 'time1')) %>% 
+    filter(period==time) %>% select(species, presence)
+  
+  df_period_blobs <- st_join(blobs, df_period,
+                             left=TRUE, join = st_contains) %>%
+    group_by(ID) %>% 
+    summarise(presence=max(presence),
+              temporalSpan=max(temporalSpan),
+              effort=max(effort),
+              blobArea=max(blobArea)) %>% 
+    mutate(presence=ifelse(is.na(presence), 0, presence))
+  return(df_period_blobs)
+}
+
+# SPECIES
+PA_SPECIES_time1_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time1, 'SPECIES', 'time1')
+PA_SPECIES_time2_blobs <- calculate_PA_sp_blobs(PA, blobs_efforttime_time2, 'SPECIES', 'time2')
+```
+
+### Plots
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: PA-plots
+#| message: false
+#| warning: false
+
+data_PA_time1_time2 <- rbind(PA_SPECIES_time1_blobs %>% mutate(period='time1'), 
+                             PA_SPECIES_time2_blobs %>% mutate(period='time2'))
+
+gg_PA_time1 <- ggplot() + 
+    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+    geom_sf(data=data_PA_time1_time2 %>% filter(period=='time1') %>% st_buffer(20000), 
+            aes(fill=factor(presence)), col=NA, show.legend = F) +
+    coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
+    scale_fill_manual(values = c("#474545","#E31A1C"))+
+    scale_color_manual(values = c("#474545","#E31A1C")) +
+    labs(title='PA', subtitle='time1: 2000-2013', col='') +
+    theme_bw() +    
+    theme(text=element_text(size = 14)) 
+
+gg_PA_time2 <- ggplot() + 
+    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+    geom_sf(data=data_PA_time1_time2 %>% filter(period=='time2') %>% st_buffer(20000), 
+            aes(fill=factor(presence), col=factor(presence)), show.legend = F) +
+    coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
+    scale_fill_manual(values = c("#434445","#1F78B4"))+
+    scale_color_manual(values = c("#434445","#1F78B4")) +
+    labs(title='', subtitle='time2: 2014 to 2021', col='') +
+    theme_bw() +    
+    theme(text=element_text(size = 14)) 
+
+gg_PA_time1 + gg_PA_time2
+```
+
+## Presence-only data
+
+### Calculate PO rasters
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: PO-data
+#| message: false
+#| warning: false
+
+# rasterisation of the presence-only data
+data_PO_GIS <- data_carnivores_PO %>% 
+  filter(species == 'SPECIES') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  as.data.frame() %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  st_set_crs(4326) 
+
+PO <- st_transform(data_PO_GIS, crs=equalareaCRS)
+
+# functions to create presence-only rasters for time1 and time2 for each species
+calculate_PO_sp_period_raster <- function(PO, sp, raster, time){
+  periodStart <- 2000
+  periodEnd <- 2014
+  df_period <- PO %>% filter(species==sp & !is.na(year)) %>% 
+    filter(year>=periodStart) %>% 
+    mutate(period=ifelse(year>=periodEnd , 'time2', 'time1'),
+           occurrence=1) %>% filter(period==time)
+  df_period_raster <- terra::rasterize(x = vect(df_period),
+                                       y = raster,
+                                       field = 'occurrence',
+                                       fun = 'length',
+                                       sum = T, background=0) %>% mask(., raster)
+  
+  df_country_raster <- terra::rasterize(x = vect(df_period),
+                                       y = raster,
+                                       field = 'countryCode',
+                                       fun = 'first') %>% mask(., raster)
+  
+  names(df_period_raster) <- 'count'
+  names(df_country_raster) <- 'country'
+  df_raster <- c(df_period_raster, df_country_raster)
+  return(df_raster)
+}
+
+# SPECIES
+PO_SPECIES_time1_raster <- calculate_PO_sp_period_raster(PO, 'SPECIES', Latam.raster, 'time1')
+PO_SPECIES_time2_raster <- calculate_PO_sp_period_raster(PO, 'SPECIES', Latam.raster, 'time2')
+```
+
+### Plots
+
+```{r}
+#| echo: true
+#| eval: true
+#| label: PO-plots
+#| message: false
+#| warning: false
+
+data_PO_time1_time2 <- data_PO_GIS %>% 
+  mutate(period=ifelse(year>=2014 , 'time2', 'time1'), occurrence=1) 
+
+gg_PO_time1 <- ggplot() + 
+    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+    geom_sf(data=data_PO_time1_time2 %>% filter(period=='time1'), col="#E31A1C", size=0.5, show.legend = F) +
+    coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
+    labs(title='PO time1: 2000-2013', col='') +
+    theme_bw() +
+    theme(text=element_text(size = 14))
+
+gg_PO_time2 <- ggplot() + 
+    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+    geom_sf(data=data_PO_time1_time2 %>% filter(period=='time2'), col="#1F78B4", size=0.5, show.legend = F) +
+    coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
+    labs(title='PO time2: 2014 to 2021', col='') +
+    theme_bw() +
+    theme(text=element_text(size = 14))
+    
+gg_PO_time1 + gg_PO_time2
+```
+
+
+## Save data
+
+```{r}
+#| label: save-data
+#| eval: false
+#| message: false
+#| warning: false
+#| code-fold: false
+
+# blobs
+saveRDS(PA_SPECIES_time1_blobs, 'data/PA_SPECIES_time1_blobs.rds')
+saveRDS(PA_SPECIES_time2_blobs, 'data/PA_SPECIES_time2_blobs.rds')
+
+# presence-only rasters
+terra::writeRaster(PO_SPECIES_time1_raster, 'data/PO_SPECIES_time1_raster.tif', overwrite=TRUE)
+terra::writeRaster(PO_SPECIES_time2_raster, 'data/PO_SPECIES_time2_raster.tif', overwrite=TRUE)
+```
+
