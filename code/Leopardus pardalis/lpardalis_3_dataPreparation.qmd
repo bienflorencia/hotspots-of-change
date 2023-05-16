@@ -87,10 +87,10 @@ PA_lpardalis_time2_blobs <- readRDS('data/PA_lpardalis_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio7`: Temperature Annual Range
- - `bio4`: Mean Temperature of Warmest Quarter
+ - `bio10`: Mean Temperature of Warmest Quarter
+ - `bio17`: Precipitation of Driest Quarter
  - `npp`: Net Primary Production (NPP)
- - `nontree`: Percentage of No Tree Cover
+ - `tree`: Percentage of Tree Cover
 
 ``` {r}
 #| echo: true
@@ -100,15 +100,15 @@ The following covariates were chosen using the 'variableSelection' script:
 #| warning: false
 
 bio <- rast(here::here('big_data/bio_high.tif'))
-nontree <- rast(here::here('big_data/nontree_high.tif'))
-nontree <- resample(nontree, bio, method='bilinear') 
-names(nontree) <- 'nontree'
+tree <- rast(here::here('big_data/tree_high.tif'))
+tree <- resample(tree, bio, method='bilinear') 
+names(tree) <- 'tree'
 npp <- rast(here::here('big_data/npp_high.tif'))
 npp <- resample(npp, bio, method='bilinear') 
 names(npp) <- 'npp'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_4')]], nontree, npp) %>% 
+env <- c(bio[[c('bio_10','bio_17')]], tree, npp) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -130,8 +130,8 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
   classify(cbind(NaN, NA))
 
-nontree.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["nontree"]]) +
+tree.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["tree"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
@@ -144,24 +144,24 @@ npp.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_7.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_7"]]) +
+bio_10.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_10"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_4.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_4"]]) +
+bio_17.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_17"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-nontree.plot 
+tree.plot 
 npp.plot
-bio_7.plot
-bio_4.plot
+bio_10.plot
+bio_17.plot
 ```
 
 ### Thinning parametres 
@@ -185,7 +185,7 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
 ```{r}
 #| echo: true
 #| eval: true
-#| label: covariates-plots
+#| label: thinning-plots
 #| message: false
 #| warning: false
 #| code-fold: false

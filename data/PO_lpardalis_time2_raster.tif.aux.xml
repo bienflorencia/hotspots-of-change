@@ -5,12 +5,15 @@
   <PAMRasterBand band="2">
     <Description>country</Description>
     <CategoryNames>
+      <Category>AR</Category>
       <Category>BO</Category>
       <Category>BR</Category>
       <Category>BZ</Category>
       <Category>CO</Category>
       <Category>CR</Category>
       <Category>EC</Category>
+      <Category>GF</Category>
+      <Category>GT</Category>
       <Category>GY</Category>
       <Category>HN</Category>
       <Category>MX</Category>
@@ -20,9 +23,6 @@
       <Category>PY</Category>
       <Category>SR</Category>
       <Category>TT</Category>
-      <Category></Category>
-      <Category></Category>
-      <Category></Category>
       <Category></Category>
       <Category></Category>
       <Category></Category>
