@@ -1,0 +1,393 @@
+---
+title: "Species data"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+self-contained: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+Data cleaning for presence-absence and presence-only records.
+
+
+  - R Libraries
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
+
+library(countrycode)
+library(janitor)
+library(patchwork)
+library(knitr)
+library(measurements)
+library(lubridate)
+library(terra)
+library(sf)
+sf::sf_use_s2(FALSE)
+library(tidyverse)
+```
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| message: false
+#| warning: false
+#| code-fold: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
+Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam <- st_union(st_make_valid(Latam_projected))
+Latam.raster <- terra::rast('data/Latam_raster.tif')
+Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+```
+
+
+  - Species lits
+
+```{r}
+#| label: species-list
+#| message: false
+#| warning: false
+#| code-fold: false
+
+speciesList_MDD <- read_csv('data/MDD_Carnivora_List.csv') 
+```
+
+
+# Data
+
+## Presence/absence data
+
+Terms standardised:  
+- recordID  
+- species  
+- temporalSpan  
+- yearEnd  
+- decimalLatitude  
+- decimalLongitude  
+- area_m2  
+- countryCode  
+- stateProvince  
+- locality  
+- presence  
+- abundance  
+- effort  
+- effortUnit  
+- dataset  
+
+```{r}
+#| label: PA-data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+pointsAndSurveys_Kaca <- read_csv('data/data_Kaca.csv') 
+
+data_PA_Ab_1 <- pointsAndSurveys_Kaca %>% 
+  janitor::clean_names('lower_camel') %>% 
+  filter(speciesLatin %in% speciesList_MDD$sp) %>% 
+  mutate(hemisphere_lat=ifelse(grepl('S', latitude), 'S', ifelse(grepl('N', latitude), 'N', NA))) %>%
+  mutate(hemisphere_lon=ifelse(grepl('W', longitude), 'W', ifelse(grepl('E', longitude), 'E', NA))) %>%
+  mutate(latitude = str_squish(str_replace_all(latitude, '°|’|S|W|E|N', ' '))) %>% 
+  mutate(longitude = str_squish(str_replace_all(longitude, '°|’|S|W|E|N', ' '))) %>% 
+  rowwise() %>%
+  mutate(latitude = ifelse(latLonUnit=='deg', conv_unit(latitude, from = 'deg_dec_min', to = 'dec_deg'), latitude)) %>% 
+  mutate(longitude = ifelse(latLonUnit=='deg', conv_unit(longitude, from = 'deg_dec_min', to = 'dec_deg'), longitude)) %>% 
+  ungroup() %>% 
+  mutate(latitude=ifelse(latLonUnit=='deg' & hemisphere_lat=='S', as.numeric(latitude)*-1, as.numeric(latitude))) %>% 
+  mutate(longitude=ifelse(latLonUnit=='deg' & hemisphere_lon=='W', as.numeric(longitude)*-1, as.numeric(longitude))) %>% 
+  mutate(dateStart=dmy(dateStart), dateEnd=dmy(dateEnd)) %>% 
+  filter(!(year(dateEnd)>=2014 & year(dateStart)<2014)) %>% 
+  mutate(area_m2=ifelse(areaUnit=='ha', area*10000, area*1e+6)) %>% 
+  mutate(countryCode=countrycode::countrycode(countryCode, 
+                                              origin = 'country.name', 
+                                              destination = 'iso2c')) %>% 
+  mutate(temporalSpan=ifelse(temporalSpan!='G', dateEnd-dateStart, temporalSpan)) %>%   ###### me quedé acá
+  mutate(effort=ifelse(effortUnit=='camera trap hours', effort/24, effort)) %>% 
+  mutate(effortUnit='days') %>% 
+  mutate(independentLocation=str_c(latitude,':',longitude)) %>% 
+  mutate(independentYearSpan=str_c(year(dateStart),':',year(dateEnd))) %>% 
+  mutate(dataset='pointsAndSurveys_Kaca') %>% 
+  select(recordID=recordId, date_start=dateStart, date_end=dateEnd,
+         species=speciesLatin,
+         temporalSpan,
+         independentLocation,
+         independentYearSpan,
+         decimalLatitude=latitude,
+         decimalLongitude=longitude, 
+         area_m2=area,
+         countryCode,
+         stateProvince,
+         locality,
+         presence,
+         abundance, # not all of the records have abundance data
+         effort,
+         effortUnit,
+         dataset)
+  
+pointsAndSurveys_NeotropCarnivores <- 
+  read_csv('data/NEOTROPICAL_CARNIVORES_DATASET_2020-04.csv',
+           guess_max = 90000) # Neotropical carnivores Data Paper
+
+data_PA_Ab_2 <- 
+  pointsAndSurveys_NeotropCarnivores %>% 
+  # filter the records to include only the Neotropical Mammals
+  filter(SPECIES %in% speciesList_MDD$sp) %>% 
+  # filter only the records taken with camera traps -> assumption: these will reflect presence-absece data 
+  filter(METHOD=='Camera trap') %>% 
+  # filter records with no coordinates
+  filter(!is.na(LAT_Y)) %>%
+  # filter occurrences that don't have month and year when they were recorded
+  filter(!is.na(COL_END_YR)&!is.na(COL_START_MO)&!is.na(COL_END_MO)&!is.na(COL_START_YR)) %>%
+  # one area has a range instead of a value, I took the mean of the range as area
+  mutate(AREA_HA=ifelse(AREA_HA=='700-1000', mean(c(700, 1000)), AREA_HA)) %>% 
+  # filter records with no area of study recorded / or with sampling level area and precision recorded
+  filter(!is.na(AREA_HA) | (is.na(AREA_HA) & !is.na(PRECISION_m) & SAMPLING_LEVEL=='AREA')) %>% 
+  mutate(area_ha=as.numeric(AREA_HA),
+         area_m2=ifelse(!is.na(AREA_HA), 
+                          area_ha*10000, # 1 hectare are 10000 meters / will be used for buffers
+                          PRECISION_m)) %>% 
+  # to have the same values as the presence-only I kept country codes
+  mutate(countryCode=countrycode::countrycode(COUNTRY, 
+                                              origin = 'country.name', 
+                                              destination = 'iso2c')) %>% 
+  # since the dataset has no day, dates were assumed to start and end the first day of the month
+  mutate(date_start=lubridate::dmy(str_c('1', COL_START_MO, COL_START_YR))) %>% 
+  mutate(date_end=lubridate::dmy(str_c('1', COL_END_MO, COL_END_YR))) %>% 
+  # the temporal span was calculated -> there are errors in some dates, and the temporal span is negative
+  mutate(temporalSpan=ifelse(date_end-date_start<0, date_start-date_end, date_end-date_start)) %>% 
+  filter(!(year(date_end)>=2014 & year(date_start)<2014)) %>% 
+  # decimal places for some records corrected
+  mutate(EFFORT=ifelse(grepl('\\.', EFFORT) & (temporalSpan>=31 | temporalSpan>=30), 
+                       str_remove(EFFORT, '\\.' ), EFFORT)) %>% 
+  # the sampling effort was standardized to days
+  mutate(samplingEffort=ifelse(grepl('hours', EFFORT_UNIT, ignore.case = T), as.numeric(EFFORT)/24, 
+                               ifelse(grepl('days', EFFORT_UNIT, ignore.case = T), as.numeric(EFFORT), NA))) %>% 
+  # filter those without sampling effort (no data was provided and it cannot be derived)
+  filter(!is.na(samplingEffort)) %>% 
+  mutate(effortUnit='days') %>% 
+  # calculate the number of camera traps needed 
+  mutate(numCameras=floor(samplingEffort/temporalSpan)) %>% 
+  # filter unreliable values 
+  mutate(temporalSpan=ifelse(numCameras==Inf & temporalSpan==0 & samplingEffort>31, NA, 
+                             ifelse(numCameras==Inf & temporalSpan==0 & samplingEffort<=31, 
+                                    floor(as.numeric(EFFORT)), temporalSpan))) %>% 
+  filter(!is.na(temporalSpan)) %>% 
+  mutate(independentLocation=str_c(LAT_Y,':',LONG_X)) %>% 
+  mutate(independentYearSpan=str_c(COL_START_YR,':',COL_END_YR)) %>% 
+  dplyr::select(recordID=ID,
+                date_start, date_end,
+         species=SPECIES,
+         temporalSpan,
+         independentLocation,
+         independentYearSpan,
+         decimalLatitude=LAT_Y,
+         decimalLongitude=LONG_X, 
+         area_m2,
+         countryCode,
+         stateProvince=STATE,
+         locality=SITE,
+         presence=OCCUR,
+         abundance=N_RECORDS, # not all of the records have abundance data
+         effort=samplingEffort,
+         effortUnit,
+         dataset=DATASET)%>% 
+  mutate(dataset='pointsAndSurveys_NeotropCarnivores') # in total 34,389 records
+
+# Generate 0 (zeros) for locations where the species hasn't been recorded
+# this can very probably be done in a more efficient way, but this one works!
+data_PA_Ab_0 <- bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>% 
+  pivot_wider(names_from = species,
+              values_from = c(presence, abundance, effort),
+              values_fill = c(list(presence=0), 
+                              list(abundance=0),
+                              list(effort=0))) %>%
+  pivot_longer(cols=starts_with(c('presence_', 'abundance_', 'effort_')),
+               names_to=c('metric', 'species'),
+               names_sep='_') %>% 
+  pivot_wider(names_from = metric,
+              values_from = value,
+              values_fill = c(list(value=0))) %>% 
+  distinct(species, independentYearSpan, independentLocation, presence, .keep_all = T) %>%
+  group_by(species, independentYearSpan, independentLocation) %>% 
+  mutate(presence=sum(presence, na.rm = T),
+         abundance=sum(abundance, na.rm = T),
+         effort=max(effort, na.rm = T)) %>% 
+  distinct(species, independentYearSpan, independentLocation, .keep_all = T) %>% 
+  ungroup() %>% group_by(independentLocation, independentYearSpan) %>% 
+  mutate(effort=max(effort, na.rm = T)) %>% 
+  ungroup()
+```
+
+
+### Check the data
+
+```{r}
+#| label: check-PA-data
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 14
+
+bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>% 
+  mutate(period=ifelse(year(date_end)<2014, 'time1', 'time2')) %>% 
+  filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis', 
+                        'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                        'Eira barbara', 'Leopardus wiedii', 
+                        'Nasua nasua', 'Pteronura brasiliensis')) %>% 
+  filter(presence==1) %>% 
+  group_by(species, period) %>% count() %>% 
+  pivot_wider(names_from = species, values_from = n, values_fill = 0) %>% 
+  janitor::adorn_totals()%>% kable()
+
+
+bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>% 
+  mutate(period=ifelse(year(date_end)<2014, 'time1', 'time2')) %>%
+  filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis', 
+                        'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                        'Eira barbara', 'Leopardus wiedii', 
+                        'Nasua nasua', 'Pteronura brasiliensis')) %>% 
+  filter(presence==1) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>% 
+  ggplot() + 
+  geom_sf(data = Latam_projected, fill='white', size=0.2) +
+  geom_sf(aes(col=year(date_end))) + 
+  facet_grid(species~period) +
+  scale_color_distiller(palette = 'Greens', direction = 1) + 
+  labs(col='Year') +
+  theme_bw() 
+```
+
+
+## Presence-only data
+
+Terms standardised:  
+- recordID,  
+- species,  
+- year,  
+- eventDate,  
+- decimalLatitude,  
+- decimalLongitude,  
+- countryCode, 
+- stateProvince,  
+- locality,   
+- dataset  
+
+
+```{r}
+#| label: PO-data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+# The data download and cleaning can be found in the GBIF_download.R script
+occurrencePoints_GBIF <- read_csv('data/0240776-230224095556074_CLEAN.csv', 
+                                  guess_max = 130000) # GBIF data (cleaned)
+
+data_PO_1 <- occurrencePoints_GBIF %>% 
+  # filter only presences
+  filter(occurrenceStatus == 'PRESENT') %>% 
+  # rename the species yaguarundi and filter our species of interest
+  mutate(species=ifelse(species=='Puma yagouaroundi', 'Herpailurus yagouaroundi', species)) %>% 
+  filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis', 
+                        'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                        'Eira barbara', 'Leopardus wiedii', 
+                        'Nasua nasua', 'Pteronura brasiliensis')) %>% 
+  # filter records from unrealistic or unwanted) locations: USA, Denmark, Belgium and France
+  filter(!countryCode %in% c('US', 'DK', 'BE', 'FR')) %>%
+  # filter occurrences that don't have the year when they were recorded
+  filter(!is.na(year) & year>=2000 & year<=2020) %>%
+  # transform eventdate to class datetime
+  mutate(eventDate=lubridate::ymd_hms(eventDate)) %>% 
+  # remove duplicates according to species, date, latitude and longitude
+  group_by(species, eventDate, decimalLatitude, decimalLongitude) %>% 
+  slice_head(n=1) %>% ungroup() %>% 
+  # select columns of interest
+  dplyr::select(recordID=gbifID, 
+         species, 
+         year, eventDate,  
+         decimalLatitude,
+         decimalLongitude, 
+         countryCode,
+         stateProvince,
+         locality) %>% 
+  mutate(dataset='occurrencePoints_GBIF') 
+
+
+data_PO_2 <- pointsAndSurveys_NeotropCarnivores %>%
+    filter(SPECIES %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis',
+                          'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                          'Eira barbara', 'Leopardus wiedii', 
+                          'Nasua nasua', 'Pteronura brasiliensis')) %>% 
+    filter(!is.na(COL_END_YR)&!is.na(COL_START_MO)&!is.na(COL_END_MO)&!is.na(COL_START_YR)) %>%
+    filter(DATA_TYPE=='Count data') %>% 
+    filter(METHOD %in% c('Opportunistic', 'Line transect', 'Active searching', 'Roadkill', 'Museum')) %>% 
+    mutate(countryCode=countrycode::countrycode(COUNTRY, 
+                                                origin = 'country.name', 
+                                                destination = 'iso2c')) %>% 
+    mutate(date_start=lubridate::dmy(str_c('1', COL_START_MO, COL_START_YR))) %>% 
+    mutate(date_end=lubridate::dmy(str_c('1', COL_END_MO, COL_END_YR))) %>% 
+    filter(date_start==date_end) %>% mutate(year=year(date_start)) %>%  
+    filter(!is.na(date_end) & year(date_start)>=2000 & year(date_end)<=2020) %>% 
+    group_by(SPECIES, date_start, LAT_Y, LONG_X) %>% 
+    slice_head(n=1) %>% ungroup() %>% 
+    dplyr::select(recordID=ID, 
+                  species=SPECIES, 
+                  year, eventDate=date_start,  
+                  decimalLatitude=LAT_Y,
+                  decimalLongitude=LONG_X,
+                  countryCode,
+                  stateProvince=STATE,
+                  locality=SITE) %>% 
+    mutate(dataset='occurrencePoints_NeotropCarnivores') 
+```
+
+### Check the data
+
+```{r}
+#| label: check-PO-data
+#| message: false
+#| warning: false
+#| fig-width: 8
+#| fig-height: 14
+
+bind_rows(data_PO_1, data_PO_2) %>% 
+  mutate(period=ifelse(year(eventDate)<2014, 'time1', 'time2')) %>% 
+  filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis',
+                        'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                        'Eira barbara', 'Leopardus wiedii', 
+                        'Nasua nasua', 'Pteronura brasiliensis')) %>% 
+  group_by(species, period) %>% count() %>% 
+  pivot_wider(names_from = species, values_from = n, values_fill = 0) %>% 
+  janitor::adorn_totals()%>% kable()
+
+bind_rows(data_PO_1, data_PO_2) %>% 
+  mutate(period=ifelse(year(eventDate)<2014, 'time1', 'time2')) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>% 
+  ggplot() + 
+  geom_sf(data = Latam_projected, fill='white', size=0.2) +
+  geom_sf(aes(col=year)) + 
+  facet_grid(species~period) +
+  scale_color_distiller(palette = 'Greens', direction = 1) + 
+  labs(col='Year') +
+  theme_bw() 
+```
+
+
+```{r}
+
+```
