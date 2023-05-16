@@ -46,7 +46,7 @@ library(tidyverse)
 #| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
-Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
+Latam_projected <- st_read('data/Latam_vector.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam <- st_union(st_make_valid(Latam_projected))
 Latam.raster <- terra::rast('data/Latam_raster.tif')
@@ -238,10 +238,12 @@ data_PA_Ab_0 <- bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>%
 #| label: check-PA-data
 #| message: false
 #| warning: false
+#| fig-dpi: 150
 #| fig-width: 8
 #| fig-height: 14
 
-bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>% 
+
+data_PA_Ab_0 %>% 
   mutate(period=ifelse(year(date_end)<2014, 'time1', 'time2')) %>% 
   filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis', 
                         'Cerdocyon thous', 'Chrysocyon brachyurus', 
@@ -250,7 +252,7 @@ bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>%
   filter(presence==1) %>% 
   group_by(species, period) %>% count() %>% 
   pivot_wider(names_from = species, values_from = n, values_fill = 0) %>% 
-  janitor::adorn_totals()%>% kable()
+  janitor::adorn_totals() %>% kable()
 
 
 bind_rows(data_PA_Ab_1, data_PA_Ab_2) %>% 
@@ -353,6 +355,13 @@ data_PO_2 <- pointsAndSurveys_NeotropCarnivores %>%
                   stateProvince=STATE,
                   locality=SITE) %>% 
     mutate(dataset='occurrencePoints_NeotropCarnivores') 
+
+
+data_PO_0 <- bind_rows(data_PO_1, data_PO_2) %>% 
+  filter(species %in% c('Herpailurus yagouaroundi', 'Leopardus pardalis',
+                        'Cerdocyon thous', 'Chrysocyon brachyurus', 
+                        'Eira barbara', 'Leopardus wiedii', 
+                        'Nasua nasua', 'Pteronura brasiliensis'))
 ```
 
 ### Check the data
@@ -361,6 +370,7 @@ data_PO_2 <- pointsAndSurveys_NeotropCarnivores %>%
 #| label: check-PO-data
 #| message: false
 #| warning: false
+#| fig-dpi: 150
 #| fig-width: 8
 #| fig-height: 14
 
@@ -387,7 +397,66 @@ bind_rows(data_PO_1, data_PO_2) %>%
   theme_bw() 
 ```
 
+# Calculate the ratio of the global PO effort between time1 and time2
 
 ```{r}
+#| label: globalEffort
+#| message: false
+#| warning: false
+#| code-fold: false
 
+globalEffort <- occurrencePoints_GBIF %>% 
+  filter(occurrenceStatus == 'PRESENT') %>% 
+  filter(!countryCode %in% c('US', 'DK', 'BE', 'FR')) %>%
+  mutate(eventDate=lubridate::ymd_hms(eventDate), year=year(eventDate)) %>% 
+  filter(!is.na(year) & year>=2000 & year<=2020) %>%
+  mutate(species=ifelse(species=='Puma yagouaroundi', 'Herpailurus yagouaroundi', species)) %>% 
+  # select columns of interest
+  dplyr::select(recordID=gbifID, 
+         species, year, eventDate,  
+         decimalLatitude,
+         decimalLongitude, 
+         countryCode) %>% 
+  mutate(period=ifelse(year<2014, 'time1', 'time2')) 
+
+globalEffort_sf <- globalEffort %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>% st_transform(crs=equalareaCRS)
+
+globalEffort_time <- st_join(Latam_projected, globalEffort_sf, left=TRUE) %>% 
+  group_by(FID, period) %>% 
+  summarise(effort=n(), .groups = 'drop') %>% st_drop_geometry()
+
+globalEffort_time %>% select(-FID) %>% ungroup() %>%  
+  janitor::adorn_totals()%>% kable()
+
+globalEffort_value <- globalEffort_time %>% filter(period=='time1') %>% pull(effort) / 
+  globalEffort_time %>% filter(period=='time2') %>% pull(effort) * 100
+
+ggplot(globalEffort_sf) +
+    geom_sf(data = Latam_projected, fill='white', size=0.2) +
+    geom_sf(aes(col=species, alpha=0.5), show.legend = F) + 
+    facet_grid(~period) +
+    scale_color_brewer(palette = 'Set3') + 
+    labs(col='Year', title= paste0('Records increase ', 
+                                   round(globalEffort_value, 1), '% from time1 to time2' )) +
+    theme_bw() 
+```
+
+
+# Save files
+
+```{r}
+#| label: save
+#| message: false
+#| warning: false
+#| code-fold: false
+
+# R object species data
+saveRDS(data_PO_0, 'data/data_PO.Rds')
+saveRDS(data_PA_Ab_0, 'data/data_PA.Rds')
+
+# csv species data
+write_csv(data_PO_0, 'data/data_PO.csv')
+write_csv(data_PA_Ab_0, 'data/data_PA.csv')
 ```
