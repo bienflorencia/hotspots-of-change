@@ -306,7 +306,7 @@ gg_PO_time1 <- ggplot() +
     geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time1'), col="#E31A1C", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
-    labs(title='PO time1: 2000-2013', col='') +
+    labs(title='PO', subtitle='time1: 2000-2013', col='') +
     theme_bw() +
     theme(text=element_text(size = 14))
 
@@ -315,7 +315,7 @@ gg_PO_time2 <- ggplot() +
     geom_sf(data=SPECIES_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time2'), col="#1F78B4", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(SPECIES_IUCN)
-    labs(title='PO time2: 2014 to 2021', col='') +
+    labs(title='PO', subtitle='time2: 2014 to 2021', col='') +
     theme_bw() +
     theme(text=element_text(size = 14))
     
