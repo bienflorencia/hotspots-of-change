@@ -100,7 +100,7 @@ rm(bio, elev, urban, barren, water,
 gc()
 ```
 
-## Species' preferences
+## Leopardus wiedii' preferences
 
 We will use the data from both periods
 

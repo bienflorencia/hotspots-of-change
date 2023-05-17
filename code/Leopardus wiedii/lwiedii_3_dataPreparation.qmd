@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *Leopardus wiedii*, with the covariates `bio7`, `bio4`, `npp`, and `nontree` (selected in the previous step).
+Data preparation for modelling for *Leopardus wiedii*, with the covariates `bio7`, `bio9`, `npp`, and `nontree` (selected in the previous step). 
 
   - R Libraries
 
@@ -50,7 +50,7 @@ Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 
 # IUCN range distribution
-lwiedii_IUCN <- sf::st_read('big_data/margay_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+lwiedii_IUCN <- sf::st_read('big_data/lwiedii_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 
 MAP.IUCN <- tm_graticules(alpha = 0.3) +
     tm_shape(Latam_countries) +
@@ -88,8 +88,8 @@ PA_lwiedii_time2_blobs <- readRDS('data/PA_lwiedii_time2_blobs.rds')
 The following covariates were chosen using the 'variableSelection' script:
 
  - `bio7`: Temperature Annual Range
- - `bio4`: Mean Temperature of Warmest Quarter
- - `npp`: Net Primary Production (NPP)
+ - `bio9`: Mean Temperature of Warmest Quarter
+ - `npp`: Net Primary Production (npp)
  - `nontree`: Percentage of No Tree Cover
 
 ``` {r}
@@ -99,16 +99,16 @@ The following covariates were chosen using the 'variableSelection' script:
 #| message: false
 #| warning: false
 
-bio <- rast(here::here('big_data/bio_high.tif'))
-nontree <- rast(here::here('big_data/nontree_high.tif'))
-nontree <- resample(nontree, bio, method='bilinear') 
-names(nontree) <- 'nontree'
-npp <- rast(here::here('big_data/npp_high.tif'))
+bio <- rast('big_data/bio_high.tif')
+npp <- rast('big_data/npp_high.tif')
 npp <- resample(npp, bio, method='bilinear') 
 names(npp) <- 'npp'
+nontree <- rast('big_data/nontree_high.tif')
+nontree <- resample(nontree, bio, method='bilinear') 
+names(nontree) <- 'nontree'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_4')]], nontree, npp) %>% 
+env <- c(bio[[c('bio_7','bio_9')]], nontree, npp) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -132,28 +132,28 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 
 nontree.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_resampled[["nontree"]]) +
-    tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
+    tm_raster(palette = 'YlGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 npp.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_resampled[["npp"]]) +
-    tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'BrBG', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_7.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_resampled[["bio_7"]]) +
-    tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'PuRd', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_4.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_4"]]) +
-    tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
+bio_9.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_9"]]) +
+    tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -161,7 +161,7 @@ bio_4.plot <- tm_graticules(alpha = 0.3) +
 nontree.plot 
 npp.plot
 bio_7.plot
-bio_4.plot
+bio_9.plot
 ```
 
 ### Thinning parametres 
@@ -185,7 +185,7 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
 ```{r}
 #| echo: true
 #| eval: true
-#| label: covariates-plots
+#| label: thinning-plots
 #| message: false
 #| warning: false
 #| code-fold: false
@@ -406,6 +406,5 @@ for (i in 1:ncol(env_PO)){
     iqr <- IQR(env_PO[[i]], na.rm = T)
     print(str_glue('PO {names(env_PO[i])} -> range: {range} - IQR: {iqr}'))
 }
-
 ```
 

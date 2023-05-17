@@ -46,7 +46,7 @@ Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>%
 Latam <- st_union(st_make_valid(Latam_projected))
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
-lwiedii_IUCN <- sf::st_read('big_data/margay_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+lwiedii_IUCN <- sf::st_read('big_data/lwiedii_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 ```
 
   - Dataset
@@ -235,9 +235,6 @@ gg_PA_time2 <- ggplot() +
     theme(text=element_text(size = 14)) 
 
 gg_PA_time1 + gg_PA_time2
-
-# ggsave(plot = gg_PA_time1 + gg_PA_time2, 
-#        filename='docs/figs/lwiedii_PA_data.svg', device = 'svg', width=10, height=10, dpi=300)
 ```
 
 ## Presence-only data
@@ -309,7 +306,7 @@ gg_PO_time1 <- ggplot() +
     geom_sf(data=lwiedii_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time1'), col="#E31A1C", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(lwiedii_IUCN)
-    labs(title='PO time1: 2000-2013', col='') +
+    labs(title='PO', subtitle='time1: 2000-2013', col='') +
     theme_bw() +
     theme(text=element_text(size = 14))
 
@@ -318,7 +315,7 @@ gg_PO_time2 <- ggplot() +
     geom_sf(data=lwiedii_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time2'), col="#1F78B4", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(lwiedii_IUCN)
-    labs(title='PO time2: 2014 to 2021', col='') +
+    labs(title='PO', subtitle='time2: 2014 to 2021', col='') +
     theme_bw() +
     theme(text=element_text(size = 14))
     
@@ -330,7 +327,7 @@ gg_PO_time1 + gg_PO_time2
 
 ```{r}
 #| label: save-data
-#| eval: false
+#| eval: true
 #| message: false
 #| warning: false
 #| code-fold: false
