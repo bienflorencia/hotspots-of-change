@@ -12,11 +12,17 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
+Model outputs for *Herpailurus yagouaroundi*.  
+
+
   - R Libraries
 
 ```{r}
-#| message: false
 #| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
 library(patchwork)
 library(mcmcplots)
 library(ggmcmc)
@@ -31,16 +37,13 @@ library(tidyverse)
 options(scipen = 999)
 ```
 
-## Data
-
   - Basemaps
 
 ```{r}
 #| label: basemaps
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
+#| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
 Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
@@ -59,66 +62,41 @@ Latam_no_islands <- bind_rows(list(Latam_countries %>%
                                      mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
                                      head(n=1) %>% dplyr::select(-area))) %>% st_union()
 
+hyagouaroundi_IUCN <- sf::st_read('big_data/hyagouaroundi_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
-
-  -   IUCN range distribution
-  
-```{r}
-#| label: iucn-map
-#| echo: true
-#| eval: true
-#| message: false
-#| fig-cap: "IUCN distribution in red. Expert range map (the offset) in grey"
-
-yaguarundi_IUCN <- sf::st_read('big_data/yaguarundi_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-# yaguarundi_expertMap <- readRDS('data/yaguarundi_expertMap.rds')
-
-MAP.IUCN <- tm_graticules(alpha = 0.3) +
-    tm_shape(Latam_countries) +
-    tm_fill(col='grey90') +
-    tm_borders(col='grey60', alpha = 0.4) +
-    # tm_shape(yaguarundi_expertMap) +
-    # tm_fill(col='grey20', alpha = 0.4, labels = 'expert range map') +
-    tm_shape(yaguarundi_IUCN) +
-    tm_fill(col='red', alpha = 0.4, labels = 'IUCN') +
-    tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
-
-MAP.IUCN 
-```
-
 
   - Species data and covariates
 
 ```{r}
 #| label: data
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
+#| code-fold: false
 
-PA_time1 <- readRDS('data/data_yaguarundi_PA_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev)) # remove NA's
-PA_time2 <- readRDS('data/data_yaguarundi_PA_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev)) # remove NA's
+PA_time1 <- readRDS('data/data_hyagouaroundi_PA_time1.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
+PA_time2 <- readRDS('data/data_hyagouaroundi_PA_time2.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
 
 # Presence-only data
-PO_time1 <- readRDS('data/data_yaguarundi_PO_time1.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_yaguarundi_PO_time2.rds') %>% 
-  filter(!is.na(env.npp) &!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
+PO_time1 <- readRDS('data/data_hyagouaroundi_PO_time1.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+PO_time2  <- readRDS('data/data_hyagouaroundi_PO_time2.rds') %>% 
+  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
 ```
 
-  -   Model output
+  -   Read model
   
 ```{r}
 #| label: model-output
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
+#| code-fold: false
 
 fitted.model <- readRDS('big_data/hyagouaroundi_model.rds') # deleted after model output
 
@@ -133,16 +111,21 @@ The `fitted.model` is an object of class `rjags`.
 
 ```{r}
 #| label: fitted-model
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 # labels for the linear predictor `b`
-L.fitted.model.b <- plab("b", list(Covariate = c('Intercept', 'env.npp', 'env.bio_15',
-                                                 'env.bio_7', 'env.elev', sprintf('spline%i', 1:18)))) # changes with n.spl
+L.fitted.model.b <- plab("b", 
+                         list(Covariate = c('Intercept', 
+                                            'cov.1',
+                                            'cov.2',
+                                            'cov.3', 
+                                            'cov.4', sprintf('spline%i', 1:18)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
-fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, par_labels = L.fitted.model.b, family="^b\\[")
+fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
+                                  par_labels = L.fitted.model.b,
+                                  family="^b\\[")
 
 # diagnostics
 ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/hyagouaroundi_model_diagnostics.pdf", param_page=3)
@@ -152,9 +135,8 @@ ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/hyagouaroundi_model_diagnostics.pd
   
 ```{r}
 #| label: traceplot
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 #| fig-height: 50
 
 ggs_traceplot(fitted.model.ggs.b)
@@ -171,14 +153,16 @@ ggs_traceplot(fitted.model.ggs.b)
 ggs_Rhat(fitted.model.ggs.b)
 ```
 
-### Probability of occurrence of the yaguarundi
-For each pre- and time2-periods, and the difference (time2-pre)
+### Probability of occurrence of *Herpailurus yagouaroundi*
+
+For each period: time1 and time2, and their difference (time2-time1)
 
 ```{r}
 #| label: predictions-map
 #| echo: true
 #| eval: true
 #| message: false
+#| warning: false
 
 P.pred <- fitted.model$BUGSoutput$mean$P.pred
 preds <- data.frame(PO_time1_time2, P.pred)
@@ -224,18 +208,16 @@ diffMAP <- tm_graticules(alpha = 0.3) +
 time1MAP
 time2MAP
 diffMAP
-
-# tmap_save(time1MAP, filename='docs/figs/hyagouaroundi_time1MAP.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
-# tmap_save(time2MAP, filename='docs/figs/hyagouaroundi_time2MAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
-# tmap_save(diffMAP, filename='docs/figs/hyagouaroundi_diffMAP.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
 ```
 
-### Standard deviation (SD) of the probability of occurrence of
+### Standard deviation (SD) of the probability of occurrence of *Herpailurus yagouaroundi*
+
 ```{r}
 #| label: sd-maps
 #| echo: true
 #| eval: true
 #| message: false
+#| warning: false
 
 P.pred.sd <- fitted.model$BUGSoutput$sd$P.pred
 preds.sd <- data.frame(PO_time1_time2, P.pred.sd)
@@ -273,12 +255,10 @@ time2MAP.sd <-  tm_graticules(alpha = 0.3) +
 
 time1MAP.sd
 time2MAP.sd
-
-# tmap_save(time1MAP.sd, filename='docs/figs/hyagouaroundi_time1MAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
-# tmap_save(time2MAP.sd, filename='docs/figs/hyagouaroundi_time2MAPsd.svg', dpi=300,  height = 7, width = 6, device = svglite::svglite)
 ```
 
 ### Bivariate map
+
 Map of the difference including the Standard deviation (SD) of the probability of occurrence as the transparency of the layer.  
 
 ```{r}
@@ -286,6 +266,7 @@ Map of the difference including the Standard deviation (SD) of the probability o
 #| echo: true
 #| eval: true
 #| message: false
+#| warning: false
 
 library(cols4all)
 library(pals)
@@ -305,8 +286,8 @@ bivcol = function(pal, nx = 3, ny = 3){
   mtext(tit)
 }
 
-yaguarundi.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
-yaguarundi.pal <- c(t(apply(yaguarundi.pal.pu_gn_bivd, 2, rev)))
+hyagouaroundi.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
+hyagouaroundi.pal <- c(t(apply(hyagouaroundi.pal.pu_gn_bivd, 2, rev)))
 
 ###
 
@@ -331,7 +312,6 @@ delta.GridMAP.sd <-  tm_graticules(alpha = 0.3) +
 
 delta.GridMAP.sd
 
-# tmap_save(delta.GridMAP.sd, filename='docs/figs/hyagouaroundi_deltaGridMAPsd.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 
 rast.stars <- c(stars::st_as_stars(rast2-rast1), stars::st_as_stars(rast.sd))
 names(rast.stars) <- c('diff', 'sd')
@@ -374,30 +354,30 @@ all_classes <- seq(1,15,1)
 rast_classes <- as_tibble(rast.bivariate['new_var']) %>% 
     distinct(new_var) %>% filter(!is.na(new_var)) %>% pull()
 absent_classes <- all_classes[!(all_classes %in% rast_classes)]
-yaguarundi.new.pal <- yaguarundi.pal[-c(absent_classes)]
+
+if (length(absent_classes)==0){
+  hyagouaroundi.new.pal <- hyagouaroundi.pal
+} else hyagouaroundi.new.pal <- hyagouaroundi.pal[-c(absent_classes[i])]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
 
 diffMAP.SD <- tm_graticules(alpha = 0.3) + 
   tm_shape(rast.bivariate) +
-  tm_raster("new_var", style= "cat", palette = yaguarundi.new.pal) +
+  tm_raster("new_var", style= "cat", palette = hyagouaroundi.new.pal) +
   tm_shape(Latam_countries) +
   tm_borders(col='grey60', alpha = 0.4) + 
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 diffMAP.SD
-
-# tmap_save(diffMAP.SD, filename='docs/figs/hyagouaroundi_diffMAPSD.svg', dpi=300, height = 7, width = 6, device = svglite::svglite)
 ```
 
 ### Countries thinning
 
 ```{r}
 #| label: country-thining
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 countryLevels <- cats(Latam.raster.countries)[[1]] #%>% mutate(value=value+1)
 rasterLevels <- levels(as.factor(PO_time1_time2$country))
@@ -447,10 +427,6 @@ acce_country <- ggplot(allPredictions)+
 
 acce_country
 
-# ggsave(plot = acce_country, filename='../docs/figs/acce_country.svg', 
-#        device = 'svg', width=10, height=10, dpi=300)
-
-
 # all countries
 acce_allcountries <- ggplot(allPredictions) +
   geom_line(aes(x = access, y  = preds, colour = name_en), show.legend = F)+
@@ -465,32 +441,28 @@ acce_allcountries
 
 ```{r}
 #| label: parameters-caterpillar-plot
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.npp', 'net primary production',
-                                    ifelse(Parameter=='env.elev', 'elevation',
-                                           ifelse(Parameter=='env.bio_7', 'temperature annual range',
-                                                  ifelse(Parameter=='env.bio_15', 'precipitation seasonality', Parameter)))))) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='cov.1', 'covariate 1 name',
+                                    ifelse(Parameter=='cov.4', 'covariate 2 name',
+                                           ifelse(Parameter=='cov.3', 'covariate 3 name',
+                                                  ifelse(Parameter=='cov.2', 'covariate 4 name', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')
 
 caterpiller.params
-
-# ggsave(plot = caterpiller.params, filename='docs/figs/hyagouaroundi_caterpiller.params.svg', device = 'svg', width=6, height=5, dpi=300)
 ```
 
-### Boxplot of time2erior densities of the predicted area in both time periods
+### Boxplot of posterior densities of the predicted area in both time periods
 
 ```{r}
 #| label: areas-boxplots
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 fitted.model.ggs.A <- ggmcmc::ggs(fitted.model.mcmc,  family="^A")
 
@@ -507,8 +479,6 @@ range.boxplot <- ggs_caterpillar(fitted.model.ggs.A, horizontal=FALSE, ) + theme
 
 range.boxplot
  
-# ggsave(plot = range.boxplot, filename='docs/figs/hyagouaroundi_range.boxplot.svg', device = 'svg', width=5, height=5, dpi=300)
-
 # CI 
 range.ci <- ggmcmc::ci(fitted.model.ggs.A) %>% 
     mutate(Parameter = fct_rev(Parameter)) %>% 
@@ -520,16 +490,13 @@ range.ci <- ggmcmc::ci(fitted.model.ggs.A) %>%
     labs(x='', y='Area (number of 100x100 km grid-cells)')
 
 range.ci
-# ggsave(plot = range.ci, filename='docs/figs/hyagouaroundi_range.ci.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 
-### time2erior distribution of range change (Area).
+### posterior distribution of range change (Area).
 
 ```{r}
 #| label: hpd-range-change
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -554,21 +521,17 @@ delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
     labs(y='Probability density', x=expression(Delta*'Area'))
 
 delta.A.plot
-
-# ggsave(plot = delta.A.plot, filename='docs/figs/hyagouaroundi_delta.A.plot.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 
-## time2erior predictive checks
+## posterior predictive checks
 
 ### PO
 
 #### Expected vs observed
 
 ```{r}
-#| label: time2erior-predictive-PO
-#| echo: true
-#| eval: true
+#| label: posterior-predictive-PO
 #| message: false
 #| warning: false
 
@@ -598,18 +561,15 @@ pp.PO.log10 <- ggplot(pred.PO, aes(x=counts, y=lambda), fill=NA) +
     theme_bw() 
 
 pp.PO | pp.PO.log10
-#pp.PO.sqrt
 
-# ggsave(plot = pp.PO | pp.PO.log10, filename='docs/figs/hyagouaroundi_pp.PO.svg', device = 'svg', width=7, height=5, dpi=300)
 ```
 
 #### Residual Diagnostics
 
 ```{r}
 #| label: residual-diagnostics-PO
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 library(DHARMa)
 
@@ -632,9 +592,8 @@ plotSimulatedResiduals(sim)
 
 ```{r}
 #| label: tjur2-PA
-#| echo: true
-#| eval: true
 #| message: false
+#| warning: false
 
 presabs <- PA_time1_time2$presabs
 psi <- fitted.model$BUGSoutput$mean$psi
@@ -658,21 +617,21 @@ pp.PA <- ggplot(pred.PA, aes(x=presabs, y=psi, col=presabs)) +
 
 pp.PA
 
-# ggsave(plot = pp.PA, filename='../docs/figs/pp.PA.svg', device = 'svg', width=5, height=5, dpi=300)
 ```
 
 #### AUC
 
 Source: [Calculate AUC in a JAGS model](https://gist.github.com/johnbaums/098bb760422801d10aed)
 
-- Calculate AUC from time2erior medians of sensitivity and 1-specificity
-- Compare to time2erior median of AUC
+- Calculate AUC from posterior medians of sensitivity and 1-specificity
+- Compare to posterior median of AUC
 
 ```{r}
 #| label: AUC-PA
 #| echo: true
 #| eval: false
 #| message: false
+#| warning: false
 
 library(jagstools) # devtools::install_github('johnbaums/jagstools')
 
@@ -684,15 +643,12 @@ sum((sens[-1]+sens[-length(sens)])/2 * -diff(fpr)) # auc
 
 # 
 jagsresults(fitted.model, 'auc')[, '50%']
-
 ```
 
 ### Grid-level change
 
 ```{r}
 #| label: grid-level-change
-#| echo: true
-#| eval: true
 #| message: false
 #| warning: false
 
@@ -711,8 +667,6 @@ grid.level.change <- bind_cols(range_change, numRecord_change) %>%
     theme_bw(base_size = 14)
 
 grid.level.change
-
-# ggsave(plot = grid.level.change, filename='../docs/figs/grid.level.change.svg', device = 'svg', width=8, height=8, dpi=300)
 
 ```
 

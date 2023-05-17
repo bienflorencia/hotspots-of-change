@@ -12,48 +12,44 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Analysis for the *Herpailurus yagouaroundi*, with new covariates: `npp`, `elev`, `bio7`, and `bio15`.
+Model run for *Herpailurus yagouaroundi* with the data prepared in the previous step (including species and covariates data).  
 
-## Load the data
-
-# Libraries
+  - R Libraries
 
 ```{r}
 #| label: libraries
 #| message: false
 #| warning: false
+#| code-fold: false
+
 library(sf)
 library(R2jags) # interface to JAGS
 library(tidyverse)
 ```
 
-### Data
+## Data
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: load-data
 #| message: false
 #| warning: false
+#| code-fold: false
 
 # Presence-absence data
 PA_time1 <- readRDS('data/data_hyagouaroundi_PA_time1.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev)) # remove NA's
+  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
 PA_time2 <- readRDS('data/data_hyagouaroundi_PA_time2.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev)) # remove NA's
-
+  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_hyagouaroundi_PO_time1.rds') %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_hyagouaroundi_PO_time2.rds')  %>%
-  filter(!is.na(env.npp) &!is.na(env.bio_15) & !is.na(env.bio_7) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
-
+  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
 ```
-
 
 ## Splines
 
@@ -62,18 +58,16 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
   -   Fit the **GAM model**.  
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: gam-model
 #| message: false
 #| warning: false
 
-k = 10
+k = 9
 
-gam.formula <- formula(count ~ env.npp + 
-                               env.bio_15 + 
-                               env.bio_7 + 
-                               env.elev +
+gam.formula <- formula(count ~ cov.1 + 
+                               cov.2 + 
+                               cov.3 + 
+                               cov.4 +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
 
@@ -87,8 +81,6 @@ summary(model.gam)
   -   Get the **jagam splines** values: using `mgcv::jagam`.  
   
 ```{r}
-#| echo: true
-#| eval: true
 #| label: jagam-splines
 #| message: false
 #| warning: false
@@ -113,25 +105,23 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 ## Prepare data for JAGS
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: data-for-jags
 #| message: false
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'env.npp' = PA_time1_time2$env.npp,
-              'env.bio_15' = PA_time1_time2$env.bio_15,
-              'env.bio_7' = PA_time1_time2$env.bio_7,
-              'env.elev' = PA_time1_time2$env.elev,
+              'cov.1' = PA_time1_time2$cov.1,
+              'cov.2' = PA_time1_time2$cov.2,
+              'cov.3' = PA_time1_time2$cov.3,
+              'cov.4' = PA_time1_time2$cov.4,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'env.npp' = PO_time1_time2$env.npp,
-              'env.bio_15' = PO_time1_time2$env.bio_15,
-              'env.bio_7' = PO_time1_time2$env.bio_7,
-              'env.elev' = PO_time1_time2$env.elev,
+              'cov.1' = PO_time1_time2$cov.1,
+              'cov.2' = PO_time1_time2$cov.2,
+              'cov.3' = PO_time1_time2$cov.3,
+              'cov.4' = PO_time1_time2$cov.4,
               jagam.PO.time1, 
               jagam.PO.time2)
 
@@ -183,8 +173,6 @@ jags.data <- list(n.PA = nrow(PA_time1_time2),
 ## Specify the model in BUGS language
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: BUGS-model
 #| message: false
 #| warning: false
@@ -323,8 +311,6 @@ cat('model
 ## Inits function
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: inits
 #| message: false
 #| warning: false
@@ -340,15 +326,12 @@ jags.inits <- function(model = model.gam)
 ## Fit the model
 
 ```{r}
-#| echo: true
-#| eval: true
 #| label: run
 #| message: false
 #| warning: false
+#| eval: true
 
 start.time <- Sys.time()
-
-# jags.data <- readRDS('data/tmp_jags_data.rds')
 
 hyagouaroundi_model <- R2jags::jags(data=jags.data,
                                  model.file='models/hyagouaroundi_model.txt',
@@ -360,15 +343,14 @@ hyagouaroundi_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=100000,
+                                n.iter=200000,
                                 n.thin=10,
-                                n.burnin=10000,
+                                n.burnin=20000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(hyagouaroundi_model, 'D:/Flo/HNC_models/hyagouaroundi_model.rds')
-
+saveRDS(hyagouaroundi_model, 'big_data/hyagouaroundi_model.rds')
 ```
