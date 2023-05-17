@@ -1,5 +1,5 @@
 ---
-title: "SPECIES Model Run"
+title: "speciesLatin Model Run"
 format: 
   html:
     toc: true
@@ -12,7 +12,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Model run for *SPECIES* with the data prepared in the previous step (including species and covariates data).  
+Model run for *speciesLatin* with the data prepared in the previous step (including species and covariates data).  
 
   - R Libraries
 
@@ -36,15 +36,15 @@ library(tidyverse)
 #| code-fold: false
 
 # Presence-absence data
-PA_time1 <- readRDS('data/data_SPECIES_PA_time1.rds') %>%
+PA_time1 <- readRDS('data/data_speciesAbrev_PA_time1.rds') %>%
   filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
-PA_time2 <- readRDS('data/data_SPECIES_PA_time2.rds') %>%
+PA_time2 <- readRDS('data/data_speciesAbrev_PA_time2.rds') %>%
   filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
 
 # Presence-only data
-PO_time1 <- readRDS('data/data_SPECIES_PO_time1.rds') %>%
+PO_time1 <- readRDS('data/data_speciesAbrev_PO_time1.rds') %>%
   filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_SPECIES_PO_time2.rds')  %>%
+PO_time2  <- readRDS('data/data_speciesAbrev_PO_time2.rds')  %>%
   filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
@@ -304,7 +304,7 @@ cat('model
       delta.Grid[j] <- P.pred[n.PO.half+j] - P.pred[j]
     }
   }
-', file = 'models/SPECIES_model.txt')
+', file = 'models/speciesAbrev_model.txt')
 ```
 
 
@@ -333,8 +333,8 @@ jags.inits <- function(model = model.gam)
 
 start.time <- Sys.time()
 
-SPECIES_model <- R2jags::jags(data=jags.data,
-                                 model.file='models/SPECIES_model.txt',
+speciesAbrev_model <- R2jags::jags(data=jags.data,
+                                 model.file='models/speciesAbrev_model.txt',
                                 parameters.to.save=c('b', 'P.pred', 
                                             'A.time1', 'A.time2', 'delta.A',
                                             'alpha0', 'alpha1', 'beta',
@@ -352,5 +352,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(SPECIES_model, 'big_data/SPECIES_model.rds')
+saveRDS(speciesAbrev_model, 'big_data/speciesAbrev_model.rds')
 ```

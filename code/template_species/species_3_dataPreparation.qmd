@@ -1,5 +1,5 @@
 ---
-title: "SPECIES Data Preparation"
+title: "speciesLatin Data Preparation"
 format: 
   html:
     toc: true
@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *SPECIES*, with the covariates `bio7`, `bio4`, `npp`, and `nontree` (selected in the previous step).
+Data preparation for modelling for *speciesLatin*, with the covariates `bio2`, `bio14`, `elev`, and `grass` (selected in the previous step).
 
   - R Libraries
 
@@ -50,13 +50,13 @@ Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 
 # IUCN range distribution
-SPECIES_IUCN <- sf::st_read('big_data/SPECIES_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+speciesAbrev_IUCN <- sf::st_read('big_data/speciesAbrev_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 
 MAP.IUCN <- tm_graticules(alpha = 0.3) +
     tm_shape(Latam_countries) +
     tm_fill(col='grey90') +
     tm_borders(col='grey60', alpha = 0.4) +
-    tm_shape(SPECIES_IUCN) +
+    tm_shape(speciesAbrev_IUCN) +
     tm_fill(col='grey20', alpha = 0.4) +
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -74,12 +74,12 @@ MAP.IUCN
 #| code-fold: false
 
 # presence-only rasters
-PO_SPECIES_time1_raster <- terra::rast('data/PO_SPECIES_time1_raster.tif')
-PO_SPECIES_time2_raster <- terra::rast('data/PO_SPECIES_time2_raster.tif')
+PO_speciesAbrev_time1_raster <- terra::rast('data/PO_speciesAbrev_time1_raster.tif')
+PO_speciesAbrev_time2_raster <- terra::rast('data/PO_speciesAbrev_time2_raster.tif')
 
 # blobs
-PA_SPECIES_time1_blobs <- readRDS('data/PA_SPECIES_time1_blobs.rds')
-PA_SPECIES_time2_blobs <- readRDS('data/PA_SPECIES_time2_blobs.rds')
+PA_speciesAbrev_time1_blobs <- readRDS('data/PA_speciesAbrev_time1_blobs.rds')
+PA_speciesAbrev_time2_blobs <- readRDS('data/PA_speciesAbrev_time2_blobs.rds')
 ```
 
 
@@ -87,10 +87,10 @@ PA_SPECIES_time2_blobs <- readRDS('data/PA_SPECIES_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio7`: Temperature Annual Range
- - `bio4`: Mean Temperature of Warmest Quarter
- - `npp`: Net Primary Production (NPP)
- - `nontree`: Percentage of No Tree Cover
+ - `bio2`: Temperature Annual Range
+ - `bio14`: Mean Temperature of Warmest Quarter
+ - `elev`: Net Primary Production (elev)
+ - `grass`: Percentage of No Tree Cover
 
 ``` {r}
 #| echo: true
@@ -99,16 +99,14 @@ The following covariates were chosen using the 'variableSelection' script:
 #| message: false
 #| warning: false
 
+elev <- rast(here::here('big_data/elev_high.tif'))
 bio <- rast(here::here('big_data/bio_high.tif'))
-nontree <- rast(here::here('big_data/nontree_high.tif'))
-nontree <- resample(nontree, bio, method='bilinear') 
-names(nontree) <- 'nontree'
-npp <- rast(here::here('big_data/npp_high.tif'))
-npp <- resample(npp, bio, method='bilinear') 
-names(npp) <- 'npp'
+grass <- rast(here::here('big_data/grass_high.tif'))
+grass <- resample(grass, bio, method='bilinear') 
+names(grass) <- 'grass'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_4')]], nontree, npp) %>% 
+env <- c(bio[[c('bio_2','bio_14')]], grass, elev) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -130,38 +128,38 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
   classify(cbind(NaN, NA))
 
-nontree.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["nontree"]]) +
-    tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
+grass.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["grass"]]) +
+    tm_raster(palette = 'YlGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-npp.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["npp"]]) +
-    tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
+elev.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["elev"]]) +
+    tm_raster(palette = 'BrBG', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_7.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_7"]]) +
-    tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
+bio_2.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_2"]]) +
+    tm_raster(palette = 'PuRd', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_4.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_4"]]) +
-    tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
+bio_14.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_resampled[["bio_14"]]) +
+    tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-nontree.plot 
-npp.plot
-bio_7.plot
-bio_4.plot
+grass.plot 
+elev.plot
+bio_2.plot
+bio_14.plot
 ```
 
 ### Thinning parametres 
@@ -212,49 +210,49 @@ acce.plot
 #| warning: false
 
 # calculate area in each raster cell
-PO_SPECIES.area <- terra::cellSize(PO_SPECIES_time1_raster[[1]], unit='m', transform=F) %>% 
+PO_speciesAbrev.area <- terra::cellSize(PO_speciesAbrev_time1_raster[[1]], unit='m', transform=F) %>% 
   classify(cbind(NaN, NA)) %>% terra::values()
 
 # calculate coordinates for each raster cell
-PO_SPECIES.coords <- terra::xyFromCell(PO_SPECIES_time1_raster, cell=1:ncell(PO_SPECIES_time1_raster)) %>% as.data.frame()
-names(PO_SPECIES.coords) <- c('X', 'Y')
+PO_speciesAbrev.coords <- terra::xyFromCell(PO_speciesAbrev_time1_raster, cell=1:ncell(PO_speciesAbrev_time1_raster)) %>% as.data.frame()
+names(PO_speciesAbrev.coords) <- c('X', 'Y')
 
 # number of cells in the rasters (both the same)
-PO_SPECIES.cell <- 1:ncell(PO_SPECIES_time1_raster)
+PO_speciesAbrev.cell <- 1:ncell(PO_speciesAbrev_time1_raster)
 
 # with the environmental variables values for each cell
-PO_SPECIES.env <- env_100k_resampled[] # scaled values
+PO_speciesAbrev.env <- env_100k_resampled[] # scaled values
 
 # with the mean accessibility value for each cell
-PO_SPECIES.acce <- acce_100k_resampled # scaled values
+PO_speciesAbrev.acce <- acce_100k_resampled # scaled values
 
 # calculate point count in each raster cell
-PO_SPECIES_time1.count <- PO_SPECIES_time1_raster %>%
+PO_speciesAbrev_time1.count <- PO_speciesAbrev_time1_raster %>%
     classify(cbind(NaN, NA)) %>% terra::values() %>% as_tibble %>% 
   dplyr::select(count)
 
-PO_SPECIES_time2.count <- PO_SPECIES_time2_raster %>%
+PO_speciesAbrev_time2.count <- PO_speciesAbrev_time2_raster %>%
     classify(cbind(NaN, NA)) %>% terra::values() %>% as_tibble %>% 
   dplyr::select(count)
 
-PO_SPECIES.countries <- Latam.raster.countries %>% classify(cbind(NaN, NA))
+PO_speciesAbrev.countries <- Latam.raster.countries %>% classify(cbind(NaN, NA))
 
 # save time1 and time2 datasets 
-PO_SPECIES_time1.model.data <- data.frame(PO_SPECIES.coords,
-                                            pixel = PO_SPECIES.cell[],
-                                            area = PO_SPECIES.area,
-                                            pt.count = PO_SPECIES_time1.count,
-                                            env = PO_SPECIES.env,
-                                            acce = PO_SPECIES.acce[], 
-                                            country = PO_SPECIES.countries[])
+PO_speciesAbrev_time1.model.data <- data.frame(PO_speciesAbrev.coords,
+                                            pixel = PO_speciesAbrev.cell[],
+                                            area = PO_speciesAbrev.area,
+                                            pt.count = PO_speciesAbrev_time1.count,
+                                            env = PO_speciesAbrev.env,
+                                            acce = PO_speciesAbrev.acce[], 
+                                            country = PO_speciesAbrev.countries[])
 
-PO_SPECIES_time2.model.data <- data.frame(PO_SPECIES.coords,
-                                            pixel = PO_SPECIES.cell[],
-                                            area = PO_SPECIES.area,
-                                            pt.count = PO_SPECIES_time2.count,
-                                            env = PO_SPECIES.env,
-                                            acce = PO_SPECIES.acce[], 
-                                            country = PO_SPECIES.countries[])
+PO_speciesAbrev_time2.model.data <- data.frame(PO_speciesAbrev.coords,
+                                            pixel = PO_speciesAbrev.cell[],
+                                            area = PO_speciesAbrev.area,
+                                            pt.count = PO_speciesAbrev_time2.count,
+                                            env = PO_speciesAbrev.env,
+                                            acce = PO_speciesAbrev.acce[], 
+                                            country = PO_speciesAbrev.countries[])
 
 ```
 
@@ -267,8 +265,8 @@ PO_SPECIES_time2.model.data <- data.frame(PO_SPECIES.coords,
 #| message: false
 #| warning: false
 
-head(PO_SPECIES_time1.model.data) %>% kable()
-head(PO_SPECIES_time2.model.data) %>% kable()
+head(PO_speciesAbrev_time1.model.data) %>% kable()
+head(PO_speciesAbrev_time2.model.data) %>% kable()
 ```
 
 ### Presence-absence data 
@@ -281,14 +279,14 @@ head(PO_SPECIES_time2.model.data) %>% kable()
 #| warning: false
 
 # calculate area, coordinates, and point count in each raster cell
-PA_SPECIES.area.time1 <- as.numeric(PA_SPECIES_time1_blobs$blobArea) 
-PA_SPECIES.area.time2 <- as.numeric(PA_SPECIES_time2_blobs$blobArea) 
+PA_speciesAbrev.area.time1 <- as.numeric(PA_speciesAbrev_time1_blobs$blobArea) 
+PA_speciesAbrev.area.time2 <- as.numeric(PA_speciesAbrev_time2_blobs$blobArea) 
 
-PA_SPECIES.coords.time1 <- st_coordinates(st_centroid(PA_SPECIES_time1_blobs)) %>% as_tibble()
-PA_SPECIES.coords.time2 <- st_coordinates(st_centroid(PA_SPECIES_time2_blobs)) %>% as_tibble()
+PA_speciesAbrev.coords.time1 <- st_coordinates(st_centroid(PA_speciesAbrev_time1_blobs)) %>% as_tibble()
+PA_speciesAbrev.coords.time2 <- st_coordinates(st_centroid(PA_speciesAbrev_time2_blobs)) %>% as_tibble()
 
-PA_SPECIES.pixel.time1 <- terra::cells(PO_SPECIES_time1_raster, vect(st_centroid(PA_SPECIES_time1_blobs))) 
-PA_SPECIES.pixel.time2 <- terra::cells(PO_SPECIES_time2_raster, vect(st_centroid(PA_SPECIES_time2_blobs))) 
+PA_speciesAbrev.pixel.time1 <- terra::cells(PO_speciesAbrev_time1_raster, vect(st_centroid(PA_speciesAbrev_time1_blobs))) 
+PA_speciesAbrev.pixel.time2 <- terra::cells(PO_speciesAbrev_time2_raster, vect(st_centroid(PA_speciesAbrev_time2_blobs))) 
 
 # mode to calculate the most frequent value for the blob - this needs to be changed to getting the %are for each landcover
 mode_raster  <- function(x, na.rm = FALSE) {
@@ -297,25 +295,25 @@ mode_raster  <- function(x, na.rm = FALSE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-PA_SPECIES.env.time1 <- terra::extract(x = env, y = vect(PA_SPECIES_time1_blobs), fun = mean, rm.na=T) %>% 
+PA_speciesAbrev.env.time1 <- terra::extract(x = env, y = vect(PA_speciesAbrev_time1_blobs), fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_SPECIES.env.time2 <- terra::extract(x = env, y = vect(PA_SPECIES_time2_blobs), fun = mean, rm.na=T) %>% 
+PA_speciesAbrev.env.time2 <- terra::extract(x = env, y = vect(PA_speciesAbrev_time2_blobs), fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_SPECIES_time1.model.data <- data.frame(pixel = PA_SPECIES.pixel.time1, 
-                                            PA_SPECIES.coords.time1,
-                                            area = PA_SPECIES.area.time1,
-                                            presabs = PA_SPECIES_time1_blobs$presence,
-                                            effort = PA_SPECIES_time1_blobs$effort,
-                                            env = PA_SPECIES.env.time1[,2:5])
+PA_speciesAbrev_time1.model.data <- data.frame(pixel = PA_speciesAbrev.pixel.time1, 
+                                            PA_speciesAbrev.coords.time1,
+                                            area = PA_speciesAbrev.area.time1,
+                                            presabs = PA_speciesAbrev_time1_blobs$presence,
+                                            effort = PA_speciesAbrev_time1_blobs$effort,
+                                            env = PA_speciesAbrev.env.time1[,2:5])
 
-PA_SPECIES_time2.model.data <- data.frame(pixel = PA_SPECIES.pixel.time2, 
-                                            PA_SPECIES.coords.time2,
-                                            area = PA_SPECIES.area.time2,
-                                            presabs = PA_SPECIES_time2_blobs$presence,
-                                            effort = PA_SPECIES_time2_blobs$effort,
-                                            env = PA_SPECIES.env.time2[,2:5])
+PA_speciesAbrev_time2.model.data <- data.frame(pixel = PA_speciesAbrev.pixel.time2, 
+                                            PA_speciesAbrev.coords.time2,
+                                            area = PA_speciesAbrev.area.time2,
+                                            presabs = PA_speciesAbrev_time2_blobs$presence,
+                                            effort = PA_speciesAbrev_time2_blobs$effort,
+                                            env = PA_speciesAbrev.env.time2[,2:5])
 
 ```
 
@@ -328,8 +326,8 @@ PA_SPECIES_time2.model.data <- data.frame(pixel = PA_SPECIES.pixel.time2,
 #| message: false
 #| warning: false
 
-head(PA_SPECIES_time1.model.data) %>% kable()
-head(PA_SPECIES_time2.model.data) %>% kable()
+head(PA_speciesAbrev_time1.model.data) %>% kable()
+head(PA_speciesAbrev_time2.model.data) %>% kable()
 ```
 
 
@@ -343,10 +341,10 @@ head(PA_SPECIES_time2.model.data) %>% kable()
 #| warning: false
 #| code-fold: false
 
-saveRDS(PO_SPECIES_time1.model.data, 'data/data_SPECIES_PO_time1.rds')
-saveRDS(PO_SPECIES_time2.model.data, 'data/data_SPECIES_PO_time2.rds')
-saveRDS(PA_SPECIES_time1.model.data, 'data/data_SPECIES_PA_time1.rds')
-saveRDS(PA_SPECIES_time2.model.data, 'data/data_SPECIES_PA_time2.rds')
+saveRDS(PO_speciesAbrev_time1.model.data, 'data/data_speciesAbrev_PO_time1.rds')
+saveRDS(PO_speciesAbrev_time2.model.data, 'data/data_speciesAbrev_PO_time2.rds')
+saveRDS(PA_speciesAbrev_time1.model.data, 'data/data_speciesAbrev_PA_time1.rds')
+saveRDS(PA_speciesAbrev_time2.model.data, 'data/data_speciesAbrev_PA_time2.rds')
 ```
 
 
@@ -378,8 +376,8 @@ getRangeIQR <- function(env_PX){
 
 # covariates for PA
 env_PA <- terra::extract(x = env, 
-                         y = rbind(vect(PA_SPECIES_time1_blobs), 
-                                   vect(PA_SPECIES_time2_blobs)), 
+                         y = rbind(vect(PA_speciesAbrev_time1_blobs), 
+                                   vect(PA_speciesAbrev_time2_blobs)), 
                                      fun = mean, rm.na=T) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) 
 

@@ -1,5 +1,5 @@
 ---
-title: "SPECIES Variable Selection"
+title: "speciesLatin Variable Selection"
 format: 
   html:
     toc: true
@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Variable Selection for *SPECIES*, using the data generated in the previous step.
+Variable Selection for *speciesLatin*, using the data generated in the previous step.
 
   - R Libraries
 
@@ -100,7 +100,7 @@ rm(bio, elev, urban, barren, water,
 gc()
 ```
 
-## Species' preferences
+## speciesLatin' preferences
 
 We will use the data from both periods
 
@@ -111,8 +111,8 @@ We will use the data from both periods
 #| message: false
 #| tbl-cap: Presence-absence data for the second period
 
-PA_time1 <- readRDS('data/PA_SPECIES_time1_blobs.rds')%>% ungroup()
-PA_time2 <- readRDS('data/PA_SPECIES_time2_blobs.rds')%>% ungroup()
+PA_time1 <- readRDS('data/PA_speciesAbrev_time1_blobs.rds')%>% ungroup()
+PA_time2 <- readRDS('data/PA_speciesAbrev_time2_blobs.rds')%>% ungroup()
 
 PA_time1 %>% st_drop_geometry() %>% head() %>% kable()
 PA_time2 %>% st_drop_geometry() %>% head() %>% kable()
