@@ -185,7 +185,7 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
 ```{r}
 #| echo: true
 #| eval: true
-#| label: covariates-plots
+#| label: thinning-plots
 #| message: false
 #| warning: false
 #| code-fold: false
