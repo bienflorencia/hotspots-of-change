@@ -112,8 +112,10 @@ env <- c(bio[[c('bio_10','bio_17')]], nontree, npp) %>%
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA)) %>% scale() # scaled values to 0 mean and sd of 1
+env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+  classify(cbind(NaN, NA))
+
+env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean and sd of 1
 ```
 
 #### Plots
@@ -126,33 +128,29 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 #| warning: false
 #| code-fold: false
 
-# use unscaled values
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA))
-
 nontree.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["nontree"]]) +
+    tm_shape(env_100k_unscaled[["nontree"]]) +
     tm_raster(palette = 'YlGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 npp.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["npp"]]) +
+    tm_shape(env_100k_unscaled[["npp"]]) +
     tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_10.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_10"]]) +
+    tm_shape(env_100k_unscaled[["bio_10"]]) +
     tm_raster(palette = 'YlOrRd', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_17.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_17"]]) +
+    tm_shape(env_100k_unscaled[["bio_17"]]) +
     tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
