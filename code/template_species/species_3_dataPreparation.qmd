@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *speciesLatin*, with the covariates `bio2`, `bio14`, `elev`, and `grass` (selected in the previous step).
+Data preparation for modelling for *speciesLatin*, with the covariates `cov.1`, `cov.2`, `cov.3`, and `cov.4` (selected in the previous step).
 
   - R Libraries
 
@@ -87,10 +87,10 @@ PA_speciesAbrev_time2_blobs <- readRDS('data/PA_speciesAbrev_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio2`: Temperature Annual Range
- - `bio14`: Mean Temperature of Warmest Quarter
- - `elev`: Net Primary Production (elev)
- - `grass`: Percentage of No Tree Cover
+ - `cov.1`: Temperature Annual Range
+ - `cov.2`: Mean Temperature of Warmest Quarter
+ - `cov.3`: Net Primary Production (cov.3)
+ - `cov.4`: Percentage of No Tree Cover
 
 ``` {r}
 #| echo: true
@@ -99,19 +99,21 @@ The following covariates were chosen using the 'variableSelection' script:
 #| message: false
 #| warning: false
 
-elev <- rast(here::here('big_data/elev_high.tif'))
+cov.3 <- rast(here::here('big_data/cov.3_high.tif'))
 bio <- rast(here::here('big_data/bio_high.tif'))
-grass <- rast(here::here('big_data/grass_high.tif'))
-grass <- resample(grass, bio, method='bilinear') 
-names(grass) <- 'grass'
+cov.4 <- rast(here::here('big_data/cov.4_high.tif'))
+cov.4 <- resample(cov.4, bio, method='bilinear') 
+names(cov.4) <- 'cov.4'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_2','bio_14')]], grass, elev) %>% 
+env <- c(bio[[c('cov.1','cov.2')]], cov.4, cov.3) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA)) %>% scale() # scaled values to 0 mean and sd of 1
+env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+  classify(cbind(NaN, NA))
+
+env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean and sd of 1
 ```
 
 #### Plots
@@ -124,42 +126,39 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 #| warning: false
 #| code-fold: false
 
-# use unscaled values
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA))
 
-grass.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["grass"]]) +
+cov.4.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["cov.4"]]) +
     tm_raster(palette = 'YlGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-elev.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["elev"]]) +
+cov.3.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["cov.3"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_2.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_2"]]) +
+cov.1.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["cov.1"]]) +
     tm_raster(palette = 'PuRd', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_14.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_14"]]) +
+cov.2.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["cov.2"]]) +
     tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-grass.plot 
-elev.plot
-bio_2.plot
-bio_14.plot
+cov.4.plot 
+cov.3.plot
+cov.1.plot
+cov.2.plot
 ```
 
 ### Thinning parametres 
