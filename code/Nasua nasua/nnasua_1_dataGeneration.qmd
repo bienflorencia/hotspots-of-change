@@ -80,6 +80,7 @@ data_carnivores_PO %>% filter(species == 'Nasua nasua') %>% filter(year>=2000) %
 
 # Presence-absence
 data_carnivores_PA %>% filter(species == 'Nasua nasua' & presence ==1) %>% 
+  filter(countryCode!='MX') %>%  # this record is not reliable
   mutate(period=ifelse(year(date_start)<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
   group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
 ```
@@ -98,6 +99,7 @@ Blobs contain data on total effort, total temporal span, a list of the records I
 
 data_PA_GIS <- data_carnivores_PA %>% 
   filter(species == 'Nasua nasua') %>% 
+  filter(!(countryCode=='CR' | countryCode=='GT' | countryCode=='MX' | countryCode=='PA')) %>% # these records are not reliable
   mutate(year=lubridate::year(date_end)) %>% 
   filter(year>=2000, year<=2021) %>% 
   as.data.frame() %>% 
