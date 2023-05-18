@@ -127,32 +127,32 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 #| code-fold: false
 
 # use unscaled values
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
   classify(cbind(NaN, NA))
 
 tree.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["tree"]]) +
+    tm_shape(env_100k_unscaled[["tree"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 npp.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["npp"]]) +
+    tm_shape(env_100k_unscaled[["npp"]]) +
     tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_10.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_10"]]) +
+    tm_shape(env_100k_unscaled[["bio_10"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_17.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_17"]]) +
+    tm_shape(env_100k_unscaled[["bio_17"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
