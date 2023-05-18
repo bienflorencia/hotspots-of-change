@@ -73,12 +73,12 @@ Check data for each years on example species
 
 # Presence-only
 data_carnivores_PO %>% filter(species == 'Leopardus pardalis') %>% filter(year>=2000) %>% 
-  mutate(period=ifelse(year<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
+  mutate(period=ifelse(year<2014, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
   group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
 
 # Presence-absence
 data_carnivores_PA %>% filter(species == 'Leopardus pardalis' & presence ==1) %>% 
-  mutate(period=ifelse(year(date_start)<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
+  mutate(period=ifelse(year(date_start)<2014, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
   group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
 ```
 
@@ -327,7 +327,7 @@ gg_PO_time1 + gg_PO_time2
 
 ```{r}
 #| label: save-data
-#| eval: false
+#| eval: true
 #| message: false
 #| warning: false
 #| code-fold: false
