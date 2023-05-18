@@ -110,8 +110,10 @@ env <- c(bio[[c('bio_7','bio_15')]], npp, elev) %>%
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA)) %>% scale() # scaled values to 0 mean and sd of 1
+env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+  classify(cbind(NaN, NA))
+
+env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean and sd of 1
 ```
 
 #### Plots
@@ -124,33 +126,29 @@ env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 #| warning: false
 #| code-fold: false
 
-# use unscaled values
-env_100k_resampled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
-  classify(cbind(NaN, NA))
-
 elev.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["elev"]]) +
+    tm_shape(env_100k_unscaled[["elev"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 npp.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["npp"]]) +
+    tm_shape(env_100k_unscaled[["npp"]]) +
     tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_7.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_7"]]) +
+    tm_shape(env_100k_unscaled[["bio_7"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_15.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_resampled[["bio_15"]]) +
+    tm_shape(env_100k_unscaled[["bio_15"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
