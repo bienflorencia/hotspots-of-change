@@ -277,7 +277,7 @@ variables_ranger <- importance(ranger) %>% as_tibble(rownames = 'var') %>% arran
 
 Correlation between the six more important variables detected.
 
-  - Boosted regression tree: `r variables_brt`
+  - Boosted regression tree: `variables_brt`
   - Random forest: `r variables_rf`
   - Ranger: `r variables_ranger`
 
