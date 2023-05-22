@@ -149,7 +149,7 @@ PO.expert = PO_time1_time2$expert
 n.country <- length(unique(PO.country))
 
 #global effort time1/time2
-global.effort = 0.2715625
+global.effort <- rep(0.2715625, nrow(PO_time1_time2))
 
 jags.data <- list(n.PA = nrow(PA_time1_time2),
                   y.PA = PA_time1_time2$presabs, 
@@ -257,8 +257,8 @@ cat('model
         nu[j] <- area.PO[j] * exp(eta.PO[j]) 
 
         # thinning: the true lambda
-        lambda[j] <- nu[j] * P.ret[j]
-        #lambda[(n.PO.half+1):n.PO] <- lambda[j] * global.effort
+        lambda[1:n.PO.half] <- nu[j] * P.ret[j]                     #time1
+        lambda[(n.PO.half+1):n.PO] <- lambda[j] * global.effort[j]  #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
