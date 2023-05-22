@@ -7,6 +7,7 @@ format:
     smooth-scroll: true
     html-math-method: katex
     code-fold: true
+self-contained: true
 editor: source
 author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
@@ -76,15 +77,15 @@ Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 #| code-fold: false
 
 PA_time1 <- readRDS('data/data_lpardalis_PA_time1.rds') %>% 
-  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.tree) &!is.na(env.bio_17) & !is.na(env.npp)) # remove NA's
 PA_time2 <- readRDS('data/data_lpardalis_PA_time2.rds') %>% 
-  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.tree) &!is.na(env.bio_17) & !is.na(env.npp)) # remove NA's
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_lpardalis_PO_time1.rds') %>% 
-  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.tree) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds') %>% 
-  filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.tree) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -117,10 +118,10 @@ The `fitted.model` is an object of class `rjags`.
 # labels for the linear predictor `b`
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
-                                            'cov.1',
-                                            'cov.2',
-                                            'cov.3', 
-                                            'cov.4', sprintf('spline%i', 1:18)))) # changes with n.spl
+                                            'env.bio_10',
+                                            'env.bio_17',
+                                            'env.tree', 
+                                            'env.npp', sprintf('spline%i', 1:18)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -357,7 +358,8 @@ absent_classes <- all_classes[!(all_classes %in% rast_classes)]
 
 if (length(absent_classes)==0){
   lpardalis.new.pal <- lpardalis.pal
-} else lpardalis.new.pal <- lpardalis.pal[-c(absent_classes[i])]
+} else lpardalis.new.pal <- lpardalis.pal[-c(absent_classes)]
+
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
@@ -446,10 +448,10 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='cov.1', 'covariate 1 name',
-                                    ifelse(Parameter=='cov.4', 'covariate 2 name',
-                                           ifelse(Parameter=='cov.3', 'covariate 3 name',
-                                                  ifelse(Parameter=='cov.2', 'covariate 4 name', Parameter)))))) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'mean temperature of the warmest quarter',
+                                    ifelse(Parameter=='env.npp', 'npp',
+                                           ifelse(Parameter=='env.tree', 'percentage of tree cover',
+                                                  ifelse(Parameter=='env.bio_17', 'precipitation of the driest quarter', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')

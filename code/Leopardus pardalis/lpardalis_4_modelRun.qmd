@@ -7,6 +7,7 @@ format:
     smooth-scroll: true
     html-math-method: katex
     code-fold: true
+self-contained: true
 editor: source
 author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
@@ -37,15 +38,15 @@ library(tidyverse)
 
 # Presence-absence data
 PA_time1 <- readRDS('data/data_lpardalis_PA_time1.rds') %>%
-  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp)) # remove NA's
 PA_time2 <- readRDS('data/data_lpardalis_PA_time2.rds') %>%
-  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp)) # remove NA's
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_lpardalis_PO_time1.rds') %>%
-  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds')  %>%
-  filter(!is.na(cov.1) &!is.na(cov.2) & !is.na(cov.3) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -62,12 +63,12 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 9
+k = 10
 
-gam.formula <- formula(count ~ cov.1 + 
-                               cov.2 + 
-                               cov.3 + 
-                               cov.4 +
+gam.formula <- formula(count ~ env.bio_10 + 
+                               env.bio_17 + 
+                               env.tree + 
+                               env.npp +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
 
@@ -110,18 +111,18 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'cov.1' = PA_time1_time2$cov.1,
-              'cov.2' = PA_time1_time2$cov.2,
-              'cov.3' = PA_time1_time2$cov.3,
-              'cov.4' = PA_time1_time2$cov.4,
+              'env.bio_10' = PA_time1_time2$env.bio_10,
+              'env.bio_17' = PA_time1_time2$env.bio_17,
+              'env.tree' = PA_time1_time2$env.tree,
+              'env.npp' = PA_time1_time2$env.npp,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'cov.1' = PO_time1_time2$cov.1,
-              'cov.2' = PO_time1_time2$cov.2,
-              'cov.3' = PO_time1_time2$cov.3,
-              'cov.4' = PO_time1_time2$cov.4,
+              'env.bio_10' = PO_time1_time2$env.bio_10,
+              'env.bio_17' = PO_time1_time2$env.bio_17,
+              'env.tree' = PO_time1_time2$env.tree,
+              'env.npp' = PO_time1_time2$env.npp,
               jagam.PO.time1, 
               jagam.PO.time2)
 
@@ -147,6 +148,9 @@ PO.expert = PO_time1_time2$expert
 #number of countries
 n.country <- length(unique(PO.country))
 
+#global effort time1/time2
+global.effort = 0.2715625
+
 jags.data <- list(n.PA = nrow(PA_time1_time2),
                   y.PA = PA_time1_time2$presabs, 
                   X.PA = PA.X,
@@ -159,6 +163,7 @@ jags.data <- list(n.PA = nrow(PA_time1_time2),
                   area.PO = PO_time1_time2$area, 
                   acce = PO_time1_time2$acce,
                   country = PO.country,
+                  global.effort = global.effort,
                   n.X = n.X,
                   n.cntr = n.country,
                   n.par = n.par,
@@ -253,6 +258,7 @@ cat('model
 
         # thinning: the true lambda
         lambda[j] <- nu[j] * P.ret[j]
+        #lambda[(n.PO.half+1):n.PO] <- lambda[j] * global.effort
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
