@@ -1,0 +1,700 @@
+---
+title: "Range-map offset"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+self-contained: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+ Calculate range offset layer for each species
+
+1) Generate a buffer of 100km distance for presence-only data (PO)
+2) Combine the presence-absence data (PA) for both time periods, considering only the blobs with presences  
+3) Combine de PO buffered data with the combined PA blobs
+4) Combine the PO and PA polygons 
+5) Udpate the IUCN expert range map with the PO and PA polygons 
+
+  - R Libraries
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
+library(patchwork)
+library(knitr)
+library(smoothr)
+library(terra)
+library(sf)
+sf_use_s2(FALSE)
+library(tidyverse)
+```
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| message: false
+#| warning: false
+#| code-fold: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+Latam_projected <- st_read('data/Latam_vector.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam <- st_union(st_make_valid(Latam_projected))
+Latam.raster <- terra::rast('data/Latam_raster.tif')
+Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+```
+
+
+  - Datasets
+
+```{r}
+#| label: data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+data_carnivores_PO <- read_csv('data/data_PO.csv')
+data_carnivores_PA <- read_csv('data/data_PA.csv')
+```
+
+## Binary range function
+
+Values
+
+  - buffer_PO = 100000 -> 100km
+  - buffer_PA = 10000 -> 10km
+  - buffer_expert = 150000 -> 150km
+
+```{r}
+#| label: binary-range-function
+#| message: false
+#| warning: false
+#| code-fold: false
+
+binary_expert_range <- function(data_PO_sf, data_PA_pre_sf, data_PA_pos_sf, 
+                                expert_range_sf, Latam,
+                                buffer_PO = 50000, buffer_PA = 50000, 
+                                buffer_expert = 100000){
+  # 1) Generate a buffer of 100km distance for presence-only data (PO)
+  PO_data_buffer <- st_buffer(st_union(data_PO_sf), dist=buffer_PO) %>% st_sf()
+  # 2) Join the presence-absence data (PA) for both time periods, considering only the blobs with presences  
+  PA_blobs_buffer <- rbind(data_PA_pre_sf %>% filter(presence==1),
+                           data_PA_pos_sf %>% filter(presence==1)) %>% 
+    st_centroid() %>% st_buffer(dist=buffer_PA) %>% st_union() %>% st_sf()
+  # 4) Combine the PO and PA polygons 
+  PA_PO <- rbind(PO_data_buffer, PA_blobs_buffer) 
+  # 5) Udpate the IUCN expert range map with the PO and PA polygons 
+  hyagouaroundi_expert <- rbind(st_as_sf(PA_PO %>% st_cast('POLYGON')), 
+                             st_buffer(expert_range_sf, dist=buffer_expert) %>% 
+                               st_union() %>% st_sf()) %>% 
+    st_union() %>% st_sf() %>% st_intersection(Latam)
+  # 6) Fill small holes
+  area_thresh <- units::set_units(100000, km^2)
+  hyagouaroundi_expert <- fill_holes(hyagouaroundi_expert, area_thresh)
+  
+  return(list(PA_PO, hyagouaroundi_expert))
+}
+```
+
+
+# Herpailurus yagouaroundi
+
+```{r}
+#| label: hyagouaroundi
+#| message: false
+#| warning: false
+
+hyagouaroundi_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Herpailurus yagouaroundi') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+hyagouaroundi_PA_pre_blobs <- readRDS('data/PA_hyagouaroundi_time1_blobs.rds')
+hyagouaroundi_PA_pos_blobs <- readRDS('data/PA_hyagouaroundi_time2_blobs.rds')
+
+hyagouaroundi_IUCN <- sf::st_read('big_data/hyagouaroundi_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+hyagouaroundi_expert <- binary_expert_range(hyagouaroundi_PO_data, 
+                                            hyagouaroundi_PA_pre_blobs,
+                                            hyagouaroundi_PA_pos_blobs,
+                                            hyagouaroundi_IUCN, Latam)
+
+### Presence-only data
+hyagouaroundi_expert_gridcell <- rasterize(x = vect(hyagouaroundi_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(hyagouaroundi_expert_gridcell) <- 'expert'
+data_hyagouaroundi_expert_gridcell <- data.frame(expertCell=hyagouaroundi_expert_gridcell[])
+
+### Presence-absence data
+hyagouaroundi_expert_blob_pre <- st_join(hyagouaroundi_PA_pre_blobs, hyagouaroundi_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+hyagouaroundi_expert_blob_pos <- st_join(hyagouaroundi_PA_pos_blobs, hyagouaroundi_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: hyagouaroundi-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=hyagouaroundi_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=hyagouaroundi_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=hyagouaroundi_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+
+```{r}
+#| label: hyagouaroundi-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(hyagouaroundi_expert_gridcell, 'data/hyagouaroundi_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_hyagouaroundi_expert_gridcell, 'data/hyagouaroundi_expert_gridcell.rds')
+saveRDS(hyagouaroundi_expert[[2]], 'data/hyagouaroundi_expertMap.rds')
+saveRDS(hyagouaroundi_expert_blob_pre, 'data/hyagouaroundi_expert_blob_pre.rds')
+saveRDS(hyagouaroundi_expert_blob_pos, 'data/hyagouaroundi_expert_blob_pos.rds')
+```
+
+# Leopardus pardalis
+
+```{r}
+#| label: lpardalis
+#| message: false
+#| warning: false
+
+lpardalis_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Leopardus pardalis') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+lpardalis_PA_pre_blobs <- readRDS('data/PA_lpardalis_time1_blobs.rds')
+lpardalis_PA_pos_blobs <- readRDS('data/PA_lpardalis_time2_blobs.rds')
+
+lpardalis_IUCN <- sf::st_read('big_data/lpardalis_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+lpardalis_expert <- binary_expert_range(lpardalis_PO_data, 
+                                            lpardalis_PA_pre_blobs,
+                                            lpardalis_PA_pos_blobs,
+                                            lpardalis_IUCN, Latam)
+
+### Presence-only data
+lpardalis_expert_gridcell <- rasterize(x = vect(lpardalis_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(lpardalis_expert_gridcell) <- 'expert'
+data_lpardalis_expert_gridcell <- data.frame(expertCell=lpardalis_expert_gridcell[])
+
+### Presence-absence data
+lpardalis_expert_blob_pre <- st_join(lpardalis_PA_pre_blobs, lpardalis_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+lpardalis_expert_blob_pos <- st_join(lpardalis_PA_pos_blobs, lpardalis_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: lpardalis-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=lpardalis_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=lpardalis_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=lpardalis_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: lpardalis-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(lpardalis_expert_gridcell, 'data/lpardalis_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_lpardalis_expert_gridcell, 'data/lpardalis_expert_gridcell.rds')
+saveRDS(lpardalis_expert[[2]], 'data/lpardalis_expertMap.rds')
+saveRDS(lpardalis_expert_blob_pre, 'data/lpardalis_expert_blob_pre.rds')
+saveRDS(lpardalis_expert_blob_pos, 'data/lpardalis_expert_blob_pos.rds')
+```
+
+# Cerdocyon thous
+
+```{r}
+#| label: cthous
+#| message: false
+#| warning: false
+
+cthous_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Cerdocyon thous') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+cthous_PA_pre_blobs <- readRDS('data/PA_cthous_time1_blobs.rds')
+cthous_PA_pos_blobs <- readRDS('data/PA_cthous_time2_blobs.rds')
+
+cthous_IUCN <- sf::st_read('big_data/cthous_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+cthous_expert <- binary_expert_range(cthous_PO_data, 
+                                            cthous_PA_pre_blobs,
+                                            cthous_PA_pos_blobs,
+                                            cthous_IUCN, Latam)
+
+### Presence-only data
+cthous_expert_gridcell <- rasterize(x = vect(cthous_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(cthous_expert_gridcell) <- 'expert'
+data_cthous_expert_gridcell <- data.frame(expertCell=cthous_expert_gridcell[])
+
+### Presence-absence data
+cthous_expert_blob_pre <- st_join(cthous_PA_pre_blobs, cthous_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+cthous_expert_blob_pos <- st_join(cthous_PA_pos_blobs, cthous_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: cthous-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=cthous_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=cthous_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=cthous_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: cthous-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(cthous_expert_gridcell, 'data/cthous_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_cthous_expert_gridcell, 'data/cthous_expert_gridcell.rds')
+saveRDS(cthous_expert[[2]], 'data/cthous_expertMap.rds')
+saveRDS(cthous_expert_blob_pre, 'data/cthous_expert_blob_pre.rds')
+saveRDS(cthous_expert_blob_pos, 'data/cthous_expert_blob_pos.rds')
+```
+
+# Chrysocyon brachyurus
+
+```{r}
+#| label: cbrachyurus
+#| message: false
+#| warning: false
+
+cbrachyurus_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Chrysocyon brachyurus') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+cbrachyurus_PA_pre_blobs <- readRDS('data/PA_cbrachyurus_time1_blobs.rds')
+cbrachyurus_PA_pos_blobs <- readRDS('data/PA_cbrachyurus_time2_blobs.rds')
+
+cbrachyurus_IUCN <- sf::st_read('big_data/cbrachyurus_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+cbrachyurus_expert <- binary_expert_range(cbrachyurus_PO_data, 
+                                            cbrachyurus_PA_pre_blobs,
+                                            cbrachyurus_PA_pos_blobs,
+                                            cbrachyurus_IUCN, Latam)
+
+### Presence-only data
+cbrachyurus_expert_gridcell <- rasterize(x = vect(cbrachyurus_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(cbrachyurus_expert_gridcell) <- 'expert'
+data_cbrachyurus_expert_gridcell <- data.frame(expertCell=cbrachyurus_expert_gridcell[])
+
+### Presence-absence data
+cbrachyurus_expert_blob_pre <- st_join(cbrachyurus_PA_pre_blobs, cbrachyurus_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+cbrachyurus_expert_blob_pos <- st_join(cbrachyurus_PA_pos_blobs, cbrachyurus_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: cbrachyurus-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=cbrachyurus_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=cbrachyurus_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=cbrachyurus_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: cbrachyurus-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(cbrachyurus_expert_gridcell, 'data/cbrachyurus_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_cbrachyurus_expert_gridcell, 'data/cbrachyurus_expert_gridcell.rds')
+saveRDS(cbrachyurus_expert[[2]], 'data/cbrachyurus_expertMap.rds')
+saveRDS(cbrachyurus_expert_blob_pre, 'data/cbrachyurus_expert_blob_pre.rds')
+saveRDS(cbrachyurus_expert_blob_pos, 'data/cbrachyurus_expert_blob_pos.rds')
+```
+
+
+# Eira barbara
+
+```{r}
+#| label: ebarbara
+#| message: false
+#| warning: false
+
+ebarbara_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Eira barbara') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+ebarbara_PA_pre_blobs <- readRDS('data/PA_ebarbara_time1_blobs.rds')
+ebarbara_PA_pos_blobs <- readRDS('data/PA_ebarbara_time2_blobs.rds')
+
+ebarbara_IUCN <- sf::st_read('big_data/ebarbara_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+ebarbara_expert <- binary_expert_range(ebarbara_PO_data, 
+                                            ebarbara_PA_pre_blobs,
+                                            ebarbara_PA_pos_blobs,
+                                            ebarbara_IUCN, Latam)
+
+### Presence-only data
+ebarbara_expert_gridcell <- rasterize(x = vect(ebarbara_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(ebarbara_expert_gridcell) <- 'expert'
+data_ebarbara_expert_gridcell <- data.frame(expertCell=ebarbara_expert_gridcell[])
+
+### Presence-absence data
+ebarbara_expert_blob_pre <- st_join(ebarbara_PA_pre_blobs, ebarbara_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+ebarbara_expert_blob_pos <- st_join(ebarbara_PA_pos_blobs, ebarbara_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: ebarbara-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=ebarbara_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=ebarbara_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=ebarbara_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: ebarbara-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(ebarbara_expert_gridcell, 'data/ebarbara_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_ebarbara_expert_gridcell, 'data/ebarbara_expert_gridcell.rds')
+saveRDS(ebarbara_expert[[2]], 'data/ebarbara_expertMap.rds')
+saveRDS(ebarbara_expert_blob_pre, 'data/ebarbara_expert_blob_pre.rds')
+saveRDS(ebarbara_expert_blob_pos, 'data/ebarbara_expert_blob_pos.rds')
+```
+
+
+# Leopardus wiedii
+
+```{r}
+#| label: lwiedii
+#| message: false
+#| warning: false
+
+lwiedii_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Leopardus wiedii') %>% 
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+lwiedii_PA_pre_blobs <- readRDS('data/PA_lwiedii_time1_blobs.rds')
+lwiedii_PA_pos_blobs <- readRDS('data/PA_lwiedii_time2_blobs.rds')
+
+lwiedii_IUCN <- sf::st_read('big_data/lwiedii_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+lwiedii_expert <- binary_expert_range(lwiedii_PO_data, 
+                                            lwiedii_PA_pre_blobs,
+                                            lwiedii_PA_pos_blobs,
+                                            lwiedii_IUCN, Latam)
+
+### Presence-only data
+lwiedii_expert_gridcell <- rasterize(x = vect(lwiedii_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(lwiedii_expert_gridcell) <- 'expert'
+data_lwiedii_expert_gridcell <- data.frame(expertCell=lwiedii_expert_gridcell[])
+
+### Presence-absence data
+lwiedii_expert_blob_pre <- st_join(lwiedii_PA_pre_blobs, lwiedii_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+lwiedii_expert_blob_pos <- st_join(lwiedii_PA_pos_blobs, lwiedii_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: lwiedii-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=lwiedii_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=lwiedii_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=lwiedii_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: lwiedii-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(lwiedii_expert_gridcell, 'data/lwiedii_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_lwiedii_expert_gridcell, 'data/lwiedii_expert_gridcell.rds')
+saveRDS(lwiedii_expert[[2]], 'data/lwiedii_expertMap.rds')
+saveRDS(lwiedii_expert_blob_pre, 'data/lwiedii_expert_blob_pre.rds')
+saveRDS(lwiedii_expert_blob_pos, 'data/lwiedii_expert_blob_pos.rds')
+```
+
+# Nasua nasua
+
+```{r}
+#| label: nnasua
+#| message: false
+#| warning: false
+
+nnasua_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Nasua nasua') %>% 
+  filter(!(countryCode=='UY'& stateProvince=='Maldonado')) %>% # these two records are not wild
+  filter(!(countryCode=='CR' | countryCode=='GT')) %>% # these records are not reliable
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+nnasua_PA_pre_blobs <- readRDS('data/PA_nnasua_time1_blobs.rds')
+nnasua_PA_pos_blobs <- readRDS('data/PA_nnasua_time2_blobs.rds')
+
+nnasua_IUCN <- sf::st_read('big_data/nnasua_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+nnasua_expert <- binary_expert_range(nnasua_PO_data, 
+                                            nnasua_PA_pre_blobs,
+                                            nnasua_PA_pos_blobs,
+                                            nnasua_IUCN, Latam)
+
+### Presence-only data
+nnasua_expert_gridcell <- rasterize(x = vect(nnasua_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(nnasua_expert_gridcell) <- 'expert'
+data_nnasua_expert_gridcell <- data.frame(expertCell=nnasua_expert_gridcell[])
+
+### Presence-absence data
+nnasua_expert_blob_pre <- st_join(nnasua_PA_pre_blobs, nnasua_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+nnasua_expert_blob_pos <- st_join(nnasua_PA_pos_blobs, nnasua_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: nnasua-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=nnasua_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=nnasua_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=nnasua_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: nnasua-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(nnasua_expert_gridcell, 'data/nnasua_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_nnasua_expert_gridcell, 'data/nnasua_expert_gridcell.rds')
+saveRDS(nnasua_expert[[2]], 'data/nnasua_expertMap.rds')
+saveRDS(nnasua_expert_blob_pre, 'data/nnasua_expert_blob_pre.rds')
+saveRDS(nnasua_expert_blob_pos, 'data/nnasua_expert_blob_pos.rds')
+```
+
+
+# Pteronura brasiliensis
+
+```{r}
+#| label: pbrasiliensis
+#| message: false
+#| warning: false
+
+pbrasiliensis_PO_data <- data_carnivores_PO %>% 
+  filter(species == 'Pteronura brasiliensis') %>% 
+  filter(!(countryCode=='UY'& stateProvince=='Maldonado')) %>% # these two records are not wild
+  filter(!(countryCode=='CR' | countryCode=='GT')) %>% # these records are not reliable
+  mutate(year=lubridate::year(eventDate)) %>% 
+  filter(year>=2000, year<=2021) %>% 
+  sf::st_as_sf(coords=c('decimalLongitude', 'decimalLatitude')) %>% 
+  sf::st_set_crs(4326) %>%  st_transform(., crs=equalareaCRS)
+
+pbrasiliensis_PA_pre_blobs <- readRDS('data/PA_pbrasiliensis_time1_blobs.rds')
+pbrasiliensis_PA_pos_blobs <- readRDS('data/PA_pbrasiliensis_time2_blobs.rds')
+
+pbrasiliensis_IUCN <- sf::st_read('big_data/pbrasiliensis_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+
+# Calculate new range layer
+pbrasiliensis_expert <- binary_expert_range(pbrasiliensis_PO_data, 
+                                            pbrasiliensis_PA_pre_blobs,
+                                            pbrasiliensis_PA_pos_blobs,
+                                            pbrasiliensis_IUCN, Latam)
+
+### Presence-only data
+pbrasiliensis_expert_gridcell <- rasterize(x = vect(pbrasiliensis_expert[[2]]),
+                                        y = Latam.raster ,
+                                        fun = 'length',
+                                        sum = T, background=0) %>% mask(., Latam.raster)
+
+names(pbrasiliensis_expert_gridcell) <- 'expert'
+data_pbrasiliensis_expert_gridcell <- data.frame(expertCell=pbrasiliensis_expert_gridcell[])
+
+### Presence-absence data
+pbrasiliensis_expert_blob_pre <- st_join(pbrasiliensis_PA_pre_blobs, pbrasiliensis_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+pbrasiliensis_expert_blob_pos <- st_join(pbrasiliensis_PA_pos_blobs, pbrasiliensis_expert[[2]] %>% mutate(presence=1)) %>% 
+  mutate(presence=ifelse(is.na(presence.y), 0, presence.y)) %>% dplyr::select(presence)
+
+```
+
+## Plot
+
+```{r}
+#| label: pbrasiliensis-plot
+#| message: false
+#| warning: false
+
+ggplot() +
+  geom_sf(data=Latam, fill='white') +
+  geom_sf(data=pbrasiliensis_IUCN, fill='grey20', alpha=0.2) +
+  geom_sf(data=pbrasiliensis_expert[[2]], col='red', fill='red', alpha=0.2) +
+  geom_sf(data=pbrasiliensis_expert[[1]], fill='black', col=NA, alpha=0.5) +
+  theme_bw()
+```
+
+## Save
+```{r}
+#| label: pbrasiliensis-save
+#| eval: true
+#| message: false
+#| warning: false
+#| code-fold: false
+
+terra::writeRaster(pbrasiliensis_expert_gridcell, 'data/pbrasiliensis_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_pbrasiliensis_expert_gridcell, 'data/pbrasiliensis_expert_gridcell.rds')
+saveRDS(pbrasiliensis_expert[[2]], 'data/pbrasiliensis_expertMap.rds')
+saveRDS(pbrasiliensis_expert_blob_pre, 'data/pbrasiliensis_expert_blob_pre.rds')
+saveRDS(pbrasiliensis_expert_blob_pos, 'data/pbrasiliensis_expert_blob_pos.rds')
+```
