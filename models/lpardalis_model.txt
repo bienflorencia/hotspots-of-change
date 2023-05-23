@@ -73,8 +73,10 @@ model
         nu[j] <- area.PO[j] * exp(eta.PO[j]) 
 
         # thinning: the true lambda
-        lambda[j] <- nu[j] * P.ret[j]
-        #lambda[(n.PO.half+1):n.PO] <- lambda[j] * global.effort
+        
+        lambda[j] <- ifelse(j >= n.PO.half, 
+                            nu[j] * P.ret[j], #time1
+                            nu[j] * P.ret[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 

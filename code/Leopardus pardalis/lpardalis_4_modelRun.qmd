@@ -148,7 +148,7 @@ PO.expert = PO_time1_time2$expert
 #number of countries
 n.country <- length(unique(PO.country))
 
-#global effort time1/time2
+#global effort time1/time2 (see Range_map_offset.qmd)
 global.effort <- rep(0.2715625, nrow(PO_time1_time2))
 
 jags.data <- list(n.PA = nrow(PA_time1_time2),
@@ -257,8 +257,10 @@ cat('model
         nu[j] <- area.PO[j] * exp(eta.PO[j]) 
 
         # thinning: the true lambda
-        lambda[1:n.PO.half] <- nu[j] * P.ret[j]                     #time1
-        lambda[(n.PO.half+1):n.PO] <- lambda[j] * global.effort[j]  #time2
+        
+        lambda[j] <- ifelse(j >= n.PO.half, 
+                            nu[j] * P.ret[j], #time1
+                            nu[j] * P.ret[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
@@ -349,9 +351,9 @@ lpardalis_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=200000,
+                                n.iter=100000,
                                 n.thin=10,
-                                n.burnin=20000,
+                                n.burnin=10000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
