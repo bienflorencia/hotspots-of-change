@@ -357,7 +357,7 @@ absent_classes <- all_classes[!(all_classes %in% rast_classes)]
 
 if (length(absent_classes)==0){
   speciesAbrev.new.pal <- speciesAbrev.pal
-} else speciesAbrev.new.pal <- speciesAbrev.pal[-c(absent_classes[i])]
+} else speciesAbrev.new.pal <- speciesAbrev.pal[-c(absent_classes)]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
