@@ -1,0 +1,130 @@
+model
+  { 
+    # PRIORS --------------------------------------------------
+    
+    ## Thinning at locations with complete accessibility in PO data
+      
+      # intercept of the decay function for each country of origin. 
+      # It needs a flat prior between 0 and 1
+      for (c in 1:n.cntr) 
+      {
+        alpha0[c] ~ dbeta(1, 1)  
+      }
+
+      # steepness of the decaying distance-P.ret relationship in PO data
+      alpha1 ~ dgamma(0.5, 0.05)   
+      
+    ## Effect of sampling effort in PA data
+      beta ~ dnorm(0, 0.01)
+  
+    ## Parametric effects of environment driving the point process intensity
+     # (it also includes an intercept)
+     
+      for (r in 1:n.par)
+      { 
+        b[r] ~ dnorm(0,0.01) 
+      }
+      
+    ## Splines (imported and adjusted form output of mgcv::jagam)
+    
+      ## prior for s(X,Y):as.factor(time)1 
+      sigma.time1 <- S.time1[1:n.spl, 1:n.spl] * gamma[1]  + 
+                     S.time1[1:n.spl, (n.spl + 1):(n.spl * 2)] * gamma[2]
+      b[(n.par+1):(n.spl + n.par)] ~ dmnorm(Z[(n.par+1):(n.spl + n.par)], sigma.time1) 
+     
+      ## prior for s(X,Y):as.factor(time)2
+      sigma.time2 <- S.time2[1:n.spl, 1:n.spl] * gamma[3]  + 
+                     S.time2[1:n.spl, (n.spl + 1):(n.spl * 2)] * gamma[4]
+      b[(n.X - n.spl + 1):(n.X)] ~ dmnorm(Z[(n.X - n.spl + 1):(n.X)], sigma.time2) 
+     
+      ## Priors for smoothing parameter 
+      for (f in 1:n.fac) 
+      {
+        gamma[f] ~ dgamma(.5,.5)
+        rho[f] <- log(gamma[f])
+      }
+
+    # LIKELIHOOD --------------------------------------------------
+    
+      ## --- Presence-Absence (PA) data ---
+      
+       eta.PA <- X.PA %*% b ## linear predictor
+        
+       for (i in 1:n.PA) 
+       { 
+         # the probability of presence
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) 
+        
+         # presences and absences come from a Bernoulli distribution
+         y.PA[i] ~ dbern(psi[i]*0.9999) 
+         
+       } 
+  
+      ## --- Presence-Only (PO) data --- 
+  
+      eta.PO <- X.PO %*% b  ## linear predictor
+
+      for (j in 1:n.PO)
+      {
+        # cell-specific probability of retainin (observing) a point is a function of accessibility
+        P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
+        
+        # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
+        nu[j] <- area.PO[j] * exp(eta.PO[j]) 
+
+        # thinning: the true lambda
+        
+        lambda[j] <- ifelse(j <= n.PO.half, 
+                            nu[j] * P.ret[j], #time1
+                            nu[j] * P.ret[j] * global.effort[j]) #time2
+
+        # counts of observed points come from a Poisson distribution
+        y.PO[j] ~ dpois(lambda[j]) 
+      }
+  
+    # PREDICTIONS -------------------------------------------------
+
+    eta.pred <- X.PO %*% b
+
+    for (j in 1:n.PO)
+    {
+      # predicted probability of occurrence in grid cell j
+      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j])
+    }
+
+    # POSTERIOR PREDICTIVE CHECK  --------------------------------
+    
+    # for PA
+    for (i in 1:n.PA)
+    {
+      # Fit assessments: Tjur R-Squared (fit statistic for logistic regression)
+      pres[i] <- ifelse(y.PA[i] > 0, psi[i], 0)
+      absc[i] <- ifelse(y.PA[i] == 0, psi[i], 0)
+    }
+    
+    # Discrepancy measures for entire PA data set
+    pres.n <- sum(y.PA[] > 0)
+    absc.n <- sum(y.PA[] == 0)
+    r2_tjur <- abs(sum(pres[])/pres.n - sum(absc[])/absc.n)
+
+    # for PO
+    for (j in 1:n.PO)
+    {
+      # Fit assessments: Posterior predictive check and data for DHARMA
+      y.PO.new[j] ~ dpois(lambda[j]) 
+
+    }
+
+    # DERIVED QUANTITIES ------------------------------------------
+    
+    # area in each time period, and temporal change of area
+    A.time1 <- sum(P.pred[1:n.PO.half])
+    A.time2 <- sum(P.pred[(n.PO.half+1):n.PO])
+    delta.A <- A.time2 - A.time1
+    
+    # uncertainty for the temporal change
+    for (j in 1:n.PO.half)
+    {
+      delta.Grid[j] <- P.pred[n.PO.half+j] - P.pred[j]
+    }
+  }
