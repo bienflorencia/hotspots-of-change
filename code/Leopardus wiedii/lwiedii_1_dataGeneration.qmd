@@ -73,6 +73,7 @@ Check data for each years on example species
 
 # Presence-only
 data_carnivores_PO %>% filter(species == 'Leopardus wiedii') %>% filter(year>=2000) %>% 
+  filter(!(decimalLongitude>(-40) & dataset =='occurrencePoints_NeotropCarnivores')) %>% 
   mutate(period=ifelse(year<=2013, 'first period: 2000-2013', 'second period: 2014-2021')) %>%
   group_by(species, period) %>% count() %>% pivot_wider(names_from = 'period', values_from = n) %>% kable()
 
@@ -251,6 +252,7 @@ gg_PA_time1 + gg_PA_time2
 # rasterisation of the presence-only data
 data_PO_GIS <- data_carnivores_PO %>% 
   filter(species == 'Leopardus wiedii') %>% 
+  #filter(!(decimalLongitude>(-40) & dataset =='occurrencePoints_NeotropCarnivores')) %>% 
   mutate(year=lubridate::year(eventDate)) %>% 
   filter(year>=2000, year<=2021) %>% 
   as.data.frame() %>% 
