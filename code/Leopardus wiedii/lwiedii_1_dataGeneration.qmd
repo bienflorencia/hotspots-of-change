@@ -252,7 +252,7 @@ gg_PA_time1 + gg_PA_time2
 # rasterisation of the presence-only data
 data_PO_GIS <- data_carnivores_PO %>% 
   filter(species == 'Leopardus wiedii') %>% 
-  #filter(!(decimalLongitude>(-40) & dataset =='occurrencePoints_NeotropCarnivores')) %>% 
+  filter(!(decimalLongitude>(-40) & dataset =='occurrencePoints_NeotropCarnivores')) %>% 
   mutate(year=lubridate::year(eventDate)) %>% 
   filter(year>=2000, year<=2021) %>% 
   as.data.frame() %>% 
