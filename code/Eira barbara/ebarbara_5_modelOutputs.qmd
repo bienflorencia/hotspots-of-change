@@ -1,5 +1,5 @@
 ---
-title: "SPECIES Model Outputs"
+title: "speciesLatin Model Outputs"
 format: 
   html:
     toc: true
@@ -12,7 +12,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Model outputs for *SPECIES*.  
+Model outputs for *speciesLatin*.  
 
 
   - R Libraries
@@ -62,7 +62,7 @@ Latam_no_islands <- bind_rows(list(Latam_countries %>%
                                      mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
                                      head(n=1) %>% dplyr::select(-area))) %>% st_union()
 
-SPECIES_IUCN <- sf::st_read('big_data/SPECIES_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+speciesAbrev_IUCN <- sf::st_read('big_data/speciesAbrev_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
@@ -75,15 +75,15 @@ Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 #| warning: false
 #| code-fold: false
 
-PA_time1 <- readRDS('data/data_SPECIES_PA_time1.rds') %>% 
+PA_time1 <- readRDS('data/data_speciesAbrev_PA_time1.rds') %>% 
   filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
-PA_time2 <- readRDS('data/data_SPECIES_PA_time2.rds') %>% 
+PA_time2 <- readRDS('data/data_speciesAbrev_PA_time2.rds') %>% 
   filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4)) # remove NA's
 
 # Presence-only data
-PO_time1 <- readRDS('data/data_SPECIES_PO_time1.rds') %>% 
+PO_time1 <- readRDS('data/data_speciesAbrev_PO_time1.rds') %>% 
   filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_SPECIES_PO_time2.rds') %>% 
+PO_time2  <- readRDS('data/data_speciesAbrev_PO_time2.rds') %>% 
   filter(!is.na(cov.1) &!is.na(cov.3) &!is.na(cov.2) & !is.na(cov.4) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
@@ -98,7 +98,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-fitted.model <- readRDS('big_data/SPECIES_model.rds') # deleted after model output
+fitted.model <- readRDS('big_data/speciesAbrev_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
@@ -128,7 +128,7 @@ fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc,
                                   family="^b\\[")
 
 # diagnostics
-ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/SPECIES_model_diagnostics.pdf", param_page=3)
+ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/speciesAbrev_model_diagnostics.pdf", param_page=3)
 ```
 
 ### Traceplot
@@ -153,7 +153,7 @@ ggs_traceplot(fitted.model.ggs.b)
 ggs_Rhat(fitted.model.ggs.b)
 ```
 
-### Probability of occurrence of *SPECIES*
+### Probability of occurrence of *speciesLatin*
 
 For each period: time1 and time2, and their difference (time2-time1)
 
@@ -210,7 +210,7 @@ time2MAP
 diffMAP
 ```
 
-### Standard deviation (SD) of the probability of occurrence of *SPECIES*
+### Standard deviation (SD) of the probability of occurrence of *speciesLatin*
 
 ```{r}
 #| label: sd-maps
@@ -286,8 +286,8 @@ bivcol = function(pal, nx = 3, ny = 3){
   mtext(tit)
 }
 
-SPECIES.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
-SPECIES.pal <- c(t(apply(SPECIES.pal.pu_gn_bivd, 2, rev)))
+speciesAbrev.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
+speciesAbrev.pal <- c(t(apply(speciesAbrev.pal.pu_gn_bivd, 2, rev)))
 
 ###
 
@@ -356,15 +356,15 @@ rast_classes <- as_tibble(rast.bivariate['new_var']) %>%
 absent_classes <- all_classes[!(all_classes %in% rast_classes)]
 
 if (length(absent_classes)==0){
-  SPECIES.new.pal <- SPECIES.pal
-} else SPECIES.new.pal <- SPECIES.pal[-c(absent_classes[i])]
+  speciesAbrev.new.pal <- speciesAbrev.pal
+} else speciesAbrev.new.pal <- speciesAbrev.pal[-c(absent_classes)]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
 
 diffMAP.SD <- tm_graticules(alpha = 0.3) + 
   tm_shape(rast.bivariate) +
-  tm_raster("new_var", style= "cat", palette = SPECIES.new.pal) +
+  tm_raster("new_var", style= "cat", palette = speciesAbrev.new.pal) +
   tm_shape(Latam_countries) +
   tm_borders(col='grey60', alpha = 0.4) + 
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
