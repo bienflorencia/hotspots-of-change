@@ -87,8 +87,8 @@ PA_lwiedii_time2_blobs <- readRDS('data/PA_lwiedii_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio7`: Temperature Annual Range
- - `bio9`: Mean Temperature of Warmest Quarter
+ - `bio_7`: Temperature Annual Range
+ - `bio_10`: Mean Temperature of Driest Quarter
  - `npp`: Net Primary Production (npp)
  - `nontree`: Percentage of No Tree Cover
 
@@ -108,7 +108,7 @@ nontree <- resample(nontree, bio, method='bilinear')
 names(nontree) <- 'nontree'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_7','bio_9')]], nontree, npp) %>% 
+env <- c(bio[[c('bio_7','bio_10')]], nontree, npp) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -150,8 +150,8 @@ bio_7.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_9.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_9"]]) +
+bio_10.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_10"]]) +
     tm_raster(palette = 'YlOrBr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
@@ -160,7 +160,7 @@ bio_9.plot <- tm_graticules(alpha = 0.3) +
 nontree.plot 
 npp.plot
 bio_7.plot
-bio_9.plot
+bio_10.plot
 ```
 
 ### Thinning parametres 
