@@ -7,6 +7,7 @@ format:
     smooth-scroll: true
     html-math-method: katex
     code-fold: true
+self-contained: true
 editor: source
 author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
@@ -37,15 +38,15 @@ library(tidyverse)
 
 # Presence-absence data
 PA_time1 <- readRDS('data/data_lwiedii_PA_time1.rds') %>%
-  filter(!is.na(env.bio_7) &!is.na(env.bio_9) & !is.na(env.npp) & !is.na(env.nontree)) # remove NA's
+  filter(!is.na(env.bio_7) &!is.na(env.bio_10) & !is.na(env.npp) & !is.na(env.nontree)) # remove NA's
 PA_time2 <- readRDS('data/data_lwiedii_PA_time2.rds') %>%
-  filter(!is.na(env.bio_7) &!is.na(env.bio_9) & !is.na(env.npp) & !is.na(env.nontree)) # remove NA's
+  filter(!is.na(env.bio_7) &!is.na(env.bio_10) & !is.na(env.npp) & !is.na(env.nontree)) # remove NA's
 
 # Presence-only data
 PO_time1 <- readRDS('data/data_lwiedii_PO_time1.rds') %>%
-  filter(!is.na(env.bio_7) &!is.na(env.bio_9) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_7) &!is.na(env.bio_10) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_lwiedii_PO_time2.rds')  %>%
-  filter(!is.na(env.bio_7) &!is.na(env.bio_9) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
+  filter(!is.na(env.bio_7) &!is.na(env.bio_10) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -62,10 +63,10 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k <- 8
+k <- 9
 
 gam.formula <- formula(count ~ env.bio_7 + 
-                               env.bio_9 + 
+                               env.bio_10 + 
                                env.npp + 
                                env.nontree +
                                offset(log(area)) +
@@ -111,7 +112,7 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 
 PA.X <- cbind('(Intercept)'= 1, 
               'env.bio_7' = PA_time1_time2$env.bio_7,
-              'env.bio_9' = PA_time1_time2$env.bio_9,
+              'env.bio_10' = PA_time1_time2$env.bio_10,
               'env.npp' = PA_time1_time2$env.npp,
               'env.nontree' = PA_time1_time2$env.nontree,
               jagam.PA.time1, 
@@ -119,7 +120,7 @@ PA.X <- cbind('(Intercept)'= 1,
 
 PO.X <- cbind('(Intercept)'= 1, 
               'env.bio_7' = PO_time1_time2$env.bio_7,
-              'env.bio_9' = PO_time1_time2$env.bio_9,
+              'env.bio_10' = PO_time1_time2$env.bio_10,
               'env.npp' = PO_time1_time2$env.npp,
               'env.nontree' = PO_time1_time2$env.nontree,
               jagam.PO.time1, 
@@ -349,9 +350,9 @@ lwiedii_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=100000,
+                                n.iter=200000,
                                 n.thin=10,
-                                n.burnin=10000,
+                                n.burnin=20000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
