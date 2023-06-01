@@ -4,7 +4,7 @@
 
 *Florencia Grattarola, Diana Bowler, (...) & Petr Keil*
 
-This repository includes the data, code, model and outputs for our pre-print on the use of integrated species distribution models (ISDMs) to study the change in the geograhic distribution range of eight charismatic Neotropical carnivores.
+This repository includes the data, code, model and outputs for our work on the use of integrated species distribution models (ISDMs) to study the change in the geograhic distribution range of eight charismatic Neotropical carnivores.
 
 ### Find here
 
