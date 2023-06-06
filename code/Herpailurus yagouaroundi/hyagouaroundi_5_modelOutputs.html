@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-05-24">
+<meta name="dcterms.date" content="2023-06-06">
 
 <title>Herpailurus yagouaroundi Model Outputs</title>
 <style>
@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 24, 2023</p>
+      <p class="date">June 6, 2023</p>
     </div>
   </div>
   
@@ -292,7 +292,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>Plotting caterpillar plot</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time taken to generate the report: 30 seconds.</code></pre>
+<pre><code>Time taken to generate the report: 28 seconds.</code></pre>
 </div>
 </div>
 <section id="traceplot" class="level3">
@@ -672,8 +672,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 2 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 A.time1   1252. 1277.  1399. 1521. 1544.
-2 A.time2   1362. 1373.  1421. 1465. 1474.</code></pre>
+1 A.time1   1393. 1410.  1507. 1630. 1653.
+2 A.time2   1414. 1427.  1498. 1602. 1630.</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -681,9 +681,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
-1419.919885   28.377573 1362.395213 1401.104767 1420.790942 1439.271231 
+1503.246324   52.821894 1413.795841 1467.937018 1497.819441 1532.157531 
       97.5%        Rhat       n.eff 
-1473.536240    1.001276 6000.000000 </code></pre>
+1630.190446    1.008513  460.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -692,9 +692,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
-1398.980682   74.195742 1252.416837 1349.811410 1398.937848 1448.338031 
+1511.474268   66.111413 1393.498938 1465.096711 1506.783873 1554.082919 
       97.5%        Rhat       n.eff 
-1543.977807    1.001642 2900.000000 </code></pre>
+1652.509920    1.002133 1900.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -742,7 +742,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 1 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 delta.A   -83.0 -65.5   21.2  107.  125.</code></pre>
+1 delta.A   -86.2 -72.0  -4.90  45.0  54.7</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -750,9 +750,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
-  20.939203   52.319450  -82.989575  -13.409219   21.165210   55.216408 
+  -8.227943   35.506728  -86.203297  -30.265465   -4.900484   15.946834 
       97.5%        Rhat       n.eff 
- 124.569353    1.001748 2500.000000 </code></pre>
+  54.669449    1.002510 1300.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -864,9 +864,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         mean            sd          2.5%           25%           50% 
-   0.36462554    0.01114653    0.34050687    0.35736379    0.36589073 
+   0.35430432    0.01209833    0.33237298    0.34610690    0.35366096 
           75%         97.5%          Rhat         n.eff 
-   0.37272176    0.38324072    1.00128883 5800.00000000 </code></pre>
+   0.36179232    0.38060747    1.00296810 1200.00000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -893,23 +893,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="auc" class="level4">
 <h4 class="anchored" data-anchor-id="auc">AUC</h4>
 <p>Source: <a href="https://gist.github.com/johnbaums/098bb760422801d10aed">Calculate AUC in a JAGS model</a></p>
-<ul>
-<li>Calculate AUC from posterior medians of sensitivity and 1-specificity</li>
-<li>Compare to posterior median of AUC</li>
-</ul>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jagstools) <span class="co"># devtools::install_github('johnbaums/jagstools')</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>sens <span class="ot">&lt;-</span> <span class="fu">jagsresults</span>(fitted.model, <span class="st">'sens'</span>)[, <span class="st">'50%'</span>]</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> <span class="fu">jagsresults</span>(fitted.model, <span class="st">'fpr'</span>)[, <span class="st">'50%'</span>]</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fpr, sens, <span class="at">type=</span><span class="st">'o'</span>, <span class="at">pch=</span><span class="dv">20</span>, <span class="at">xlab=</span><span class="st">'1 - Specificity'</span>, <span class="at">ylab=</span><span class="st">'Sensitivity'</span>)</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((sens[<span class="sc">-</span><span class="dv">1</span>]<span class="sc">+</span>sens[<span class="sc">-</span><span class="fu">length</span>(sens)])<span class="sc">/</span><span class="dv">2</span> <span class="sc">*</span> <span class="sc">-</span><span class="fu">diff</span>(fpr)) <span class="co"># auc</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="fu">jagsresults</span>(fitted.model, <span class="st">'auc'</span>)[, <span class="st">'50%'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>sens <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>sens</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>fpr</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>auc.jags <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>auc</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>auc.plot <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">fpr=</span>fpr, <span class="at">sens=</span>sens) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span> </span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, <span class="fu">round</span>(auc.jags,<span class="dv">3</span>))) <span class="sc">+</span></span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() </span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>auc.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>

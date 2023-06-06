@@ -623,9 +623,6 @@ pp.PA
 
 Source: [Calculate AUC in a JAGS model](https://gist.github.com/johnbaums/098bb760422801d10aed)
 
-- Calculate AUC from posterior medians of sensitivity and 1-specificity
-- Compare to posterior median of AUC
-
 ```{r}
 #| label: AUC-PA
 #| echo: true
@@ -633,16 +630,19 @@ Source: [Calculate AUC in a JAGS model](https://gist.github.com/johnbaums/098bb7
 #| message: false
 #| warning: false
 
-library(jagstools) # devtools::install_github('johnbaums/jagstools')
+sens <- fitted.model$mean$sens
+fpr <- fitted.model$mean$fpr
+auc.jags <- fitted.model$mean$auc
 
-sens <- jagsresults(fitted.model, 'sens')[, '50%']
-fpr <- jagsresults(fitted.model, 'fpr')[, '50%']
+auc.plot <- bind_cols(fpr=fpr, sens=sens) %>% 
+  ggplot(aes(fpr, sens)) + 
+  geom_line() + geom_point() +
+  labs(x='1 - Specificity', y='Sensitivity') +
+  annotate(geom="text", x=0.5, y=0.5,
+           label=paste('AUC = ', round(auc.jags,3))) +
+  theme_bw() 
 
-plot(fpr, sens, type='o', pch=20, xlab='1 - Specificity', ylab='Sensitivity')
-sum((sens[-1]+sens[-length(sens)])/2 * -diff(fpr)) # auc
-
-# 
-jagsresults(fitted.model, 'auc')[, '50%']
+auc.plot
 ```
 
 ### Grid-level change
