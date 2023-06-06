@@ -37,15 +37,24 @@ library(tidyverse)
 #| code-fold: false
 
 # Presence-absence data
+hyagouaroundi_expert_blob_time1 <- readRDS('data/hyagouaroundi_expert_blob_time1.rds')
+hyagouaroundi_expert_blob_time2 <- readRDS('data/hyagouaroundi_expert_blob_time2.rds')
+
 PA_time1 <- readRDS('data/data_hyagouaroundi_PA_time1.rds') %>%
+  cbind(expert=hyagouaroundi_expert_blob_time1$presence) %>%
   filter(!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.npp) & !is.na(env.elev)) # remove NA's
 PA_time2 <- readRDS('data/data_hyagouaroundi_PA_time2.rds') %>%
+  cbind(expert=hyagouaroundi_expert_blob_time2$presence) %>% 
   filter(!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.npp) & !is.na(env.elev)) # remove NA's
 
 # Presence-only data
+hyagouaroundi_expert_gridcell <- readRDS('data/hyagouaroundi_expert_gridcell.rds')
+
 PO_time1 <- readRDS('data/data_hyagouaroundi_PO_time1.rds') %>%
+  cbind(expert=hyagouaroundi_expert_gridcell$expert) %>% 
   filter(!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.npp) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
 PO_time2  <- readRDS('data/data_hyagouaroundi_PO_time2.rds')  %>%
+  cbind(expert=hyagouaroundi_expert_gridcell$expert) %>% 
   filter(!is.na(env.bio_7) &!is.na(env.bio_15) & !is.na(env.npp) & !is.na(env.elev) & !is.na(acce) & !is.na(count)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
@@ -151,15 +160,20 @@ n.country <- length(unique(PO.country))
 #global effort time1/time2 (see Range_map_offset.qmd)
 global.effort <- rep(0.2715625, nrow(PO_time1_time2))
 
+# for AUC
+thr <- seq(0, 1, 0.05)
+
 jags.data <- list(n.PA = nrow(PA_time1_time2),
                   y.PA = PA_time1_time2$presabs, 
                   X.PA = PA.X,
+                  expert.PA = PA.expert,
                   area.PA = PA_time1_time2$area,
                   effort = PA_time1_time2$effort,
                   n.PO = nrow(PO_time1_time2),
                   n.PO.half = nrow(PO_time1_time2)/2,
                   y.PO = PO_time1_time2$count, 
                   X.PO = PO.X,
+                  expert.PO = PO.expert,
                   area.PO = PO_time1_time2$area, 
                   acce = PO_time1_time2$acce,
                   country = PO.country,
@@ -171,7 +185,8 @@ jags.data <- list(n.PA = nrow(PA_time1_time2),
                   n.spl = n.spl,
                   Z = rep(0, length(jagam.out$jags.data$zero)),
                   S.time1 = jagam.out$jags.data$S1,
-                  S.time2 = jagam.out$jags.data$S2) 
+                  S.time2 = jagam.out$jags.data$S2, 
+                  thr = thr)  
 
 ```
 
@@ -237,7 +252,7 @@ cat('model
        for (i in 1:n.PA) 
        { 
          # the probability of presence
-         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) 
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])
         
          # presences and absences come from a Bernoulli distribution
          y.PA[i] ~ dbern(psi[i]*0.9999) 
@@ -254,11 +269,10 @@ cat('model
         P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
         
         # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
-        nu[j] <- area.PO[j] * exp(eta.PO[j]) 
+        nu[j] <- exp(eta.PO[j]) * area.PO[j] * expert.PO[j]
 
         # thinning: the true lambda
-        
-        lambda[j] <- ifelse(j <= n.PO.half, 
+        lambda[j] <- ifelse(j > n.PO.half,
                             nu[j] * P.ret[j], #time1
                             nu[j] * P.ret[j] * global.effort[j]) #time2
 
@@ -273,7 +287,7 @@ cat('model
     for (j in 1:n.PO)
     {
       # predicted probability of occurrence in grid cell j
-      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j])
+      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j]) # + expert.PO[j]
     }
 
     # POSTERIOR PREDICTIVE CHECK  --------------------------------
@@ -298,6 +312,15 @@ cat('model
       y.PO.new[j] ~ dpois(lambda[j]) 
 
     }
+    
+    # AUC
+    for (t in 1:length(thr)) {
+        sens[t] <- sum((psi > thr[t]) && (y.PA==1))/pres.n   #tpr (sensitivity)
+        spec[t] <- sum((psi < thr[t]) && (y.PA==0))/absc.n   
+        fpr[t] <- 1 - spec[t]                             #fpr (1-specificity)
+    }
+    auc <- sum((sens[2:length(sens)]+sens[1:(length(sens)-1)])/2 * 
+    -(fpr[2:length(fpr)] - fpr[1:(length(fpr)-1)]))
 
     # DERIVED QUANTITIES ------------------------------------------
     
@@ -347,7 +370,7 @@ hyagouaroundi_model <- R2jags::jags(data=jags.data,
                                             'A.time1', 'A.time2', 'delta.A',
                                             'alpha0', 'alpha1', 'beta',
                                             'lambda', 'P.ret', 'psi',
-                                            'y.PO.new', 'r2_tjur', 
+                                            'y.PO.new', 'r2_tjur', 'auc', 
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
