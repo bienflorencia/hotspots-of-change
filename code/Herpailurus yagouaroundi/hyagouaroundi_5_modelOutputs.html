@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-06-06">
+<meta name="dcterms.date" content="2023-06-07">
 
 <title>Herpailurus yagouaroundi Model Outputs</title>
 <style>
@@ -126,8 +126,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#posterior-predictive-checks" id="toc-posterior-predictive-checks" class="nav-link" data-scroll-target="#posterior-predictive-checks">posterior predictive checks</a>
   <ul class="collapse">
   <li><a href="#po" id="toc-po" class="nav-link" data-scroll-target="#po">PO</a></li>
-  <li><a href="#pa" id="toc-pa" class="nav-link" data-scroll-target="#pa">PA</a></li>
   <li><a href="#grid-level-change" id="toc-grid-level-change" class="nav-link" data-scroll-target="#grid-level-change">Grid-level change</a></li>
+  <li><a href="#pa" id="toc-pa" class="nav-link" data-scroll-target="#pa">PA</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 6, 2023</p>
+      <p class="date">June 7, 2023</p>
     </div>
   </div>
   
@@ -672,8 +672,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 2 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 A.time1   1393. 1410.  1507. 1630. 1653.
-2 A.time2   1414. 1427.  1498. 1602. 1630.</code></pre>
+1 A.time1   1345. 1363.  1468. 1595. 1620.
+2 A.time2   1374. 1389.  1466. 1572. 1601.</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -681,9 +681,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
-1503.246324   52.821894 1413.795841 1467.937018 1497.819441 1532.157531 
+1471.225796   55.978202 1374.029993 1433.500081 1466.301794 1502.960374 
       97.5%        Rhat       n.eff 
-1630.190446    1.008513  460.000000 </code></pre>
+1600.546179    1.002875 1000.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -692,9 +692,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
-1511.474268   66.111413 1393.498938 1465.096711 1506.783873 1554.082919 
+1471.992684   70.107412 1345.042005 1423.015119 1468.291791 1517.268384 
       97.5%        Rhat       n.eff 
-1652.509920    1.002133 1900.000000 </code></pre>
+1620.369412    1.002021 1900.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -742,17 +742,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 1 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 delta.A   -86.2 -72.0  -4.90  45.0  54.7</code></pre>
+1 delta.A   -75.3 -62.2   1.84  51.3  59.9</code></pre>
 </div>
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'delta.A'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>       mean          sd        2.5%         25%         50%         75% 
-  -8.227943   35.506728  -86.203297  -30.265465   -4.900484   15.946834 
-      97.5%        Rhat       n.eff 
-  54.669449    1.002510 1300.000000 </code></pre>
+<pre><code>         mean            sd          2.5%           25%           50% 
+   -0.7668883    34.3911455   -75.3458113   -22.2300048     1.8396190 
+          75%         97.5%          Rhat         n.eff 
+   22.9076560    59.8833408     1.0009800 27000.0000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -828,88 +828,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>simulations <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>y.PO.new</span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>lambda, <span class="dv">2</span>, median)</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(simulations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 27000  4366</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(simulations)</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="hyagouaroundi_5_modelOutputs_files/figure-html/residual-diagnostics-PO-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-</section>
-</section>
-<section id="pa" class="level3">
-<h3 class="anchored" data-anchor-id="pa">PA</h3>
-<section id="tjur-r2" class="level4">
-<h4 class="anchored" data-anchor-id="tjur-r2">Tjur R2</h4>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>         mean            sd          2.5%           25%           50% 
-   0.35430432    0.01209833    0.33237298    0.34610690    0.35366096 
-          75%         97.5%          Rhat         n.eff 
-   0.36179232    0.38060747    1.00296810 1200.00000000 </code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="hyagouaroundi_5_modelOutputs_files/figure-html/tjur2-PA-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="auc" class="level4">
-<h4 class="anchored" data-anchor-id="auc">AUC</h4>
-<p>Source: <a href="https://gist.github.com/johnbaums/098bb760422801d10aed">Calculate AUC in a JAGS model</a></p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>sens <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>sens</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>fpr</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>auc.jags <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>mean<span class="sc">$</span>auc</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>auc.plot <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">fpr=</span>fpr, <span class="at">sens=</span>sens) <span class="sc">%&gt;%</span> </span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span> </span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, <span class="fu">round</span>(auc.jags,<span class="dv">3</span>))) <span class="sc">+</span></span>
-<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() </span>
-<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>auc.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
@@ -918,26 +848,101 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="hyagouaroundi_5_modelOutputs_files/figure-html/grid-level-change-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+<section id="pa" class="level3">
+<h3 class="anchored" data-anchor-id="pa">PA</h3>
+<section id="tjur-r2" class="level4">
+<h4 class="anchored" data-anchor-id="tjur-r2">Tjur R2</h4>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>         mean            sd          2.5%           25%           50% 
+   0.34439230    0.01358508    0.31955755    0.33585535    0.34362105 
+          75%         97.5%          Rhat         n.eff 
+   0.35199851    0.37615980    1.00193947 2000.00000000 </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_5_modelOutputs_files/figure-html/tjur2-PA-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="auc" class="level4">
+<h4 class="anchored" data-anchor-id="auc">AUC</h4>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>auc.sens.fpr <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">sens=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>sens, </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fpr=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>fpr) </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>auc.value <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>auc, <span class="dv">3</span>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(auc.sens.fpr, <span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, auc.value)) <span class="sc">+</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="hyagouaroundi_5_modelOutputs_files/figure-html/AUC-PA-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'auc'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          mean             sd           2.5%            25%            50% 
+    0.74774447     0.00591763     0.73678107     0.74393320     0.74736317 
+           75%          97.5%           Rhat          n.eff 
+    0.75124387     0.76073648     1.00109140 13000.00000000 </code></pre>
+</div>
+</div>
+</section>
 </section>
 </section>
 

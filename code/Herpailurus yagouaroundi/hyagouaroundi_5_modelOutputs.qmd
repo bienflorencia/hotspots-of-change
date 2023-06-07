@@ -575,7 +575,7 @@ library(DHARMa)
 
 simulations <- fitted.model$BUGSoutput$sims.list$y.PO.new
 pred <- apply(fitted.model$BUGSoutput$sims.list$lambda, 2, median)
-dim(simulations)
+#dim(simulations)
 
 sim <- createDHARMa(simulatedResponse = t(simulations),
                     observedResponse = PO_time1_time2$count,
@@ -585,6 +585,32 @@ sim <- createDHARMa(simulatedResponse = t(simulations),
 plotSimulatedResiduals(sim)
 
 ```
+
+### Grid-level change
+
+```{r}
+#| label: grid-level-change
+#| message: false
+#| warning: false
+
+range_change <- as_tibble(rast2[PO_time2$pixel] - rast1[PO_time2$pixel]) %>% rename(range=time2)
+numRecord_change <- as_tibble(PO_time2$count - PO_time1$count) %>% rename(numRecord=value)
+
+grid.level.change <- bind_cols(range_change, numRecord_change) %>% 
+    mutate(nonzero=ifelse(numRecord==0, '0', '>=1')) %>% 
+    ggplot() +
+    geom_point(aes(y=range, x=numRecord, col=nonzero), size=1) +
+    geom_vline(xintercept=0, linetype=2, size=0.5) + 
+    geom_hline(yintercept=0, linetype=2, size=0.5) + 
+    labs(y = expression('Predicted grid-level range change (Ppred'['time2']*'-Ppred'['time1']*')'),
+         x= expression('Grid-level range change in number of records (Nrecords'['time2']*'-Nrecords'['time1']*')'),
+         col = 'Number of records\nper grid cell') +
+    theme_bw(base_size = 14)
+
+grid.level.change
+
+```
+
 
 ### PA
 
@@ -621,52 +647,26 @@ pp.PA
 
 #### AUC
 
-Source: [Calculate AUC in a JAGS model](https://gist.github.com/johnbaums/098bb760422801d10aed)
-
 ```{r}
 #| label: AUC-PA
 #| echo: true
-#| eval: false
+#| eval: true
 #| message: false
 #| warning: false
 
-sens <- fitted.model$mean$sens
-fpr <- fitted.model$mean$fpr
-auc.jags <- fitted.model$mean$auc
+auc.sens.fpr <- bind_cols(sens=fitted.model$BUGSoutput$mean$sens, 
+                          fpr=fitted.model$BUGSoutput$mean$fpr) 
 
-auc.plot <- bind_cols(fpr=fpr, sens=sens) %>% 
-  ggplot(aes(fpr, sens)) + 
+auc.value <- round(fitted.model$BUGSoutput$mean$auc, 3)
+
+ggplot(auc.sens.fpr, aes(fpr, sens)) +
   geom_line() + geom_point() +
   labs(x='1 - Specificity', y='Sensitivity') +
   annotate(geom="text", x=0.5, y=0.5,
-           label=paste('AUC = ', round(auc.jags,3))) +
-  theme_bw() 
+           label=paste('AUC = ', auc.value)) +
+  theme_bw()
 
-auc.plot
+fitted.model$BUGSoutput$summary['auc',]
 ```
 
-### Grid-level change
-
-```{r}
-#| label: grid-level-change
-#| message: false
-#| warning: false
-
-range_change <- as_tibble(rast2[PO_time2$pixel] - rast1[PO_time2$pixel]) %>% rename(range=time2)
-numRecord_change <- as_tibble(PO_time2$count - PO_time1$count) %>% rename(numRecord=value)
-
-grid.level.change <- bind_cols(range_change, numRecord_change) %>% 
-    mutate(nonzero=ifelse(numRecord==0, '0', '>=1')) %>% 
-    ggplot() +
-    geom_point(aes(y=range, x=numRecord, col=nonzero), size=1) +
-    geom_vline(xintercept=0, linetype=2, size=0.5) + 
-    geom_hline(yintercept=0, linetype=2, size=0.5) + 
-    labs(y = expression('Predicted grid-level range change (Ppred'['time2']*'-Ppred'['time1']*')'),
-         x= expression('Grid-level range change in number of records (Nrecords'['time2']*'-Nrecords'['time1']*')'),
-         col = 'Number of records\nper grid cell') +
-    theme_bw(base_size = 14)
-
-grid.level.change
-
-```
 
