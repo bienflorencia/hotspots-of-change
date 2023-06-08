@@ -53,7 +53,7 @@ model
        for (i in 1:n.PA) 
        { 
          # the probability of presence
-         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) + expert.PA[i]
         
          # presences and absences come from a Bernoulli distribution
          y.PA[i] ~ dbern(psi[i]*0.9999) 
@@ -88,7 +88,7 @@ model
     for (j in 1:n.PO)
     {
       # predicted probability of occurrence in grid cell j
-      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j]) # + expert.PO[j]
+      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j]) + expert.PO[j]
     }
 
     # POSTERIOR PREDICTIVE CHECK  --------------------------------

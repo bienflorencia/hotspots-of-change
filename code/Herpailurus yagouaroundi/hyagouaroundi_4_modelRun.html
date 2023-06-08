@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-06-06">
+<meta name="dcterms.date" content="2023-06-07">
 
 <title>Herpailurus yagouaroundi Model Run</title>
 <style>
@@ -2640,7 +2640,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 6, 2023</p>
+      <p class="date">June 7, 2023</p>
     </div>
   </div>
   
@@ -2926,7 +2926,7 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="st">       for (i in 1:n.PA) </span></span>
 <span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="st">       { </span></span>
 <span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="st">         # the probability of presence</span></span>
-<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="st">         cloglog(psi[i]) &lt;- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="st">         cloglog(psi[i]) &lt;- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) + expert.PA[i]</span></span>
 <span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
 <span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="st">         # presences and absences come from a Bernoulli distribution</span></span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="st">         y.PA[i] ~ dbern(psi[i]*0.9999) </span></span>
@@ -2961,7 +2961,7 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO)</span></span>
 <span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
 <span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="st">      # predicted probability of occurrence in grid cell j</span></span>
-<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="st">      cloglog(P.pred[j]) &lt;- eta.pred[j] + log(area.PO[j]) # + expert.PO[j]</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="st">      cloglog(P.pred[j]) &lt;- eta.pred[j] + log(area.PO[j]) + expert.PO[j]</span></span>
 <span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
 <span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="st">    # POSTERIOR PREDICTIVE CHECK  --------------------------------</span></span>
@@ -3038,14 +3038,15 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;A.time1&#39;</span>, <span class="st">&#39;A.time2&#39;</span>, <span class="st">&#39;delta.A&#39;</span>,</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;alpha0&#39;</span>, <span class="st">&#39;alpha1&#39;</span>, <span class="st">&#39;beta&#39;</span>,</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;lambda&#39;</span>, <span class="st">&#39;P.ret&#39;</span>, <span class="st">&#39;psi&#39;</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;y.PO.new&#39;</span>, <span class="st">&#39;r2_tjur&#39;</span>, <span class="st">&#39;auc&#39;</span>, </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;delta.Grid&#39;</span>),</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                <span class="at">inits =</span> jags.inits,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.chains=</span><span class="dv">3</span>,</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.iter=</span><span class="dv">100000</span>,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.thin=</span><span class="dv">10</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.burnin=</span><span class="dv">10000</span>,</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">DIC =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;y.PO.new&#39;</span>, <span class="st">&#39;r2_tjur&#39;</span>, </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;auc&#39;</span>, <span class="st">&#39;sens&#39;</span>, <span class="st">&#39;fpr&#39;</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;delta.Grid&#39;</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                                <span class="at">inits =</span> jags.inits,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.chains=</span><span class="dv">3</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.iter=</span><span class="dv">100000</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.thin=</span><span class="dv">10</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                                <span class="at">n.burnin=</span><span class="dv">10000</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                                <span class="at">DIC =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Compiling model graph
@@ -3054,7 +3055,7 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 Graph information:
    Observed stochastic nodes: 5318
    Unobserved stochastic nodes: 4406
-   Total graph size: 210084
+   Total graph size: 211036
 
 Initializing model</code></pre>
 </div>
@@ -3065,7 +3066,7 @@ Initializing model</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>time.taken</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 7.044883 hours</code></pre>
+<pre><code>Time difference of 6.897506 hours</code></pre>
 </div>
 <details>
 <summary>Code</summary>
