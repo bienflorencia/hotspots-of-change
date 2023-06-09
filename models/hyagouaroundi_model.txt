@@ -70,12 +70,12 @@ model
         P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
         
         # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
-        nu[j] <- exp(eta.PO[j]) * area.PO[j] * expert.PO[j]
+        nu[j] <- exp(eta.PO[j]) * area.PO[j] 
 
         # thinning: the true lambda
         lambda[j] <- ifelse(j > n.PO.half,
-                            nu[j] * P.ret[j], #time1
-                            nu[j] * P.ret[j] * global.effort[j]) #time2
+                            nu[j] * P.ret[j] * expert.PO[j], #time1
+                            nu[j] * P.ret[j] * expert.PO[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 

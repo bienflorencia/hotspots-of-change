@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-06-07">
+<meta name="dcterms.date" content="2023-06-08">
 
 <title>Herpailurus yagouaroundi Model Run</title>
 <style>
@@ -2640,7 +2640,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 7, 2023</p>
+      <p class="date">June 8, 2023</p>
     </div>
   </div>
   
@@ -2943,12 +2943,12 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="st">        P.ret[j] &lt;- alpha0[country[j]] * exp( (-alpha1) * acce[j]) </span></span>
 <span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
 <span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="st">        # true mean number (nu) of points per cell i is the true intensity multiplied by cell area</span></span>
-<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="st">        nu[j] &lt;- exp(eta.PO[j]) * area.PO[j] * expert.PO[j]</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="st">        nu[j] &lt;- exp(eta.PO[j]) * area.PO[j] </span></span>
 <span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="st">        # thinning: the true lambda</span></span>
 <span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="st">        lambda[j] &lt;- ifelse(j &gt; n.PO.half,</span></span>
-<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="st">                            nu[j] * P.ret[j], #time1</span></span>
-<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="st">                            nu[j] * P.ret[j] * global.effort[j]) #time2</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="st">                            nu[j] * P.ret[j] * expert.PO[j], #time1</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="st">                            nu[j] * P.ret[j] * expert.PO[j] * global.effort[j]) #time2</span></span>
 <span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a><span class="st">        # counts of observed points come from a Poisson distribution</span></span>
 <span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a><span class="st">        y.PO[j] ~ dpois(lambda[j]) </span></span>
@@ -3066,7 +3066,7 @@ Initializing model</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>time.taken</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 6.897506 hours</code></pre>
+<pre><code>Time difference of 7.369099 hours</code></pre>
 </div>
 <details>
 <summary>Code</summary>
