@@ -54,7 +54,7 @@ model
        for (i in 1:n.PA) 
        { 
          # the probability of presence
-         cloglog(psi[i]) <- eta.PA[i]*expert.PA[i] + log(area.PA[i]) + beta*log(effort[i])  
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])  
         
          # presences and absences come from a Bernoulli distribution
          y.PA[i] ~ dbern(psi[i]*0.9999) 
@@ -71,16 +71,17 @@ model
         P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
         
         # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
-        nu[j] <- exp(eta.PO[j]*expert.PO[j]) * area.PO[j] 
+        log(nu[j]) <- eta.PO[j] + log(area.PO[j])
 
         # thinning: the true lambda
         lambda[j] <- ifelse(j > n.PO.half,
-                            nu[j] * P.ret[j],                    #time1
-                            nu[j] * P.ret[j] * global.effort[j]) #time2
+                                nu[j] * P.ret[j],                    #time1
+                                nu[j] * P.ret[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
       }
+
   
     # PREDICTIONS -------------------------------------------------
 
@@ -89,7 +90,7 @@ model
     for (j in 1:n.PO)
     {
       # predicted probability of occurrence in grid cell j
-      cloglog(P.pred[j]) <- eta.pred[j]*expert.PO[j] + log(area.PO[j]) #+ expert.PO[j]
+      cloglog(P.pred[j]) <- eta.pred[j] + log(area.PO[j]) #+ expert.PO[j]
     }
 
     # POSTERIOR PREDICTIVE CHECK  --------------------------------

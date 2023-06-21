@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-06-14">
+<meta name="dcterms.date" content="2023-06-21">
 
 <title>Herpailurus yagouaroundi Model Outputs</title>
 <style>
@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 14, 2023</p>
+      <p class="date">June 21, 2023</p>
     </div>
   </div>
   
@@ -672,18 +672,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 2 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 A.time1   2183   2183   2183  2183  2183
-2 A.time2   2183.  2183   2183  2183  2183</code></pre>
+1 A.time1   1321. 1338.  1423. 1518. 1539.
+2 A.time2   1367. 1380.  1443. 1509. 1524.</code></pre>
 </div>
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time2'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>          mean             sd           2.5%            25%            50% 
-2182.999953832    0.002831776 2182.999999999 2183.000000000 2183.000000000 
-           75%          97.5%           Rhat          n.eff 
-2183.000000000 2183.000000000    1.000000000    1.000000000 </code></pre>
+<pre><code>       mean          sd        2.5%         25%         50%         75% 
+1443.254942   39.547660 1367.111343 1417.295240 1442.595725 1468.274486 
+      97.5%        Rhat       n.eff 
+1524.031483    1.002193 1600.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -691,12 +691,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time1'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                   mean                      sd                    2.5% 
-2183.000000000000000000    0.000000000000099632 2182.999999999999545253 
-                    25%                     50%                     75% 
-2182.999999999999545253 2182.999999999999545253 2182.999999999999545253 
-                  97.5%                    Rhat                   n.eff 
-2182.999999999999545253    1.000000000000000000    1.000000000000000000 </code></pre>
+<pre><code>       mean          sd        2.5%         25%         50%         75% 
+1424.600382   55.158673 1321.285958 1387.362672 1422.757781 1459.079484 
+      97.5%        Rhat       n.eff 
+1539.082209    1.002319 1500.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -742,21 +740,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 x 6
-  Parameter      low       Low median  High  high
-  &lt;fct&gt;        &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 delta.A   -1.16e-9 -9.09e-13      0     0     0</code></pre>
+  Parameter   low   Low median  High  high
+  &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 delta.A   -38.5 -26.3   20.1  58.1  65.3</code></pre>
 </div>
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'delta.A'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>                 mean                    sd                  2.5% 
-   -0.000046167507920     0.002831775576079    -0.000000001160333 
-                  25%                   50%                   75% 
-    0.000000000000000     0.000000000000000     0.000000000000000 
-                97.5%                  Rhat                 n.eff 
-    0.000000000000000     1.174836124459586 14000.000000000000000 </code></pre>
+<pre><code>       mean          sd        2.5%         25%         50%         75% 
+  18.654560   25.846138  -38.488356    3.439679   20.060712   35.764609 
+      97.5%        Rhat       n.eff 
+  65.327414    1.001596 3100.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -888,10 +884,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>          mean             sd           2.5%            25%            50% 
-   0.074298072    0.006219327    0.062129719    0.070147580    0.074269142 
-           75%          97.5%           Rhat          n.eff 
-   0.078393135    0.086582620    1.002219332 1600.000000000 </code></pre>
+<pre><code>         mean            sd          2.5%           25%           50% 
+   0.35204549    0.01021961    0.33241069    0.34520196    0.35184191 
+          75%         97.5%          Rhat         n.eff 
+   0.35869696    0.37281078    1.00145975 3900.00000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -940,10 +936,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'auc'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>         mean            sd          2.5%           25%           50% 
-  0.546650012   0.008260753   0.531964381   0.540941147   0.546005048 
-          75%         97.5%          Rhat         n.eff 
-  0.551817873   0.564279213   1.006017790 460.000000000 </code></pre>
+<pre><code>          mean             sd           2.5%            25%            50% 
+   0.749732288    0.005508009    0.739339803    0.746041281    0.749511119 
+           75%          97.5%           Rhat          n.eff 
+   0.753185525    0.761194151    1.001674110 2700.000000000 </code></pre>
 </div>
 </div>
 </section>
