@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-06-21">
+<meta name="dcterms.date" content="2023-06-26">
 
 <title>Herpailurus yagouaroundi Model Run</title>
 <style>
@@ -2640,7 +2640,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 21, 2023</p>
+      <p class="date">June 26, 2023</p>
     </div>
   </div>
   
@@ -2663,19 +2663,28 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-absence data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PA_time1.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev)) <span class="co"># remove NA&#39;s</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PA_time2.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev)) <span class="co"># remove NA&#39;s</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PO_time1.rds&#39;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count)) <span class="co"># remove NA&#39;s</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PO_time2.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count)) <span class="co"># remove NA&#39;s</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>PA_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PA_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PA_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>PO_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PO_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PO_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>hyagouaroundi_expert_blob_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/hyagouaroundi_expert_blob_time1.rds&#39;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hyagouaroundi_expert_blob_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/hyagouaroundi_expert_blob_time2.rds&#39;</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PA_time1.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>hyagouaroundi_expert_blob_time1) <span class="sc">%&gt;%</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PA_time2.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>hyagouaroundi_expert_blob_time2) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>hyagouaroundi_expert_gridcell <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/hyagouaroundi_expert_gridcell.rds&#39;</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PO_time1.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>hyagouaroundi_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_hyagouaroundi_PO_time2.rds&#39;</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>hyagouaroundi_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_15) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>PA_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PA_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PA_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>PO_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PO_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PO_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="splines" class="level2">
@@ -2696,14 +2705,15 @@ vertical-align: -.125em;
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                               env.bio_15 <span class="sc">+</span> </span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                               env.npp <span class="sc">+</span> </span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                               env.elev <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">offset</span>(<span class="fu">log</span>(area)) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">s</span>(X, Y, <span class="at">by=</span><span class="fu">as.factor</span>(time), <span class="at">k=</span>k))</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>model.gam <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(gam.formula, </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> PO_time1_time2,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">family =</span> poisson)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model.gam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                               expert <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">offset</span>(<span class="fu">log</span>(area)) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">s</span>(X, Y, <span class="at">by=</span><span class="fu">as.factor</span>(time), <span class="at">k=</span>k))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>model.gam <span class="ot">&lt;-</span> mgcv<span class="sc">::</span><span class="fu">gam</span>(gam.formula, </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> PO_time1_time2,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">family =</span> poisson)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model.gam)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -2711,28 +2721,29 @@ Family: poisson
 Link function: log 
 
 Formula:
-count ~ env.bio_7 + env.bio_15 + env.npp + env.elev + offset(log(area)) + 
-    s(X, Y, by = as.factor(time), k = k)
+count ~ env.bio_7 + env.bio_15 + env.npp + env.elev + expert + 
+    offset(log(area)) + s(X, Y, by = as.factor(time), k = k)
 
 Parametric coefficients:
              Estimate Std. Error  z value Pr(&gt;|z|)    
-(Intercept) -27.54064    0.16831 -163.632  &lt; 2e-16 ***
-env.bio_7    -1.30741    0.12853  -10.172  &lt; 2e-16 ***
-env.bio_15    1.58933    0.24126    6.588 4.47e-11 ***
-env.npp      -0.38450    0.09744   -3.946 7.95e-05 ***
-env.elev      1.74050    0.23323    7.463 8.48e-14 ***
+(Intercept) -27.12523    0.17528 -154.754  &lt; 2e-16 ***
+env.bio_7    -1.34553    0.12863  -10.461  &lt; 2e-16 ***
+env.bio_15    1.41947    0.24832    5.716 1.09e-08 ***
+env.npp      -0.41031    0.09623   -4.264 2.01e-05 ***
+env.elev      1.76325    0.24364    7.237 4.59e-13 ***
+expert      -16.21782    4.06189   -3.993 6.53e-05 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Approximate significance of smooth terms:
                           edf Ref.df Chi.sq p-value    
-s(X,Y):as.factor(time)1 7.899  7.997  232.0  &lt;2e-16 ***
-s(X,Y):as.factor(time)2 7.948  7.999  687.7  &lt;2e-16 ***
+s(X,Y):as.factor(time)1 7.699  7.973  201.5  &lt;2e-16 ***
+s(X,Y):as.factor(time)2 7.952  7.999  610.3  &lt;2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-R-sq.(adj) =  0.0356   Deviance explained = 33.3%
-UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
+R-sq.(adj) =  0.0354   Deviance explained =   34%
+UBRE = -0.43322  Scale est. = 1         n = 4360</code></pre>
 </div>
 </div>
 <ul>
@@ -2751,14 +2762,14 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
   eta &lt;- X %*% b + offset ## linear predictor
   for (i in 1:n) { mu[i] &lt;-  exp(eta[i]) } ## expected response
   for (i in 1:n) { y[i] ~ dpois(mu[i]) } ## response 
-  ## Parametric effect priors CHECK tau=1/9.1^2 is appropriate!
-  for (i in 1:5) { b[i] ~ dnorm(0,0.012) }
+  ## Parametric effect priors CHECK tau=1/73^2 is appropriate!
+  for (i in 1:6) { b[i] ~ dnorm(0,0.00019) }
   ## prior for s(X,Y):as.factor(time)1... 
   K1 &lt;- S1[1:8,1:8] * lambda[1]  + S1[1:8,9:16] * lambda[2]
-  b[6:13] ~ dmnorm(zero[6:13],K1) 
+  b[7:14] ~ dmnorm(zero[7:14],K1) 
   ## prior for s(X,Y):as.factor(time)2... 
   K2 &lt;- S2[1:8,1:8] * lambda[3]  + S2[1:8,9:16] * lambda[4]
-  b[14:21] ~ dmnorm(zero[14:21],K2) 
+  b[15:22] ~ dmnorm(zero[15:22],K2) 
   ## smoothing parameter priors CHECK...
   for (i in 1:4) {
     lambda[i] ~ dgamma(.05,.005)
@@ -2791,63 +2802,73 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_15&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.bio_15,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.npp&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.npp,</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.elev&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.elev,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time1, </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time2)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>PO.X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="st">&#39;(Intercept)&#39;</span><span class="ot">=</span> <span class="dv">1</span>, </span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_7&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_7,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_15&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_15,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.npp&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.npp,</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.elev&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.elev,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time1, </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time2)</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co"># number of all columns in X</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>n.X <span class="ot">=</span> <span class="fu">ncol</span>(PA.X)</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># number of columns in X of spline basis functions</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>n.spl <span class="ot">=</span> <span class="fu">ncol</span>(jagam.PA.time1)</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># number of columns in X of env. predictors + intercept</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>n.par <span class="ot">=</span> n.X <span class="sc">-</span> <span class="fu">ncol</span>(jagam.PA.time1)<span class="sc">*</span><span class="dv">2</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co"># number of factors of time in X </span></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>n.fac <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>time)))<span class="sc">*</span><span class="dv">2</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co"># country as an indexed variable</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>PO.country  <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>country))</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">#number of countries</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>n.country <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(PO.country))</span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">#global effort time1/time2 (see Range_map_offset.qmd)</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>global.effort <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.2715625</span>, <span class="fu">nrow</span>(PO_time1_time2))</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co"># for AUC</span></span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>thr <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.05</span>)</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>jags.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">n.PA =</span> <span class="fu">nrow</span>(PA_time1_time2),</span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y.PA =</span> PA_time1_time2<span class="sc">$</span>presabs, </span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                  <span class="at">X.PA =</span> PA.X,</span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                  <span class="at">area.PA =</span> PA_time1_time2<span class="sc">$</span>area,</span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                  <span class="at">effort =</span> PA_time1_time2<span class="sc">$</span>effort,</span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.PO =</span> <span class="fu">nrow</span>(PO_time1_time2),</span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.PO.half =</span> <span class="fu">nrow</span>(PO_time1_time2)<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y.PO =</span> PO_time1_time2<span class="sc">$</span>count, </span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>                  <span class="at">X.PO =</span> PO.X,</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>                  <span class="at">area.PO =</span> PO_time1_time2<span class="sc">$</span>area, </span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>                  <span class="at">acce =</span> PO_time1_time2<span class="sc">$</span>acce,</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>                  <span class="at">country =</span> PO.country,</span>
-<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                  <span class="at">global.effort =</span> global.effort,</span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.X =</span> n.X,</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.cntr =</span> n.country,</span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.par =</span> n.par,</span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.fac =</span> n.fac,</span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.spl =</span> n.spl,</span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Z =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>zero)),</span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>                  <span class="at">S.time1 =</span> jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>S1,</span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>                  <span class="at">S.time2 =</span> jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>S2, </span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>                  <span class="at">thr =</span> thr)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;expert&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>expert,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time1, </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time2)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>PO.X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="st">&#39;(Intercept)&#39;</span><span class="ot">=</span> <span class="dv">1</span>, </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_7&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_7,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_15&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_15,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.npp&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.npp,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.elev&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.elev,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;expert&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>expert,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time1, </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time2)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co"># number of all columns in X</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>n.X <span class="ot">=</span> <span class="fu">ncol</span>(PA.X)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># number of columns in X of spline basis functions</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>n.spl <span class="ot">=</span> <span class="fu">ncol</span>(jagam.PA.time1)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># number of columns in X of env. predictors + intercept</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>n.par <span class="ot">=</span> n.X <span class="sc">-</span> <span class="fu">ncol</span>(jagam.PA.time1)<span class="sc">*</span><span class="dv">2</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="co"># number of factors of time in X </span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>n.fac <span class="ot">=</span> <span class="fu">length</span>(<span class="fu">unique</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>time)))<span class="sc">*</span><span class="dv">2</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co"># country as an indexed variable</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>PO.country  <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>country))</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co">#number of countries</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>n.country <span class="ot">&lt;-</span> <span class="fu">length</span>(<span class="fu">unique</span>(PO.country))</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co">#global effort time1/time2 (see Range_map_offset.qmd)</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>global.effort <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fl">0.2715625</span>, <span class="fu">nrow</span>(PO_time1_time2))</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co"># PA.expert &lt;- PA_time1_time2$expert</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="co"># PO.expert &lt;- PO_time1_time2$expert</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co"># for AUC</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>thr <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="fl">0.05</span>)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>jags.data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">n.PA =</span> <span class="fu">nrow</span>(PA_time1_time2),</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y.PA =</span> PA_time1_time2<span class="sc">$</span>presabs, </span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>                  <span class="at">X.PA =</span> PA.X,</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>                  <span class="at">area.PA =</span> PA_time1_time2<span class="sc">$</span>area,</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>                  <span class="at">effort =</span> PA_time1_time2<span class="sc">$</span>effort,</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># expert.PA = PA.expert,</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.PO =</span> <span class="fu">nrow</span>(PO_time1_time2),</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.PO.half =</span> <span class="fu">nrow</span>(PO_time1_time2)<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y.PO =</span> PO_time1_time2<span class="sc">$</span>count, </span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>                  <span class="at">X.PO =</span> PO.X,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>                  <span class="at">area.PO =</span> PO_time1_time2<span class="sc">$</span>area, </span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># expert.PO = PO.expert,</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>                  <span class="at">acce =</span> PO_time1_time2<span class="sc">$</span>acce,</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>                  <span class="at">country =</span> PO.country,</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>                  <span class="at">global.effort =</span> global.effort,</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.X =</span> n.X,</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.cntr =</span> n.country,</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.par =</span> n.par,</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.fac =</span> n.fac,</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>                  <span class="at">n.spl =</span> n.spl,</span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Z =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>zero)),</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>                  <span class="at">S.time1 =</span> jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>S1,</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>                  <span class="at">S.time2 =</span> jagam.out<span class="sc">$</span>jags.data<span class="sc">$</span>S2, </span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># beta.e = -20,</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>                  <span class="at">thr =</span> thr)  </span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="co">#jags.data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -2912,91 +2933,89 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="st">       for (i in 1:n.PA) </span></span>
 <span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="st">       { </span></span>
 <span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="st">         # the probability of presence</span></span>
-<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="st">         cloglog(psi[i]) &lt;- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])  </span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="st">         cloglog(psi[i]) &lt;- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])  #+ beta.e*expert.PA[i]</span></span>
 <span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
 <span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="st">         # presences and absences come from a Bernoulli distribution</span></span>
 <span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="st">         y.PA[i] ~ dbern(psi[i]*0.9999) </span></span>
-<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="st">         </span></span>
-<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="st">       } </span></span>
-<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="st">      ## --- Presence-Only (PO) data --- </span></span>
-<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="st">      eta.PO &lt;- X.PO %*% b  ## linear predictor</span></span>
-<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="st">      for (j in 1:n.PO)</span></span>
-<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="st">      {</span></span>
-<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="st">        # cell-specific probability of retainin (observing) a point is a function of accessibility</span></span>
-<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="st">        P.ret[j] &lt;- alpha0[country[j]] * exp( (-alpha1) * acce[j]) </span></span>
-<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
-<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="st">        # true mean number (nu) of points per cell i is the true intensity multiplied by cell area</span></span>
-<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a><span class="st">        log(nu[j]) &lt;- eta.PO[j] + log(area.PO[j])</span></span>
-<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="st">        # thinning: the true lambda</span></span>
-<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="st">        lambda[j] &lt;- ifelse(j &gt; n.PO.half,</span></span>
-<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="st">                                nu[j] * P.ret[j],                    #time1</span></span>
-<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a><span class="st">                                nu[j] * P.ret[j] * global.effort[j]) #time2</span></span>
-<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a><span class="st">        # counts of observed points come from a Poisson distribution</span></span>
-<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a><span class="st">        y.PO[j] ~ dpois(lambda[j]) </span></span>
-<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
-<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
-<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a><span class="st">    # PREDICTIONS -------------------------------------------------</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="st">       }</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="st">      ## --- Presence-Only (PO) data --- </span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="st">      eta.PO &lt;- X.PO %*% b  ## linear predictor</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a><span class="st">      for (j in 1:n.PO)</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="st">      {</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="st">        # cell-specific probability of retainin (observing) a point is a function of accessibility</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="st">        P.ret[j] &lt;- alpha0[country[j]] * exp( (-alpha1) * acce[j]) </span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="st">        # true mean number (nu) of points per cell i is the true intensity multiplied by cell area</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="st">        log(nu[j]) &lt;- eta.PO[j] + log(area.PO[j])  #+ beta.e*expert.PO[j]</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="st">        # thinning: the true lambda</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="st">        lambda[j] &lt;- ifelse(j &gt; n.PO.half,</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="st">                                nu[j] * P.ret[j],                    #time1</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="st">                                nu[j] * P.ret[j] * global.effort[j]) #time2</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a><span class="st">        # counts of observed points come from a Poisson distribution</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a><span class="st">        y.PO[j] ~ dpois(lambda[j]) </span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a><span class="st">      }</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="st">  </span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a><span class="st">    # PREDICTIONS -------------------------------------------------</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a><span class="st">    eta.pred &lt;- X.PO %*% b</span></span>
 <span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="st">    eta.pred &lt;- X.PO %*% b</span></span>
-<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO)</span></span>
-<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
-<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="st">      # predicted probability of occurrence in grid cell j</span></span>
-<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a><span class="st">      cloglog(P.pred[j]) &lt;- eta.pred[j] + log(area.PO[j]) #+ expert.PO[j]</span></span>
-<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="st">    # POSTERIOR PREDICTIVE CHECK  --------------------------------</span></span>
-<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a><span class="st">    # for PA</span></span>
-<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="st">    for (i in 1:n.PA)</span></span>
-<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
-<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="st">      # Fit assessments: Tjur R-Squared (fit statistic for logistic regression)</span></span>
-<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="st">      pres[i] &lt;- ifelse(y.PA[i] &gt; 0, psi[i], 0)</span></span>
-<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a><span class="st">      absc[i] &lt;- ifelse(y.PA[i] == 0, psi[i], 0)</span></span>
-<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a><span class="st">    # Discrepancy measures for entire PA data set</span></span>
-<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a><span class="st">    pres.n &lt;- sum(y.PA[] &gt; 0)</span></span>
-<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a><span class="st">    absc.n &lt;- sum(y.PA[] == 0)</span></span>
-<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a><span class="st">    r2_tjur &lt;- abs(sum(pres[])/pres.n - sum(absc[])/absc.n)</span></span>
-<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="st">    # for PO</span></span>
-<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO)</span></span>
-<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
-<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a><span class="st">      # Fit assessments: Posterior predictive check and data for DHARMA</span></span>
-<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a><span class="st">      y.PO.new[j] ~ dpois(lambda[j]) </span></span>
-<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a><span class="st">    # AUC</span></span>
-<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a><span class="st">    for (t in 1:length(thr)) {</span></span>
-<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a><span class="st">        sens[t] &lt;- sum((psi &gt; thr[t]) &amp;&amp; (y.PA==1))/pres.n   #tpr (sensitivity)</span></span>
-<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="st">        spec[t] &lt;- sum((psi &lt; thr[t]) &amp;&amp; (y.PA==0))/absc.n   </span></span>
-<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a><span class="st">        fpr[t] &lt;- 1 - spec[t]                             #fpr (1-specificity)</span></span>
-<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a><span class="st">    auc &lt;- sum((sens[2:length(sens)]+sens[1:(length(sens)-1)])/2 * </span></span>
-<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="st">    -(fpr[2:length(fpr)] - fpr[1:(length(fpr)-1)]))</span></span>
-<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="st">    # DERIVED QUANTITIES ------------------------------------------</span></span>
-<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a><span class="st">    # area in each time period, and temporal change of area</span></span>
-<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a><span class="st">    A.time1 &lt;- sum(P.pred[1:n.PO.half])</span></span>
-<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a><span class="st">    A.time2 &lt;- sum(P.pred[(n.PO.half+1):n.PO])</span></span>
-<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="st">    delta.A &lt;- A.time2 - A.time1</span></span>
-<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
-<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a><span class="st">    # uncertainty for the temporal change</span></span>
-<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO.half)</span></span>
-<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
-<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="st">      delta.Grid[j] &lt;- P.pred[n.PO.half+j] - P.pred[j]</span></span>
-<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
-<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
-<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span>, <span class="at">file =</span> <span class="st">&#39;models/hyagouaroundi_model.txt&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO)</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a><span class="st">      # predicted probability of occurrence in grid cell j</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="st">      cloglog(P.pred[j]) &lt;- eta.pred[j] + log(area.PO[j])  #+ beta.e*expert.PO[j]</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a><span class="st">    # POSTERIOR PREDICTIVE CHECK  --------------------------------</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a><span class="st">    # for PA</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="st">    for (i in 1:n.PA)</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a><span class="st">      # Fit assessments: Tjur R-Squared (fit statistic for logistic regression)</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a><span class="st">      pres[i] &lt;- ifelse(y.PA[i] &gt; 0, psi[i], 0)</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="st">      absc[i] &lt;- ifelse(y.PA[i] == 0, psi[i], 0)</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="st">    # Discrepancy measures for entire PA data set</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a><span class="st">    pres.n &lt;- sum(y.PA[] &gt; 0)</span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a><span class="st">    absc.n &lt;- sum(y.PA[] == 0)</span></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a><span class="st">    r2_tjur &lt;- abs(sum(pres[])/pres.n - sum(absc[])/absc.n)</span></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a><span class="st">    # for PO</span></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO)</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a><span class="st">      # Fit assessments: Posterior predictive check and data for DHARMA</span></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a><span class="st">      y.PO.new[j] ~ dpois(lambda[j]) </span></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a><span class="st">    # AUC</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a><span class="st">    for (t in 1:length(thr)) {</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a><span class="st">        sens[t] &lt;- sum((psi &gt; thr[t]) &amp;&amp; (y.PA==1))/pres.n   #tpr (sensitivity)</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a><span class="st">        spec[t] &lt;- sum((psi &lt; thr[t]) &amp;&amp; (y.PA==0))/absc.n   </span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a><span class="st">        fpr[t] &lt;- 1 - spec[t]                                #fpr (1-specificity)</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a><span class="st">    auc &lt;- sum((sens[2:length(sens)]+sens[1:(length(sens)-1)])/2 * </span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a><span class="st">    -(fpr[2:length(fpr)] - fpr[1:(length(fpr)-1)]))</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="st">    # DERIVED QUANTITIES ------------------------------------------</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="st">    # area in each time period, and temporal change of area</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="st">    A.time1 &lt;- sum(P.pred[1:n.PO.half])</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a><span class="st">    A.time2 &lt;- sum(P.pred[(n.PO.half+1):n.PO])</span></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a><span class="st">    delta.A &lt;- A.time2 - A.time1</span></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="st">    # uncertainty for the temporal change</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a><span class="st">    for (j in 1:n.PO.half)</span></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a><span class="st">    {</span></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="st">      delta.Grid[j] &lt;- P.pred[n.PO.half+j] - P.pred[j]</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="st">    }</span></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="st">  }</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span>, <span class="at">file =</span> <span class="st">&#39;models/hyagouaroundi_model.txt&#39;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3020,7 +3039,7 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>start.time <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>hyagouaroundi_model <span class="ot">&lt;-</span> R2jags<span class="sc">::</span><span class="fu">jags</span>(<span class="at">data=</span>jags.data,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">model.file=</span><span class="st">&#39;models/hyagouaroundi_model.txt&#39;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">model.file=</span><span class="st">&#39;models/hyagouaroundi_model.txt&#39;</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">parameters.to.save=</span><span class="fu">c</span>(<span class="st">&#39;b&#39;</span>, <span class="st">&#39;P.pred&#39;</span>, </span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;A.time1&#39;</span>, <span class="st">&#39;A.time2&#39;</span>, <span class="st">&#39;delta.A&#39;</span>,</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">&#39;alpha0&#39;</span>, <span class="st">&#39;alpha1&#39;</span>, <span class="st">&#39;beta&#39;</span>,</span>
@@ -3040,9 +3059,9 @@ UBRE = -0.42758  Scale est. = 1         n = 4366</code></pre>
    Resolving undeclared variables
    Allocating nodes
 Graph information:
-   Observed stochastic nodes: 5318
-   Unobserved stochastic nodes: 4406
-   Total graph size: 205718
+   Observed stochastic nodes: 5312
+   Unobserved stochastic nodes: 4400
+   Total graph size: 210791
 
 Initializing model</code></pre>
 </div>
@@ -3053,7 +3072,7 @@ Initializing model</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>time.taken</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 6.759267 hours</code></pre>
+<pre><code>Time difference of 7.790357 hours</code></pre>
 </div>
 <details>
 <summary>Code</summary>
