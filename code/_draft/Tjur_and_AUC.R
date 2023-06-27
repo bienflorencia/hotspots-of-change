@@ -186,15 +186,16 @@ R2.Tjur(jags.data$y, fitted.model$mean$psi)
 # python - Manually calculate AUC - Stack Overflow
 # You can divide the space into 2 parts: a triangle and a trapezium. The triangle will have area TPR*FRP/2 , the trapezium (1-FPR)*(1+TPR)/2 = 1/2 - FPR/2 + TPR/2 - TPR*FPR/2 . The total area is 1/2 - FPR/2 + TPR/2 . This is how you can get it, having just 2 points
 
-sens <- fitted.model$mean$sens
-fpr <- fitted.model$mean$fpr
-auc.jags <- fitted.model$mean$auc
-
-plot(fpr, sens, type='o', pch=20, 
-     xlab='1 - Specificity', ylab='Sensitivity')
-text(x=0.5, y=0.5, paste0('AUC= ', round(auc.jags,3)))
-sum((sens[-1]+sens[-length(sens)])/2 * -diff(fpr)) # auc
+auc.sens.fpr <- bind_cols(sens=fitted.model$mean$sens, 
+                          fpr=fitted.model$mean$fpr) 
+auc.value <- fitted.model$mean$auc
 
 fitted.model$mean$auc
 
+ggplot(auc.sens.fpr, aes(fpr, sens)) + 
+  geom_line() + geom_point() +
+  labs(x='1 - Specificity', y='Sensitivity') +
+  annotate(geom="text", x=0.5, y=0.5,
+           label=paste('AUC = ', round(auc.jags, 3))) +
+  theme_bw() 
 
