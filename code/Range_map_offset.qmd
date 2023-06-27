@@ -71,9 +71,9 @@ data_carnivores_PA <- read_csv('data/data_PA.csv')
 
 Values
 
-  - buffer_PO = 100000 -> 100km
-  - buffer_PA = 10000 -> 10km
-  - buffer_expert = 150000 -> 150km
+  - buffer_PO = 400000 -> 400km
+  - buffer_PA = 400000 -> 400km
+  - buffer_expert = 400000 -> 400km
 
 ```{r}
 #| label: binary-range-function

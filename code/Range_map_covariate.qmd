@@ -1,0 +1,588 @@
+---
+title: "Range-map covariate"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+self-contained: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+## Calculate expert range layer for each species, to use as a covariate in the model.
+
+  - R Libraries
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
+library(patchwork)
+library(knitr)
+library(units)
+library(smoothr)
+library(tmap)
+library(terra)
+library(sf)
+sf_use_s2(FALSE)
+library(tidyverse)
+```
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| message: false
+#| warning: false
+#| code-fold: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+Latam_projected <- st_read('data/Latam_vector.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+Latam <- st_union(st_make_valid(Latam_projected))
+Latam.raster <- terra::rast('data/Latam_raster.tif')
+Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+```
+
+
+  - Datasets
+
+```{r}
+#| label: data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+data_carnivores_PO <- read_csv('data/data_PO.csv')
+data_carnivores_PA <- read_csv('data/data_PA.csv')
+```
+
+## Functions
+
+  - `range_edge_dist_expert_range()`: generates a raster with the distance from the edge of expert range map and calculates the values fro the presence-only grid cells and presence-absence blobs (for time1 and time2). The raster will have a value of 0 inside the range, and then a positive value outside as the distance to the range (rescaled from 0 to 1).
+  - `rescale0to1()`: rescales the distance to the edge of the expert range map to be a value from 0 to 1, using the formula (value-min)/(max-min). The original code by 
+[hannahlowens](https://github.com/hannahlowens/climateStability/blob/master/R/rescale0to1.R) and their `climateStability` package.
+
+```{r}
+#| label: functions
+#| message: false
+#| warning: false
+#| code-fold: false
+
+range_edge_dist_expert_range <- function(expert_range_sf, time1_blobs, time2_blobs, 
+                                         Latam.vect, Latam.rast){
+  
+  area_thresh <- units::set_units(100000, km^2)
+  expert_range_sf_filled <- smoothr::fill_holes(expert_range_sf, area_thresh)
+  
+  dist_expertrange_rast <- rasterize(vect(expert_range_sf_filled), Latam.rast, background=2) %>% 
+    mask(vect(Latam.vect)) %>% costDist(1) %>% classify(cbind(NaN, NA)) %>% rescale0to1()
+  names(dist_expertrange_rast) <- 'dist_exprt'
+  
+  dist_expertrange_time1_blobs <- terra::extract(x = dist_expertrange_rast, y = vect(time1_blobs), fun = mean)[,2]
+  dist_expertrange_time2_blobs <- terra::extract(x = dist_expertrange_rast, y = vect(time2_blobs), fun = mean)[,2]
+  
+  return(list(dist_expertrange_rast, dist_expertrange_time1_blobs, dist_expertrange_time2_blobs))
+}
+
+rescale0to1 <- function(rasterForCalculation){
+  if (!is(rasterForCalculation, "SpatRaster")){
+    warning("Supplied argument is not a SpatRaster./n", sep = "")
+    return(NULL)
+  }
+  rasterMinMax <- minmax(rasterForCalculation)
+  rescaledRaster <- (rasterForCalculation - rasterMinMax[1])/(rasterMinMax[2] - rasterMinMax[1])
+  return(rescaledRaster)
+}
+```
+
+
+# Herpailurus yagouaroundi
+
+```{r}
+#| label: hyagouaroundi
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+hyagouaroundi_PA_time1_blobs <- readRDS('data/PA_hyagouaroundi_time1_blobs.rds')
+hyagouaroundi_PA_time2_blobs <- readRDS('data/PA_hyagouaroundi_time2_blobs.rds')
+hyagouaroundi_IUCN <- st_read('big_data/hyagouaroundi_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+hyagouaroundi_range_edge <- range_edge_dist_expert_range(hyagouaroundi_IUCN, 
+                                                         hyagouaroundi_PA_time1_blobs,
+                                                         hyagouaroundi_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_hyagouaroundi_expert_gridcell <- data.frame(expertCell=hyagouaroundi_range_edge[[1]][])
+# blobs in time 1
+hyagouaroundi_expert_blob_time1 <- hyagouaroundi_range_edge[[2]]
+# blobs in time 2
+hyagouaroundi_expert_blob_time2 <- hyagouaroundi_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: hyagouaroundi-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(hyagouaroundi_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(hyagouaroundi_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: hyagouaroundi-save
+#| eval: true
+#| message: false
+#| warning: false
+
+
+terra::writeRaster(hyagouaroundi_range_edge[[1]], 'data/hyagouaroundi_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_hyagouaroundi_expert_gridcell, 'data/hyagouaroundi_expert_gridcell.rds')
+saveRDS(hyagouaroundi_expert_blob_time1, 'data/hyagouaroundi_expert_blob_time1.rds')
+saveRDS(hyagouaroundi_expert_blob_time2, 'data/hyagouaroundi_expert_blob_time2.rds')
+```
+
+# Leopardus pardalis
+
+```{r}
+#| label: lpardalis
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+lpardalis_PA_time1_blobs <- readRDS('data/PA_lpardalis_time1_blobs.rds')
+lpardalis_PA_time2_blobs <- readRDS('data/PA_lpardalis_time2_blobs.rds')
+lpardalis_IUCN <- st_read('big_data/lpardalis_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+lpardalis_range_edge <- range_edge_dist_expert_range(lpardalis_IUCN, 
+                                                         lpardalis_PA_time1_blobs,
+                                                         lpardalis_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_lpardalis_expert_gridcell <- data.frame(expertCell=lpardalis_range_edge[[1]][])
+# blobs in time 1
+lpardalis_expert_blob_time1 <- lpardalis_range_edge[[2]]
+# blobs in time 2
+lpardalis_expert_blob_time2 <- lpardalis_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: lpardalis-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(lpardalis_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(lpardalis_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: lpardalis-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(lpardalis_range_edge[[1]], 'data/lpardalis_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_lpardalis_expert_gridcell, 'data/lpardalis_expert_gridcell.rds')
+saveRDS(lpardalis_expert_blob_time1, 'data/lpardalis_expert_blob_time1.rds')
+saveRDS(lpardalis_expert_blob_time2, 'data/lpardalis_expert_blob_time2.rds')
+```
+
+# Cerdocyon thous
+
+```{r}
+#| label: cthous
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+cthous_PA_time1_blobs <- readRDS('data/PA_cthous_time1_blobs.rds')
+cthous_PA_time2_blobs <- readRDS('data/PA_cthous_time2_blobs.rds')
+cthous_IUCN <- st_read('big_data/cthous_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+cthous_range_edge <- range_edge_dist_expert_range(cthous_IUCN, 
+                                                         cthous_PA_time1_blobs,
+                                                         cthous_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_cthous_expert_gridcell <- data.frame(expertCell=cthous_range_edge[[1]][])
+# blobs in time 1
+cthous_expert_blob_time1 <- cthous_range_edge[[2]]
+# blobs in time 2
+cthous_expert_blob_time2 <- cthous_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: cthous-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(cthous_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(cthous_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: cthous-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(cthous_range_edge[[1]], 'data/cthous_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_cthous_expert_gridcell, 'data/cthous_expert_gridcell.rds')
+saveRDS(cthous_expert_blob_time1, 'data/cthous_expert_blob_time1.rds')
+saveRDS(cthous_expert_blob_time2, 'data/cthous_expert_blob_time2.rds')
+```
+
+
+# Chrysocyon brachyurus
+
+```{r}
+#| label: cbrachyurus
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+cbrachyurus_PA_time1_blobs <- readRDS('data/PA_cbrachyurus_time1_blobs.rds')
+cbrachyurus_PA_time2_blobs <- readRDS('data/PA_cbrachyurus_time2_blobs.rds')
+cbrachyurus_IUCN <- st_read('big_data/cbrachyurus_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+cbrachyurus_range_edge <- range_edge_dist_expert_range(cbrachyurus_IUCN, 
+                                                         cbrachyurus_PA_time1_blobs,
+                                                         cbrachyurus_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_cbrachyurus_expert_gridcell <- data.frame(expertCell=cbrachyurus_range_edge[[1]][])
+# blobs in time 1
+cbrachyurus_expert_blob_time1 <- cbrachyurus_range_edge[[2]]
+# blobs in time 2
+cbrachyurus_expert_blob_time2 <- cbrachyurus_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: cbrachyurus-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(cbrachyurus_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(cbrachyurus_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: cbrachyurus-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(cbrachyurus_range_edge[[1]], 'data/cbrachyurus_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_cbrachyurus_expert_gridcell, 'data/cbrachyurus_expert_gridcell.rds')
+saveRDS(cbrachyurus_expert_blob_time1, 'data/cbrachyurus_expert_blob_time1.rds')
+saveRDS(cbrachyurus_expert_blob_time2, 'data/cbrachyurus_expert_blob_time2.rds')
+```
+
+
+# Eira barbara
+
+```{r}
+#| label: ebarbara
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+ebarbara_PA_time1_blobs <- readRDS('data/PA_ebarbara_time1_blobs.rds')
+ebarbara_PA_time2_blobs <- readRDS('data/PA_ebarbara_time2_blobs.rds')
+ebarbara_IUCN <- st_read('big_data/ebarbara_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+ebarbara_range_edge <- range_edge_dist_expert_range(ebarbara_IUCN, 
+                                                         ebarbara_PA_time1_blobs,
+                                                         ebarbara_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_ebarbara_expert_gridcell <- data.frame(expertCell=ebarbara_range_edge[[1]][])
+# blobs in time 1
+ebarbara_expert_blob_time1 <- ebarbara_range_edge[[2]]
+# blobs in time 2
+ebarbara_expert_blob_time2 <- ebarbara_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: ebarbara-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(ebarbara_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(ebarbara_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: ebarbara-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(ebarbara_range_edge[[1]], 'data/ebarbara_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_ebarbara_expert_gridcell, 'data/ebarbara_expert_gridcell.rds')
+saveRDS(ebarbara_expert_blob_time1, 'data/ebarbara_expert_blob_time1.rds')
+saveRDS(ebarbara_expert_blob_time2, 'data/ebarbara_expert_blob_time2.rds')
+```
+
+# Leopardus wiedii
+
+```{r}
+#| label: lwiedii
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+lwiedii_PA_time1_blobs <- readRDS('data/PA_lwiedii_time1_blobs.rds')
+lwiedii_PA_time2_blobs <- readRDS('data/PA_lwiedii_time2_blobs.rds')
+lwiedii_IUCN <- st_read('big_data/lwiedii_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+lwiedii_range_edge <- range_edge_dist_expert_range(lwiedii_IUCN, 
+                                                         lwiedii_PA_time1_blobs,
+                                                         lwiedii_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_lwiedii_expert_gridcell <- data.frame(expertCell=lwiedii_range_edge[[1]][])
+# blobs in time 1
+lwiedii_expert_blob_time1 <- lwiedii_range_edge[[2]]
+# blobs in time 2
+lwiedii_expert_blob_time2 <- lwiedii_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: lwiedii-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(lwiedii_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(lwiedii_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: lwiedii-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(lwiedii_range_edge[[1]], 'data/lwiedii_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_lwiedii_expert_gridcell, 'data/lwiedii_expert_gridcell.rds')
+saveRDS(lwiedii_expert_blob_time1, 'data/lwiedii_expert_blob_time1.rds')
+saveRDS(lwiedii_expert_blob_time2, 'data/lwiedii_expert_blob_time2.rds')
+```
+
+
+# Nasua nasua
+
+```{r}
+#| label: nnasua
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+nnasua_PA_time1_blobs <- readRDS('data/PA_nnasua_time1_blobs.rds')
+nnasua_PA_time2_blobs <- readRDS('data/PA_nnasua_time2_blobs.rds')
+nnasua_IUCN <- st_read('big_data/nnasua_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+nnasua_range_edge <- range_edge_dist_expert_range(nnasua_IUCN, 
+                                                         nnasua_PA_time1_blobs,
+                                                         nnasua_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_nnasua_expert_gridcell <- data.frame(expertCell=nnasua_range_edge[[1]][])
+# blobs in time 1
+nnasua_expert_blob_time1 <- nnasua_range_edge[[2]]
+# blobs in time 2
+nnasua_expert_blob_time2 <- nnasua_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: nnasua-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(nnasua_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(nnasua_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: nnasua-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(nnasua_range_edge[[1]], 'data/nnasua_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_nnasua_expert_gridcell, 'data/nnasua_expert_gridcell.rds')
+saveRDS(nnasua_expert_blob_time1, 'data/nnasua_expert_blob_time1.rds')
+saveRDS(nnasua_expert_blob_time2, 'data/nnasua_expert_blob_time2.rds')
+```
+
+# Pteronura brasiliensis
+
+```{r}
+#| label: pbrasiliensis
+#| message: false
+#| warning: false
+#| code-fold: false
+ 
+pbrasiliensis_PA_time1_blobs <- readRDS('data/PA_pbrasiliensis_time1_blobs.rds')
+pbrasiliensis_PA_time2_blobs <- readRDS('data/PA_pbrasiliensis_time2_blobs.rds')
+pbrasiliensis_IUCN <- st_read('big_data/pbrasiliensis_IUCN.shp', quiet = T) %>% 
+  st_transform(crs=equalareaCRS)
+
+
+# Calculate raster and blobs
+pbrasiliensis_range_edge <- range_edge_dist_expert_range(pbrasiliensis_IUCN, 
+                                                         pbrasiliensis_PA_time1_blobs,
+                                                         pbrasiliensis_PA_time2_blobs,
+                                                         Latam, Latam.raster)
+
+# grid cell values
+data_pbrasiliensis_expert_gridcell <- data.frame(expertCell=pbrasiliensis_range_edge[[1]][])
+# blobs in time 1
+pbrasiliensis_expert_blob_time1 <- pbrasiliensis_range_edge[[2]]
+# blobs in time 2
+pbrasiliensis_expert_blob_time2 <- pbrasiliensis_range_edge[[3]]
+
+```
+
+## Plot
+
+```{r}
+#| label: pbrasiliensis-plot
+#| message: false
+#| warning: false
+#| fig-height: 10
+
+tm_shape(pbrasiliensis_range_edge[[1]]) + 
+    tm_raster(palette = 'GnBu', n=20, title = 'Distance to the range') +
+    tm_shape(pbrasiliensis_IUCN) + 
+    tm_borders() +
+    tm_shape(Latam) + 
+    tm_borders(lwd = 0.2) +
+    tm_layout(legend.position = c('left', 'bottom'))
+```
+
+## Save
+
+```{r}
+#| label: pbrasiliensis-save
+#| eval: true
+#| message: false
+#| warning: false
+
+terra::writeRaster(pbrasiliensis_range_edge[[1]], 'data/pbrasiliensis_expert_gridcell.tif', overwrite=TRUE)
+saveRDS(data_pbrasiliensis_expert_gridcell, 'data/pbrasiliensis_expert_gridcell.rds')
+saveRDS(pbrasiliensis_expert_blob_time1, 'data/pbrasiliensis_expert_blob_time1.rds')
+saveRDS(pbrasiliensis_expert_blob_time2, 'data/pbrasiliensis_expert_blob_time2.rds')
+```
