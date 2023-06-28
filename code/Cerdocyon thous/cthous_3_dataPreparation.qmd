@@ -100,15 +100,16 @@ The following covariates were chosen using the 'variableSelection' script:
 #| warning: false
 
 bio <- rast(here::here('big_data/bio_high.tif'))
-urban <- rast(here::here('big_data/urban_high.tif'))
-urban <- resample(urban, bio, method='bilinear') 
-names(urban) <- 'urban'
+
+npp <- rast(here::here('big_data/npp_high.tif'))
+npp <- resample(npp, bio, method='bilinear') 
+names(npp) <- 'npp'
 tree <- rast(here::here('big_data/tree_high.tif'))
 tree <- resample(tree, bio, method='bilinear') 
 names(tree) <- 'tree'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_3','bio_4')]], urban, tree) %>% 
+env <- c(bio[[c('bio_10','bio_16')]], npp, tree) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -128,9 +129,9 @@ env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean an
 #| warning: false
 #| code-fold: false
 
-urban.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["urban"]]) +
-    tm_raster(palette = 'YlGnBu', midpoint = NA, style= "cont", n=20)  + 
+npp.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["npp"]]) +
+    tm_raster(palette = 'Greens', midpoint = NA, style= "cont", n=20)  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -142,24 +143,24 @@ tree.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_3.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_3"]]) +
-    tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
+bio_10.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_10"]]) +
+    tm_raster(palette = 'YlOrBr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_4.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_4"]]) +
-    tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
+bio_16.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_16"]]) +
+    tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-urban.plot 
+npp.plot 
 tree.plot
-bio_3.plot
-bio_4.plot
+bio_10.plot
+bio_16.plot
 ```
 
 ### Thinning parametres 
