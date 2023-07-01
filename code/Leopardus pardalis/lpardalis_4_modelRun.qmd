@@ -41,22 +41,21 @@ lpardalis_expert_blob_time1 <- readRDS('data/lpardalis_expert_blob_time1.rds')
 lpardalis_expert_blob_time2 <- readRDS('data/lpardalis_expert_blob_time2.rds')
 
 PA_time1 <- readRDS('data/data_lpardalis_PA_time1.rds') %>%
-  cbind(expert=lpardalis_expert_blob_time1$presence) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp)) # remove NA's
-
+  cbind(expert=lpardalis_expert_blob_time1) %>%
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_lpardalis_PA_time2.rds') %>%
-  cbind(expert=lpardalis_expert_blob_time2$presence) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp)) # remove NA's
+  cbind(expert=lpardalis_expert_blob_time2) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 lpardalis_expert_gridcell <- readRDS('data/lpardalis_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_lpardalis_PO_time1.rds') %>%
-  cbind(expert=lpardalis_expert_gridcell$expert) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
-PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds') %>%
-  cbind(expert=lpardalis_expert_gridcell$expert) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count)) # remove NA's
+  cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds')  %>%
+  cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -73,12 +72,13 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 10
+k = 9
 
 gam.formula <- formula(count ~ env.bio_10 + 
                                env.bio_17 + 
-                               env.tree + 
-                               env.npp +
+                               env.npp + 
+                               env.tree +
+                               expert +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
 
@@ -123,16 +123,18 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 PA.X <- cbind('(Intercept)'= 1, 
               'env.bio_10' = PA_time1_time2$env.bio_10,
               'env.bio_17' = PA_time1_time2$env.bio_17,
-              'env.tree' = PA_time1_time2$env.tree,
               'env.npp' = PA_time1_time2$env.npp,
+              'env.tree' = PA_time1_time2$env.tree,
+              'expert' = PA_time1_time2$expert,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
               'env.bio_10' = PO_time1_time2$env.bio_10,
               'env.bio_17' = PO_time1_time2$env.bio_17,
-              'env.tree' = PO_time1_time2$env.tree,
               'env.npp' = PO_time1_time2$env.npp,
+              'env.tree' = PO_time1_time2$env.tree,
+              'expert' = PO_time1_time2$expert,
               jagam.PO.time1, 
               jagam.PO.time2)
 
@@ -151,10 +153,6 @@ n.fac = length(unique(as.factor(PO_time1_time2$time)))*2
 # country as an indexed variable
 PO.country  <- as.numeric(as.factor(PO_time1_time2$country))
 
-# expert range map data
-PA.expert = PA_time1_time2$expert
-PO.expert = PO_time1_time2$expert
-
 #number of countries
 n.country <- length(unique(PO.country))
 
@@ -167,14 +165,12 @@ thr <- seq(0, 1, 0.05)
 jags.data <- list(n.PA = nrow(PA_time1_time2),
                   y.PA = PA_time1_time2$presabs, 
                   X.PA = PA.X,
-                  PA.expert = PA.expert,
                   area.PA = PA_time1_time2$area,
                   effort = PA_time1_time2$effort,
                   n.PO = nrow(PO_time1_time2),
                   n.PO.half = nrow(PO_time1_time2)/2,
                   y.PO = PO_time1_time2$count, 
                   X.PO = PO.X,
-                  PO.expert = PO.expert,
                   area.PO = PO_time1_time2$area, 
                   acce = PO_time1_time2$acce,
                   country = PO.country,
@@ -186,9 +182,10 @@ jags.data <- list(n.PA = nrow(PA_time1_time2),
                   n.spl = n.spl,
                   Z = rep(0, length(jagam.out$jags.data$zero)),
                   S.time1 = jagam.out$jags.data$S1,
-                  S.time2 = jagam.out$jags.data$S2,
-                  thr = thr) 
+                  S.time2 = jagam.out$jags.data$S2, 
+                  thr = thr)  
 
+#jags.data
 ```
 
 ## Specify the model in BUGS language
@@ -249,16 +246,16 @@ cat('model
       ## --- Presence-Absence (PA) data ---
       
        eta.PA <- X.PA %*% b ## linear predictor
+         
         
        for (i in 1:n.PA) 
        { 
          # the probability of presence
-         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) 
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])
         
          # presences and absences come from a Bernoulli distribution
          y.PA[i] ~ dbern(psi[i]*0.9999) 
-         
-       } 
+       }
   
       ## --- Presence-Only (PO) data --- 
   
@@ -270,13 +267,12 @@ cat('model
         P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
         
         # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
-        nu[j] <- area.PO[j] * exp(eta.PO[j]) 
+        log(nu[j]) <- eta.PO[j] + log(area.PO[j])
 
         # thinning: the true lambda
-        
-        lambda[j] <- ifelse(j >= n.PO.half, 
-                            nu[j] * P.ret[j], #time1
-                            nu[j] * P.ret[j] * global.effort[j]) #time2
+        lambda[j] <- ifelse(j > n.PO.half,
+                                nu[j] * P.ret[j],                    #time1
+                                nu[j] * P.ret[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
@@ -317,9 +313,9 @@ cat('model
     
     # AUC
     for (t in 1:length(thr)) {
-        sens[t] <- sum((psi > thr[t]) && (y==1))/pres.n   #tpr (sensitivity)
-        spec[t] <- sum((psi < thr[t]) && (y==0))/absc.n   
-        fpr[t] <- 1 - spec[t]                             #fpr (1-specificity)
+        sens[t] <- sum((psi > thr[t]) && (y.PA==1))/pres.n   #tpr (sensitivity)
+        spec[t] <- sum((psi < thr[t]) && (y.PA==0))/absc.n   
+        fpr[t] <- 1 - spec[t]                                #fpr (1-specificity)
     }
     auc <- sum((sens[2:length(sens)]+sens[1:(length(sens)-1)])/2 * 
     -(fpr[2:length(fpr)] - fpr[1:(length(fpr)-1)]))
@@ -367,12 +363,13 @@ jags.inits <- function(model = model.gam)
 start.time <- Sys.time()
 
 lpardalis_model <- R2jags::jags(data=jags.data,
-                                 model.file='models/lpardalis_model.txt',
+                                model.file='models/lpardalis_model.txt',
                                 parameters.to.save=c('b', 'P.pred', 
                                             'A.time1', 'A.time2', 'delta.A',
                                             'alpha0', 'alpha1', 'beta',
                                             'lambda', 'P.ret', 'psi',
                                             'y.PO.new', 'r2_tjur', 
+                                            'auc', 'sens', 'fpr',
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
@@ -385,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(lpardalis_model, 'D:/Flo/HNC_models/lpardalis_model.rds')
+saveRDS(lpardalis_model, 'big_data/lpardalis_model.rds')
 ```
