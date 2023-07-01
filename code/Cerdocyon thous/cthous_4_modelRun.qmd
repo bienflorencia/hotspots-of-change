@@ -42,20 +42,20 @@ cthous_expert_blob_time2 <- readRDS('data/cthous_expert_blob_time2.rds')
 
 PA_time1 <- readRDS('data/data_cthous_PA_time1.rds') %>%
   cbind(expert=cthous_expert_blob_time1) %>%
-  filter(!is.na(env.bio_3) &!is.na(env.bio_4) & !is.na(env.tree) & !is.na(env.urban) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_cthous_PA_time2.rds') %>%
   cbind(expert=cthous_expert_blob_time2) %>% 
-  filter(!is.na(env.bio_3) &!is.na(env.bio_4) & !is.na(env.tree) & !is.na(env.urban) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 cthous_expert_gridcell <- readRDS('data/cthous_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_cthous_PO_time1.rds') %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_3) &!is.na(env.bio_4) & !is.na(env.tree) & !is.na(env.urban) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 PO_time2  <- readRDS('data/data_cthous_PO_time2.rds')  %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_3) &!is.na(env.bio_4) & !is.na(env.tree) & !is.na(env.urban) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -74,10 +74,10 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 
 k = 9
 
-gam.formula <- formula(count ~ env.bio_3 + 
-                               env.bio_4 + 
-                               env.tree + 
-                               env.urban +
+gam.formula <- formula(count ~ env.bio_10 + 
+                               env.bio_16 + 
+                               env.npp + 
+                               env.tree +
                                expert +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
@@ -121,19 +121,19 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'env.bio_3' = PA_time1_time2$env.bio_3,
-              'env.bio_4' = PA_time1_time2$env.bio_4,
+              'env.bio_10' = PA_time1_time2$env.bio_10,
+              'env.bio_16' = PA_time1_time2$env.bio_16,
+              'env.npp' = PA_time1_time2$env.npp,
               'env.tree' = PA_time1_time2$env.tree,
-              'env.urban' = PA_time1_time2$env.urban,
               'expert' = PA_time1_time2$expert,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'env.bio_3' = PO_time1_time2$env.bio_3,
-              'env.bio_4' = PO_time1_time2$env.bio_4,
+              'env.bio_10' = PO_time1_time2$env.bio_10,
+              'env.bio_16' = PO_time1_time2$env.bio_16,
+              'env.npp' = PO_time1_time2$env.npp,
               'env.tree' = PO_time1_time2$env.tree,
-              'env.urban' = PO_time1_time2$env.urban,
               'expert' = PO_time1_time2$expert,
               jagam.PO.time1, 
               jagam.PO.time2)
@@ -388,5 +388,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(cthous_model, 'big_data/cthous_model.rds')
+saveRDS(cthous_model, 'D:/Flo/JAGS_models/cthous_model.rds')
 ```
