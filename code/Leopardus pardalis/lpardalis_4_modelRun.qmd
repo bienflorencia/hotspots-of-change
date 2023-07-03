@@ -72,7 +72,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 9
+k = 10
 
 gam.formula <- formula(count ~ env.bio_10 + 
                                env.bio_17 + 
@@ -373,14 +373,14 @@ lpardalis_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=100000,
+                                n.iter=200000,
                                 n.thin=10,
-                                n.burnin=10000,
+                                n.burnin=20000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(lpardalis_model, 'big_data/lpardalis_model.rds')
+saveRDS(lpardalis_model, 'D:/Flo/JAGS_models/lpardalis_model.rds')
 ```
