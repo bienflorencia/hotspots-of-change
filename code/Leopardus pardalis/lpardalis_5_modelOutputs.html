@@ -257,7 +257,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.npp'</span>, </span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.tree'</span>, </span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'expert'</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="fu">sprintf</span>(<span class="st">'spline%i'</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>)))) <span class="co"># changes with n.spl</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="fu">sprintf</span>(<span class="st">'spline%i'</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">22</span>)))) <span class="co"># changes with n.spl</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># tibble object for the linear predictor `b` extracted from the rjags fitted model</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.b <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, </span>
@@ -304,7 +304,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>Plotting caterpillar plot</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time taken to generate the report: 44 seconds.</code></pre>
+<pre><code>Time taken to generate the report: 48 seconds.</code></pre>
 </div>
 </div>
 <section id="traceplot" class="level3">
@@ -655,10 +655,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>caterpiller.params <span class="ot">&lt;-</span> fitted.model.ggs.b <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">'env'</span>, Parameter)) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'name bio_10'</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.tree'</span>, <span class="st">'name bio_17'</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.npp'</span>, <span class="st">'name npp'</span>,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_17'</span>, <span class="st">'name tree'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'mean temperature of warmest quarter'</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.tree'</span>, <span class="st">'percentage of tree cover'</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.npp'</span>, <span class="st">'npp'</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_17'</span>, <span class="st">'precipitation of driest quarter'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggs_caterpillar</span>(<span class="at">line=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'posterior densities'</span>)</span>

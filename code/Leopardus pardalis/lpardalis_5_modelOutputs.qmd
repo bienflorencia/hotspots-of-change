@@ -132,7 +132,7 @@ L.fitted.model.b <- plab("b",
                                             'env.npp', 
                                             'env.tree', 
                                             'expert',
-                                            sprintf('spline%i', 1:20)))) # changes with n.spl
+                                            sprintf('spline%i', 1:22)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -458,10 +458,10 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'name bio_10',
-                                    ifelse(Parameter=='env.tree', 'name bio_17',
-                                           ifelse(Parameter=='env.npp', 'name npp',
-                                                  ifelse(Parameter=='env.bio_17', 'name tree', Parameter)))))) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'mean temperature of warmest quarter',
+                                    ifelse(Parameter=='env.tree', 'percentage of tree cover',
+                                           ifelse(Parameter=='env.npp', 'npp',
+                                                  ifelse(Parameter=='env.bio_17', 'precipitation of driest quarter', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')
