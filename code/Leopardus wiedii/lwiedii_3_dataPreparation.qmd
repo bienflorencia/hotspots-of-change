@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *Leopardus wiedii*, with the covariates `bio7`, `bio9`, `npp`, and `nontree` (selected in the previous step). 
+Data preparation for modelling for *Leopardus wiedii*, with the covariates `bio_7`, `bio_10`, `npp`, and `nontree` (selected in the previous step). 
 
   - R Libraries
 
