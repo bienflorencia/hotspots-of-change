@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-05-31">
+<meta name="dcterms.date" content="2023-07-04">
 
 <title>Leopardus wiedii Model Outputs</title>
 <style>
@@ -126,8 +126,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#posterior-predictive-checks" id="toc-posterior-predictive-checks" class="nav-link" data-scroll-target="#posterior-predictive-checks">posterior predictive checks</a>
   <ul class="collapse">
   <li><a href="#po" id="toc-po" class="nav-link" data-scroll-target="#po">PO</a></li>
-  <li><a href="#pa" id="toc-pa" class="nav-link" data-scroll-target="#pa">PA</a></li>
   <li><a href="#grid-level-change" id="toc-grid-level-change" class="nav-link" data-scroll-target="#grid-level-change">Grid-level change</a></li>
+  <li><a href="#pa" id="toc-pa" class="nav-link" data-scroll-target="#pa">PA</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 31, 2023</p>
+      <p class="date">July 4, 2023</p>
     </div>
   </div>
   
@@ -210,25 +210,35 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Species data and covariates</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PA_time1.rds'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree)) <span class="co"># remove NA's</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PA_time2.rds'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree)) <span class="co"># remove NA's</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PO_time1.rds'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count)) <span class="co"># remove NA's</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PO_time2.rds'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count)) <span class="co"># remove NA's</span></span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-absence data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>lwiedii_expert_blob_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/lwiedii_expert_blob_time1.rds'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>lwiedii_expert_blob_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/lwiedii_expert_blob_time2.rds'</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PA_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lwiedii_expert_blob_time1) <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PA_time2.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lwiedii_expert_blob_time2) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>PA_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PA_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PA_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>PO_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PO_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PO_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>lwiedii_expert_gridcell <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/lwiedii_expert_gridcell.rds'</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PO_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lwiedii_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_lwiedii_PO_time2.rds'</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lwiedii_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_7) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.nontree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>PA_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PA_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PA_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>PO_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PO_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PO_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Read model</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fitted.model <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'big_data/lwiedii_model.rds'</span>) <span class="co"># deleted after model output</span></span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fitted.model <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'D:/Flo/JAGS_models/lwiedii_model.rds'</span>) <span class="co"># deleted after model output</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>fitted.model.mcmc <span class="ot">&lt;-</span> mcmcplots<span class="sc">::</span><span class="fu">as.mcmc.rjags</span>(fitted.model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -245,15 +255,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.bio_7'</span>,</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.bio_10'</span>,</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.npp'</span>, </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.nontree'</span>, <span class="fu">sprintf</span>(<span class="st">'spline%i'</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>)))) <span class="co"># changes with n.spl</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># tibble object for the linear predictor `b` extracted from the rjags fitted model</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.b <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, </span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">par_labels =</span> L.fitted.model.b,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">family=</span><span class="st">"^b</span><span class="sc">\\</span><span class="st">["</span>)</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># diagnostics</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ggmcmc</span>(fitted.model.ggs.b, <span class="at">file=</span><span class="st">"docs/lwiedii_model_diagnostics.pdf"</span>, <span class="at">param_page=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'env.nontree'</span>, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                                            <span class="st">'expert'</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                            <span class="fu">sprintf</span>(<span class="st">'spline%i'</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">18</span>)))) <span class="co"># changes with n.spl</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># tibble object for the linear predictor `b` extracted from the rjags fitted model</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.b <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">par_labels =</span> L.fitted.model.b,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">family=</span><span class="st">"^b</span><span class="sc">\\</span><span class="st">["</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># diagnostics</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ggmcmc</span>(fitted.model.ggs.b, <span class="at">file=</span><span class="st">"docs/lwiedii_model_diagnostics.pdf"</span>, <span class="at">param_page=</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Plotting histograms</code></pre>
@@ -292,7 +304,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>Plotting caterpillar plot</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time taken to generate the report: 39 seconds.</code></pre>
+<pre><code>Time taken to generate the report: 30 seconds.</code></pre>
 </div>
 </div>
 <section id="traceplot" class="level3">
@@ -571,13 +583,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>countryLevels <span class="ot">&lt;-</span> <span class="fu">cats</span>(Latam.raster.countries)[[<span class="dv">1</span>]] <span class="co">#%&gt;% mutate(value=value+1)</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>rasterLevels <span class="ot">&lt;-</span> <span class="fu">levels</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>country))</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> countryLevels <span class="sc">%&gt;%</span> <span class="fu">filter</span>(value <span class="sc">%in%</span> rasterLevels) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">numLevel=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">27</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> countryLevels <span class="sc">%&gt;%</span> <span class="fu">filter</span>(value <span class="sc">%in%</span> rasterLevels) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">numLevel=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels))</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.alpha <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, <span class="at">family=</span><span class="st">"^alpha"</span>)</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>ci.alpha <span class="ot">&lt;-</span> <span class="fu">ci</span>(fitted.model.ggs.alpha)</span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>country_acce <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(ci.alpha[<span class="dv">28</span>,], </span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tibble</span>(countries, ci.alpha[<span class="dv">1</span><span class="sc">:</span><span class="dv">27</span>,])) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>country_acce <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(ci.alpha[<span class="fu">length</span>(rasterLevels)<span class="sc">+</span><span class="dv">1</span>,], </span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tibble</span>(countries, ci.alpha[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels),])) <span class="sc">%&gt;%</span> </span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(value, numLevel))</span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co">#accessibility range for predictions</span></span>
@@ -643,10 +655,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>caterpiller.params <span class="ot">&lt;-</span> fitted.model.ggs.b <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">'env'</span>, Parameter)) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_7'</span>, <span class="st">'temperature annual range'</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.nontree'</span>, <span class="st">'percentage of no tree cover'</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.npp'</span>, <span class="st">'net primary production'</span>,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'mean temperature of warmest quarter'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_7'</span>, <span class="st">'bio_7'</span>,</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.nontree'</span>, <span class="st">'nontree'</span>,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.npp'</span>, <span class="st">'npp'</span>,</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'bio_10'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggs_caterpillar</span>(<span class="at">line=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
 <span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'posterior densities'</span>)</span>
@@ -672,18 +684,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 2 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 A.time1    58.3  59.8   67.5  75.9  77.7
-2 A.time2   174.  176.   189.  202.  204. </code></pre>
+1 A.time1   1316. 1334.  1427. 1516. 1532.
+2 A.time2   1240. 1258.  1350. 1444. 1462.</code></pre>
 </div>
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time2'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>        mean           sd         2.5%          25%          50%          75% 
-  188.935846     7.744866   174.124251   183.622623   188.844915   194.102545 
-       97.5%         Rhat        n.eff 
-  204.424207     1.001014 46000.000000 </code></pre>
+<pre><code>       mean          sd        2.5%         25%         50%         75% 
+1350.593856   56.350451 1239.679519 1312.310314 1350.034978 1388.904974 
+      97.5%        Rhat       n.eff 
+1461.514468    1.001216 7300.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -691,10 +703,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time1'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>        mean           sd         2.5%          25%          50%          75% 
-   67.632827     4.914702    58.312125    64.257741    67.466461    70.883225 
-       97.5%         Rhat        n.eff 
-   77.666533     1.001075 19000.000000 </code></pre>
+<pre><code>       mean          sd        2.5%         25%         50%         75% 
+1425.936498   55.460947 1316.197260 1388.581784 1426.617502 1463.995143 
+      97.5%        Rhat       n.eff 
+1532.185813    1.001215 7400.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -742,7 +754,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 1 x 6
   Parameter   low   Low median  High  high
   &lt;fct&gt;     &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1 delta.A    106.  109.   121.  134.  136.</code></pre>
+1 delta.A   -138. -129.  -75.6 -21.1 -11.0</code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -750,9 +762,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>        mean           sd         2.5%          25%          50%          75% 
-  121.303019     7.666866   106.422978   116.131071   121.235957   126.490748 
+  -75.342642    33.080618  -138.232857   -98.802694   -75.614213   -52.266133 
        97.5%         Rhat        n.eff 
-  136.420072     1.001108 15000.000000 </code></pre>
+  -11.032945     1.000966 27000.000000 </code></pre>
 </div>
 <details>
 <summary>Code</summary>
@@ -828,89 +840,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>simulations <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>y.PO.new</span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>lambda, <span class="dv">2</span>, median)</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(simulations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 54000  4366</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(simulations)</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="lwiedii_5_modelOutputs_files/figure-html/residual-diagnostics-PO-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-</section>
-</section>
-<section id="pa" class="level3">
-<h3 class="anchored" data-anchor-id="pa">PA</h3>
-<section id="tjur-r2" class="level4">
-<h4 class="anchored" data-anchor-id="tjur-r2">Tjur R2</h4>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>          mean             sd           2.5%            25%            50% 
-   0.287304046    0.006113859    0.275203313    0.283248801    0.287338880 
-           75%          97.5%           Rhat          n.eff 
-   0.291397511    0.299123374    1.001287526 6300.000000000 </code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
-<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
-<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="lwiedii_5_modelOutputs_files/figure-html/tjur2-PA-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-</section>
-<section id="auc" class="level4">
-<h4 class="anchored" data-anchor-id="auc">AUC</h4>
-<p>Source: <a href="https://gist.github.com/johnbaums/098bb760422801d10aed">Calculate AUC in a JAGS model</a></p>
-<ul>
-<li>Calculate AUC from posterior medians of sensitivity and 1-specificity</li>
-<li>Compare to posterior median of AUC</li>
-</ul>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jagstools) <span class="co"># devtools::install_github('johnbaums/jagstools')</span></span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>sens <span class="ot">&lt;-</span> <span class="fu">jagsresults</span>(fitted.model, <span class="st">'sens'</span>)[, <span class="st">'50%'</span>]</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> <span class="fu">jagsresults</span>(fitted.model, <span class="st">'fpr'</span>)[, <span class="st">'50%'</span>]</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fpr, sens, <span class="at">type=</span><span class="st">'o'</span>, <span class="at">pch=</span><span class="dv">20</span>, <span class="at">xlab=</span><span class="st">'1 - Specificity'</span>, <span class="at">ylab=</span><span class="st">'Sensitivity'</span>)</span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>((sens[<span class="sc">-</span><span class="dv">1</span>]<span class="sc">+</span>sens[<span class="sc">-</span><span class="fu">length</span>(sens)])<span class="sc">/</span><span class="dv">2</span> <span class="sc">*</span> <span class="sc">-</span><span class="fu">diff</span>(fpr)) <span class="co"># auc</span></span>
-<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a><span class="fu">jagsresults</span>(fitted.model, <span class="st">'auc'</span>)[, <span class="st">'50%'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>
@@ -919,26 +860,101 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
-<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
-<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="lwiedii_5_modelOutputs_files/figure-html/grid-level-change-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+<section id="pa" class="level3">
+<h3 class="anchored" data-anchor-id="pa">PA</h3>
+<section id="tjur-r2" class="level4">
+<h4 class="anchored" data-anchor-id="tjur-r2">Tjur R2</h4>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          mean             sd           2.5%            25%            50% 
+   0.376984352    0.005899612    0.365651126    0.372994580    0.376947812 
+           75%          97.5%           Rhat          n.eff 
+   0.380895833    0.388707255    1.002546052 1300.000000000 </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="lwiedii_5_modelOutputs_files/figure-html/tjur2-PA-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="auc" class="level4">
+<h4 class="anchored" data-anchor-id="auc">AUC</h4>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>auc.sens.fpr <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">sens=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>sens, </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fpr=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>fpr) </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>auc.value <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>auc, <span class="dv">3</span>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(auc.sens.fpr, <span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, auc.value)) <span class="sc">+</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="lwiedii_5_modelOutputs_files/figure-html/AUC-PA-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'auc'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           mean              sd            2.5%             25%             50% 
+    0.740900796     0.005243076     0.730636031     0.737413344     0.740859141 
+            75%           97.5%            Rhat           n.eff 
+    0.744419217     0.751279100     1.000998645 27000.000000000 </code></pre>
+</div>
+</div>
+</section>
 </section>
 </section>
 
