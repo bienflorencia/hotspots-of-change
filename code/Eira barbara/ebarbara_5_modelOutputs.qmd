@@ -1,5 +1,5 @@
 ---
-title: "speciesLatin Model Outputs"
+title: "Eira barbara Model Outputs"
 format: 
   html:
     toc: true
@@ -12,7 +12,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Model outputs for *speciesLatin*.  
+Model outputs for *Eira barbara*.  
 
 
   - R Libraries
@@ -62,7 +62,7 @@ Latam_no_islands <- bind_rows(list(Latam_countries %>%
                                      mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
                                      head(n=1) %>% dplyr::select(-area))) %>% st_union()
 
-speciesAbrev_IUCN <- sf::st_read('big_data/speciesAbrev_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+ebarbara_IUCN <- sf::st_read('big_data/ebarbara_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 Latam.raster <- terra::rast('data/Latam_raster.tif')
 Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
@@ -76,25 +76,25 @@ Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 #| code-fold: false
 
 # Presence-absence data
-speciesAbrev_expert_blob_time1 <- readRDS('data/speciesAbrev_expert_blob_time1.rds')
-speciesAbrev_expert_blob_time2 <- readRDS('data/speciesAbrev_expert_blob_time2.rds')
+ebarbara_expert_blob_time1 <- readRDS('data/ebarbara_expert_blob_time1.rds')
+ebarbara_expert_blob_time2 <- readRDS('data/ebarbara_expert_blob_time2.rds')
 
-PA_time1 <- readRDS('data/data_speciesAbrev_PA_time1.rds') %>%
-  cbind(expert=speciesAbrev_expert_blob_time1) %>%
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(expert)) # remove NA's
-PA_time2 <- readRDS('data/data_speciesAbrev_PA_time2.rds') %>%
-  cbind(expert=speciesAbrev_expert_blob_time2) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(expert)) # remove NA's
+PA_time1 <- readRDS('data/data_ebarbara_PA_time1.rds') %>%
+  cbind(expert=ebarbara_expert_blob_time1) %>%
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(expert)) # remove NA's
+PA_time2 <- readRDS('data/data_ebarbara_PA_time2.rds') %>%
+  cbind(expert=ebarbara_expert_blob_time2) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
-speciesAbrev_expert_gridcell <- readRDS('data/speciesAbrev_expert_gridcell.rds')
+ebarbara_expert_gridcell <- readRDS('data/ebarbara_expert_gridcell.rds')
 
-PO_time1 <- readRDS('data/data_speciesAbrev_PO_time1.rds') %>%
-  cbind(expert=speciesAbrev_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
-PO_time2  <- readRDS('data/data_speciesAbrev_PO_time2.rds')  %>%
-  cbind(expert=speciesAbrev_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+PO_time1 <- readRDS('data/data_ebarbara_PO_time1.rds') %>%
+  cbind(expert=ebarbara_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+PO_time2  <- readRDS('data/data_ebarbara_PO_time2.rds')  %>%
+  cbind(expert=ebarbara_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2))  
@@ -108,7 +108,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-fitted.model <- readRDS('big_data/speciesAbrev_model.rds') # deleted after model output
+fitted.model <- readRDS('D:/Flo/JAGS_models/ebarbara_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
@@ -127,10 +127,10 @@ The `fitted.model` is an object of class `rjags`.
 # labels for the linear predictor `b`
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
-                                            'env.cov.1',
-                                            'env.cov.2',
-                                            'env.cov.3', 
-                                            'env.cov.4', 
+                                            'env.bio_10',
+                                            'env.bio_17',
+                                            'env.npp', 
+                                            'env.nontree', 
                                             'expert',
                                             sprintf('spline%i', 1:18)))) # changes with n.spl
 
@@ -140,7 +140,7 @@ fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc,
                                   family="^b\\[")
 
 # diagnostics
-ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/speciesAbrev_model_diagnostics.pdf", param_page=3)
+ggmcmc::ggmcmc(fitted.model.ggs.b, file="docs/ebarbara_model_diagnostics.pdf", param_page=3)
 ```
 
 ### Traceplot
@@ -165,7 +165,7 @@ ggs_traceplot(fitted.model.ggs.b)
 ggs_Rhat(fitted.model.ggs.b)
 ```
 
-### Probability of occurrence of *speciesLatin*
+### Probability of occurrence of *Eira barbara*
 
 For each period: time1 and time2, and their difference (time2-time1)
 
@@ -222,7 +222,7 @@ time2MAP
 diffMAP
 ```
 
-### Standard deviation (SD) of the probability of occurrence of *speciesLatin*
+### Standard deviation (SD) of the probability of occurrence of *Eira barbara*
 
 ```{r}
 #| label: sd-maps
@@ -298,8 +298,8 @@ bivcol = function(pal, nx = 3, ny = 3){
   mtext(tit)
 }
 
-speciesAbrev.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
-speciesAbrev.pal <- c(t(apply(speciesAbrev.pal.pu_gn_bivd, 2, rev)))
+ebarbara.pal.pu_gn_bivd <- c4a("pu_gn_bivd", n=3, m=5)
+ebarbara.pal <- c(t(apply(ebarbara.pal.pu_gn_bivd, 2, rev)))
 
 ###
 
@@ -368,15 +368,15 @@ rast_classes <- as_tibble(rast.bivariate['new_var']) %>%
 absent_classes <- all_classes[!(all_classes %in% rast_classes)]
 
 if (length(absent_classes)==0){
-  speciesAbrev.new.pal <- speciesAbrev.pal
-} else speciesAbrev.new.pal <- speciesAbrev.pal[-c(absent_classes)]
+  ebarbara.new.pal <- ebarbara.pal
+} else ebarbara.new.pal <- ebarbara.pal[-c(absent_classes)]
 
 # Map of the of the change in the probability of occurrence (time2 - time1)
 # according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))
 
 diffMAP.SD <- tm_graticules(alpha = 0.3) + 
   tm_shape(rast.bivariate) +
-  tm_raster("new_var", style= "cat", palette = speciesAbrev.new.pal) +
+  tm_raster("new_var", style= "cat", palette = ebarbara.new.pal) +
   tm_shape(Latam_countries) +
   tm_borders(col='grey60', alpha = 0.4) + 
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -458,10 +458,10 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.cov.1', 'cov.1',
-                                    ifelse(Parameter=='env.cov.2', 'cov.4',
-                                           ifelse(Parameter=='env.cov.3', 'cov.3',
-                                                  ifelse(Parameter=='env.cov.4', 'cov.4', Parameter)))))) %>% 
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'bio_10',
+                                    ifelse(Parameter=='env.bio_17', 'bio_17',
+                                           ifelse(Parameter=='env.npp', 'npp',
+                                                  ifelse(Parameter=='env.nontree', 'nontree', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')

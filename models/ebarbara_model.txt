@@ -49,16 +49,16 @@ model
       ## --- Presence-Absence (PA) data ---
       
        eta.PA <- X.PA %*% b ## linear predictor
+         
         
        for (i in 1:n.PA) 
        { 
          # the probability of presence
-         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i]) + expert.PA[i]
+         cloglog(psi[i]) <- eta.PA[i] + log(area.PA[i]) + beta*log(effort[i])
         
          # presences and absences come from a Bernoulli distribution
          y.PA[i] ~ dbern(psi[i]*0.9999) 
-         
-       } 
+       }
   
       ## --- Presence-Only (PO) data --- 
   
@@ -70,12 +70,12 @@ model
         P.ret[j] <- alpha0[country[j]] * exp( (-alpha1) * acce[j]) 
         
         # true mean number (nu) of points per cell i is the true intensity multiplied by cell area
-        nu[j] <- eta.PO[j] + log(area.PO[j]) + expert.PO[j]
+        log(nu[j]) <- eta.PO[j] + log(area.PO[j])
 
         # thinning: the true lambda
-        log(lambda[j]) <- ifelse(j > n.PO.half, 
-                            nu[j] + P.ret[j], #time1
-                            nu[j] + P.ret[j] + global.effort[j]) #time2
+        lambda[j] <- ifelse(j > n.PO.half,
+                                nu[j] * P.ret[j],                    #time1
+                                nu[j] * P.ret[j] * global.effort[j]) #time2
 
         # counts of observed points come from a Poisson distribution
         y.PO[j] ~ dpois(lambda[j]) 
@@ -118,7 +118,7 @@ model
     for (t in 1:length(thr)) {
         sens[t] <- sum((psi > thr[t]) && (y.PA==1))/pres.n   #tpr (sensitivity)
         spec[t] <- sum((psi < thr[t]) && (y.PA==0))/absc.n   
-        fpr[t] <- 1 - spec[t]                             #fpr (1-specificity)
+        fpr[t] <- 1 - spec[t]                                #fpr (1-specificity)
     }
     auc <- sum((sens[2:length(sens)]+sens[1:(length(sens)-1)])/2 * 
     -(fpr[2:length(fpr)] - fpr[1:(length(fpr)-1)]))
