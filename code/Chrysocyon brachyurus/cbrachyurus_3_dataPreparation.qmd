@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *Chrysocyon brachyurus*, with the covariates `bio_2`, `bio_14`, `elev`, and `grass` (selected in the previous step).
+Data preparation for modelling for *Chrysocyon brachyurus*, with the covariates `bio_10`, `bio_14`, `elev`, and `grass` (selected in the previous step).
 
   - R Libraries
 
@@ -87,8 +87,8 @@ PA_cbrachyurus_time2_blobs <- readRDS('data/PA_cbrachyurus_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio_2`: Mean diurnal range (mean of monthly (maxtemp - mintemp))
- - `bio_14`: Precipitation of the driest month
+ - `bio_10`: Mean Temperature of Warmest Quarter
+ - `bio_14`: Precipitation of Driest Month
  - `elev`: Elevation
  - `grass`: Grasslands
 
@@ -106,7 +106,7 @@ grass <- resample(grass, bio, method='bilinear')
 names(grass) <- 'grass'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_2','bio_14')]], grass, elev) %>% 
+env <- c(bio[[c('bio_10','bio_14')]], grass, elev) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -129,7 +129,7 @@ env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean an
 
 grass.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["grass"]]) +
-    tm_raster(palette = 'YlGn', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -141,23 +141,23 @@ elev.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_2.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_2"]]) +
-    tm_raster(palette = 'PuRd', midpoint = NA, style= "cont")  + 
+bio_10.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_10"]]) +
+    tm_raster(palette = 'YlOrRd', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_14.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["bio_14"]]) +
-    tm_raster(palette = 'PuBu', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'RdBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 grass.plot 
 elev.plot
-bio_2.plot
+bio_10.plot
 bio_14.plot
 ```
 
