@@ -382,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(ebarbara_model, 'big_data/ebarbara_model.rds')
+saveRDS(ebarbara_model, 'D:/Flo/JAGS_models/ebarbara_model.rds')
 ```
