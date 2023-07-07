@@ -42,20 +42,20 @@ cbrachyurus_expert_blob_time2 <- readRDS('data/cbrachyurus_expert_blob_time2.rds
 
 PA_time1 <- readRDS('data/data_cbrachyurus_PA_time1.rds') %>%
   cbind(expert=cbrachyurus_expert_blob_time1) %>%
-  filter(!is.na(env.bio_5) &!is.na(env.bio_10) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_cbrachyurus_PA_time2.rds') %>%
   cbind(expert=cbrachyurus_expert_blob_time2) %>% 
-  filter(!is.na(env.bio_5) &!is.na(env.bio_10) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 cbrachyurus_expert_gridcell <- readRDS('data/cbrachyurus_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_cbrachyurus_PO_time1.rds') %>%
   cbind(expert=cbrachyurus_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_5) &!is.na(env.bio_10) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 PO_time2  <- readRDS('data/data_cbrachyurus_PO_time2.rds')  %>%
   cbind(expert=cbrachyurus_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_5) &!is.na(env.bio_10) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -72,10 +72,10 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 9
+k = 8
 
-gam.formula <- formula(count ~ env.bio_5 + 
-                               env.bio_10 + 
+gam.formula <- formula(count ~ env.bio_10 + 
+                               env.bio_14 + 
                                env.elev + 
                                env.grass +
                                expert +
@@ -121,8 +121,8 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'env.bio_5' = PA_time1_time2$env.bio_5,
               'env.bio_10' = PA_time1_time2$env.bio_10,
+              'env.bio_14' = PA_time1_time2$env.bio_14,
               'env.elev' = PA_time1_time2$env.elev,
               'env.grass' = PA_time1_time2$env.grass,
               'expert' = PA_time1_time2$expert,
@@ -130,8 +130,8 @@ PA.X <- cbind('(Intercept)'= 1,
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'env.bio_5' = PO_time1_time2$env.bio_5,
               'env.bio_10' = PO_time1_time2$env.bio_10,
+              'env.bio_14' = PO_time1_time2$env.bio_14,
               'env.elev' = PO_time1_time2$env.elev,
               'env.grass' = PO_time1_time2$env.grass,
               'expert' = PO_time1_time2$expert,
@@ -371,7 +371,7 @@ cbrachyurus_model <- R2jags::jags(data=jags.data,
                                             'y.PO.new', 'r2_tjur', 
                                             'auc', 'sens', 'fpr',
                                             'delta.Grid'),
-                                inits = jags.inits,
+                                #inits = jags.inits,
                                 n.chains=3,
                                 n.iter=100000,
                                 n.thin=10,
@@ -382,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(cbrachyurus_model, 'big_data/cbrachyurus_model.rds')
+saveRDS(cbrachyurus_model, 'D:/Flo/JAGS_models/cbrachyurus_model.rds')
 ```
