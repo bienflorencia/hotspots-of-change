@@ -1,5 +1,5 @@
 ---
-title: "speciesLatin Model Run"
+title: "Pteronura brasiliensis Model Run"
 format: 
   html:
     toc: true
@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Model run for *speciesLatin* with the data prepared in the previous step (including species and covariates data).  
+Model run for *Pteronura brasiliensis* with the data prepared in the previous step (including species and covariates data).  
 
   - R Libraries
 
@@ -37,25 +37,25 @@ library(tidyverse)
 #| code-fold: false
 
 # Presence-absence data
-speciesAbrev_expert_blob_time1 <- readRDS('data/speciesAbrev_expert_blob_time1.rds')
-speciesAbrev_expert_blob_time2 <- readRDS('data/speciesAbrev_expert_blob_time2.rds')
+pbrasiliensis_expert_blob_time1 <- readRDS('data/pbrasiliensis_expert_blob_time1.rds')
+pbrasiliensis_expert_blob_time2 <- readRDS('data/pbrasiliensis_expert_blob_time2.rds')
 
-PA_time1 <- readRDS('data/data_speciesAbrev_PA_time1.rds') %>%
-  cbind(expert=speciesAbrev_expert_blob_time1) %>%
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(expert)) # remove NA's
-PA_time2 <- readRDS('data/data_speciesAbrev_PA_time2.rds') %>%
-  cbind(expert=speciesAbrev_expert_blob_time2) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(expert)) # remove NA's
+PA_time1 <- readRDS('data/data_pbrasiliensis_PA_time1.rds') %>%
+  cbind(expert=pbrasiliensis_expert_blob_time1) %>%
+  filter(!is.na(env.bio_3) &!is.na(env.bio_5) & !is.na(env.wetland) & !is.na(env.woodysavanna) & !is.na(expert)) # remove NA's
+PA_time2 <- readRDS('data/data_pbrasiliensis_PA_time2.rds') %>%
+  cbind(expert=pbrasiliensis_expert_blob_time2) %>% 
+  filter(!is.na(env.bio_3) &!is.na(env.bio_5) & !is.na(env.wetland) & !is.na(env.woodysavanna) & !is.na(expert)) # remove NA's
 
 # Presence-only data
-speciesAbrev_expert_gridcell <- readRDS('data/speciesAbrev_expert_gridcell.rds')
+pbrasiliensis_expert_gridcell <- readRDS('data/pbrasiliensis_expert_gridcell.rds')
 
-PO_time1 <- readRDS('data/data_speciesAbrev_PO_time1.rds') %>%
-  cbind(expert=speciesAbrev_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
-PO_time2  <- readRDS('data/data_speciesAbrev_PO_time2.rds')  %>%
-  cbind(expert=speciesAbrev_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.cov.1) &!is.na(env.cov.2) & !is.na(env.cov.3) & !is.na(env.cov.4) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+PO_time1 <- readRDS('data/data_pbrasiliensis_PO_time1.rds') %>%
+  cbind(expert=pbrasiliensis_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_3) &!is.na(env.bio_5) & !is.na(env.wetland) & !is.na(env.woodysavanna) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+PO_time2  <- readRDS('data/data_pbrasiliensis_PO_time2.rds')  %>%
+  cbind(expert=pbrasiliensis_expert_gridcell$dist_exprt) %>% 
+  filter(!is.na(env.bio_3) &!is.na(env.bio_5) & !is.na(env.wetland) & !is.na(env.woodysavanna) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -74,10 +74,10 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 
 k = 9
 
-gam.formula <- formula(count ~ env.cov.1 + 
-                               env.cov.2 + 
-                               env.cov.3 + 
-                               env.cov.4 +
+gam.formula <- formula(count ~ env.bio_3 + 
+                               env.bio_5 + 
+                               env.wetland + 
+                               env.woodysavanna +
                                expert +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
@@ -121,19 +121,19 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'env.cov.1' = PA_time1_time2$env.cov.1,
-              'env.cov.2' = PA_time1_time2$env.cov.2,
-              'env.cov.3' = PA_time1_time2$env.cov.3,
-              'env.cov.4' = PA_time1_time2$env.cov.4,
+              'env.bio_3' = PA_time1_time2$env.bio_3,
+              'env.bio_5' = PA_time1_time2$env.bio_5,
+              'env.wetland' = PA_time1_time2$env.wetland,
+              'env.woodysavanna' = PA_time1_time2$env.woodysavanna,
               'expert' = PA_time1_time2$expert,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'env.cov.1' = PO_time1_time2$env.cov.1,
-              'env.cov.2' = PO_time1_time2$env.cov.2,
-              'env.cov.3' = PO_time1_time2$env.cov.3,
-              'env.cov.4' = PO_time1_time2$env.cov.4,
+              'env.bio_3' = PO_time1_time2$env.bio_3,
+              'env.bio_5' = PO_time1_time2$env.bio_5,
+              'env.wetland' = PO_time1_time2$env.wetland,
+              'env.woodysavanna' = PO_time1_time2$env.woodysavanna,
               'expert' = PO_time1_time2$expert,
               jagam.PO.time1, 
               jagam.PO.time2)
@@ -333,7 +333,7 @@ cat('model
       delta.Grid[j] <- P.pred[n.PO.half+j] - P.pred[j]
     }
   }
-', file = 'models/speciesAbrev_model.txt')
+', file = 'models/pbrasiliensis_model.txt')
 ```
 
 
@@ -362,8 +362,8 @@ jags.inits <- function(model = model.gam)
 
 start.time <- Sys.time()
 
-speciesAbrev_model <- R2jags::jags(data=jags.data,
-                                model.file='models/speciesAbrev_model.txt',
+pbrasiliensis_model <- R2jags::jags(data=jags.data,
+                                model.file='models/pbrasiliensis_model.txt',
                                 parameters.to.save=c('b', 'P.pred', 
                                             'A.time1', 'A.time2', 'delta.A',
                                             'alpha0', 'alpha1', 'beta',
@@ -382,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(speciesAbrev_model, 'big_data/speciesAbrev_model.rds')
+saveRDS(pbrasiliensis_model, 'big_data/pbrasiliensis_model.rds')
 ```
