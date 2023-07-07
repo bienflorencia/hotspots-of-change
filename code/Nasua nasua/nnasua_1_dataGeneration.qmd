@@ -345,5 +345,8 @@ saveRDS(PA_nnasua_time2_blobs, 'data/PA_nnasua_time2_blobs.rds')
 # presence-only rasters
 terra::writeRaster(PO_nnasua_time1_raster, 'data/PO_nnasua_time1_raster.tif', overwrite=TRUE)
 terra::writeRaster(PO_nnasua_time2_raster, 'data/PO_nnasua_time2_raster.tif', overwrite=TRUE)
+
+saveRDS(data_PA_time1_time2, 'data/data_nnasua_PA.rds')
+saveRDS(data_PO_time1_time2, 'data/data_nnasua_PO.rds')
 ```
 
