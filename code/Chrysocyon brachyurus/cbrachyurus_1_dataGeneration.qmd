@@ -339,5 +339,8 @@ saveRDS(PA_cbrachyurus_time2_blobs, 'data/PA_cbrachyurus_time2_blobs.rds')
 # presence-only rasters
 terra::writeRaster(PO_cbrachyurus_time1_raster, 'data/PO_cbrachyurus_time1_raster.tif', overwrite=TRUE)
 terra::writeRaster(PO_cbrachyurus_time2_raster, 'data/PO_cbrachyurus_time2_raster.tif', overwrite=TRUE)
+
+saveRDS(data_PA_time1_time2, 'data/data_cbrachyurus_PA.rds')
+saveRDS(data_PO_time1_time2, 'data/data_cbrachyurus_PO.rds')
 ```
 
