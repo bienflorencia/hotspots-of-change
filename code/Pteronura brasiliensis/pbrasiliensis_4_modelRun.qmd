@@ -382,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(pbrasiliensis_model, 'big_data/pbrasiliensis_model.rds')
+saveRDS(pbrasiliensis_model, 'D:/Flo/JAGS_models/pbrasiliensis_model.rds')
 ```
