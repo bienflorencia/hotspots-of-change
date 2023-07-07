@@ -459,7 +459,7 @@ acce_allcountries
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
   mutate(Parameter=as.factor(ifelse(Parameter=='env.cov.1', 'cov.1',
-                                    ifelse(Parameter=='env.cov.2', 'cov.4',
+                                    ifelse(Parameter=='env.cov.2', 'cov.2',
                                            ifelse(Parameter=='env.cov.3', 'cov.3',
                                                   ifelse(Parameter=='env.cov.4', 'cov.4', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
