@@ -13,9 +13,11 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
+
 Data preparation for modelling for *Cerdocyon thous*, with the covariates `bio_16`, `bio_19`, `npp`, and `tree` (selected in the previous step). 
 
   - R Libraries
+
 
 ```{r}
 #| label: libraries
@@ -34,7 +36,9 @@ sf::sf_use_s2(FALSE)
 library(tidyverse)
 ```
 
+
   - Basemaps
+
 
 ```{r}
 #| label: basemaps
@@ -63,9 +67,11 @@ MAP.IUCN <- tm_graticules(alpha = 0.3) +
 MAP.IUCN
 ```
 
+
 ## Data
 
 ### Species data (PA & PO)
+
 
 ```{r}
 #| label: data
@@ -83,6 +89,7 @@ PA_cthous_time2_blobs <- readRDS('data/PA_cthous_time2_blobs.rds')
 ```
 
 
+
 ### Covariates
 
 The following covariates were chosen using the 'variableSelection' script:
@@ -91,6 +98,7 @@ The following covariates were chosen using the 'variableSelection' script:
  - `bio4`: Mean Temperature of Warmest Quarter
  - `tree`: Net Primary Production (tree)
  - `urban`: Percentage of No Tree Cover
+
 
 ``` {r}
 #| echo: true
@@ -119,7 +127,9 @@ env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>%
 env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean and sd of 1
 ```
 
+
 #### Plots
+
 
 ```{r}
 #| echo: true
@@ -164,11 +174,13 @@ bio_19.plot
 
 ```
 
+
 ### Thinning parametres 
 
  - `acce`: Accessibility
  - `country`: Country of origin
  
+
 ``` {r}
 #| echo: true
 #| eval: true
@@ -180,7 +192,9 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
   classify(cbind(NaN, NA)) # values are scaled
 ```
 
+
 #### Plot
+
 
 ```{r}
 #| echo: true
@@ -200,9 +214,11 @@ acce.plot <- tm_graticules(alpha = 0.3) +
 acce.plot
 ```
 
+
 ## Data for the model
 
 ### Presence-only data
+
 
 ``` {r}
 #| echo: true
@@ -258,7 +274,9 @@ PO_cthous_time2.model.data <- data.frame(PO_cthous.coords,
 
 ```
 
+
  - Check data
+
 
 ```{r}
 #| echo: true
@@ -271,7 +289,9 @@ head(PO_cthous_time1.model.data) %>% kable()
 head(PO_cthous_time2.model.data) %>% kable()
 ```
 
+
 ### Presence-absence data 
+
 
 ```{r}
 #| echo: true
@@ -319,7 +339,9 @@ PA_cthous_time2.model.data <- data.frame(pixel = PA_cthous.pixel.time2,
 
 ```
 
+
   - Check data
+
 
 ```{r}
 #| echo: true
@@ -333,7 +355,9 @@ head(PA_cthous_time2.model.data) %>% kable()
 ```
 
 
+
 ## Save data
+
 
 ```{r}
 #| echo: true
@@ -350,9 +374,11 @@ saveRDS(PA_cthous_time2.model.data, 'data/data_cthous_PA_time2.rds')
 ```
 
 
+
 ## Extra: Datasets in the covariate space
 
 The range (and interquartile range) of values for each covariate that is sampled by each dataset
+
 
 ```{r}
 #| echo: true
