@@ -13,7 +13,7 @@ author: 'Florencia Grattarola'
 date: "`r format(Sys.time(), '%Y-%m-%d')`"
 ---
 
-Data preparation for modelling for *Leopardus pardalis*, with the covariates `bio10`, `bio17`, `npp`, and `tree` (selected in the previous step).
+Data preparation for modelling for *Leopardus pardalis*, with the covariates `bio10`, `bio17`, `woodysavanna`, and `tree` (selected in the previous step).
 
   - R Libraries
 
@@ -89,7 +89,7 @@ The following covariates were chosen using the 'variableSelection' script:
 
  - `bio10`: Mean Temperature of Warmest Quarter
  - `bio17`: Precipitation of Driest Quarter
- - `npp`: Net Primary Production (NPP)
+ - `woodysavanna`: Net Primary Production (woodysavanna)
  - `tree`: Percentage of Tree Cover
 
 ``` {r}
@@ -103,12 +103,12 @@ bio <- rast(here::here('big_data/bio_high.tif'))
 tree <- rast(here::here('big_data/tree_high.tif'))
 tree <- resample(tree, bio, method='bilinear') 
 names(tree) <- 'tree'
-npp <- rast(here::here('big_data/npp_high.tif'))
-npp <- resample(npp, bio, method='bilinear') 
-names(npp) <- 'npp'
+woodysavanna <- rast(here::here('big_data/woodysavanna_high.tif'))
+woodysavanna <- resample(woodysavanna, bio, method='bilinear') 
+names(woodysavanna) <- 'woodysavanna'
 
 # environmental layers for PA
-env <- c(bio[[c('bio_10','bio_17')]], tree, npp) %>% 
+env <- c(bio[[c('bio_12','bio_14')]], tree, woodysavanna) %>% 
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
@@ -136,31 +136,31 @@ tree.plot <- tm_graticules(alpha = 0.3) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-npp.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["npp"]]) +
+woodysavanna.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["woodysavanna"]]) +
     tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_10.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_10"]]) +
+bio_12.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_12"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
-bio_17.plot <- tm_graticules(alpha = 0.3) +  
-    tm_shape(env_100k_unscaled[["bio_17"]]) +
+bio_14.plot <- tm_graticules(alpha = 0.3) +  
+    tm_shape(env_100k_unscaled[["bio_14"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
     tm_shape(Latam_projected) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 tree.plot 
-npp.plot
-bio_10.plot
-bio_17.plot
+woodysavanna.plot
+bio_12.plot
+bio_14.plot
 ```
 
 ### Thinning parametres 
