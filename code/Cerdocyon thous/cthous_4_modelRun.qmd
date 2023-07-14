@@ -72,7 +72,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 9
+k = 6
 
 gam.formula <- formula(count ~ env.bio_10 + 
                                env.bio_16 + 
@@ -379,9 +379,9 @@ cthous_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=200000,
+                                n.iter=100000,
                                 n.thin=10,
-                                n.burnin=20000,
+                                n.burnin=10000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
