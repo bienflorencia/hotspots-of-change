@@ -87,10 +87,10 @@ PA_cthous_time2_blobs <- readRDS('data/PA_cthous_time2_blobs.rds')
 
 The following covariates were chosen using the 'variableSelection' script:
 
- - `bio3`: Temperature Annual Range
- - `bio4`: Mean Temperature of Warmest Quarter
- - `tree`: Net Primary Production (tree)
- - `urban`: Percentage of No Tree Cover
+ - `bio_16`: Temperature Annual Range
+ - `bio_19`: Mean Temperature of Warmest Quarter
+ - `npp`: Net Primary Production (tree)
+ - `tree`: Percentage of No Tree Cover
 
 ``` {r}
 #| echo: true
