@@ -81,20 +81,20 @@ cthous_expert_blob_time2 <- readRDS('data/cthous_expert_blob_time2.rds')
 
 PA_time1 <- readRDS('data/data_cthous_PA_time1.rds') %>%
   cbind(expert=cthous_expert_blob_time1) %>%
-  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_cthous_PA_time2.rds') %>%
   cbind(expert=cthous_expert_blob_time2) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 cthous_expert_gridcell <- readRDS('data/cthous_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_cthous_PO_time1.rds') %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 PO_time2  <- readRDS('data/data_cthous_PO_time2.rds')  %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_10) &!is.na(env.bio_16) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2))  
@@ -108,7 +108,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-fitted.model <- readRDS('big_data/cthous_model.rds') # deleted after model output
+fitted.model <- readRDS('D:/Flo/JAGS_models/cthous_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
@@ -127,12 +127,12 @@ The `fitted.model` is an object of class `rjags`.
 # labels for the linear predictor `b`
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
-                                            'env.bio_10',
                                             'env.bio_16',
+                                            'env.bio_19',
                                             'env.npp', 
                                             'env.tree', 
                                             'expert',
-                                            sprintf('spline%i', 1:18)))) # changes with n.spl
+                                            sprintf('spline%i', 1:10)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -458,10 +458,10 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'mean temperature of warmest quarter',
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_16', 'precipitation of wettest quarter',
                                     ifelse(Parameter=='env.tree', 'percentage of tree cover',
                                            ifelse(Parameter=='env.npp', 'npp',
-                                                  ifelse(Parameter=='env.bio_16', 'precipitation of wettest quarter', Parameter)))))) %>% 
+                                                  ifelse(Parameter=='env.bio_19', 'precipitation of coldest quarter', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')
