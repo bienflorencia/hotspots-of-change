@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-07-08">
+<meta name="dcterms.date" content="2023-07-18">
 
 <title>Nasua nasua Model Run</title>
 <style>
@@ -2640,7 +2640,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 8, 2023</p>
+      <p class="date">July 18, 2023</p>
     </div>
   </div>
   
@@ -2699,7 +2699,7 @@ vertical-align: -.125em;
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">9</span></span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">6</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>gam.formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(count <span class="sc">~</span> env.bio_10 <span class="sc">+</span> </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                               env.bio_13 <span class="sc">+</span> </span>
@@ -2726,24 +2726,24 @@ count ~ env.bio_10 + env.bio_13 + env.npp + env.nontree + expert +
 
 Parametric coefficients:
              Estimate Std. Error z value Pr(&gt;|z|)    
-(Intercept) -38.70500    1.27743 -30.299  &lt; 2e-16 ***
-env.bio_10    0.33280    0.03722   8.942  &lt; 2e-16 ***
-env.bio_13   -0.14775    0.10543  -1.401    0.161    
-env.npp       0.69886    0.04727  14.786  &lt; 2e-16 ***
-env.nontree   0.23762    0.05682   4.182 2.89e-05 ***
-expert      -47.42320    2.92132 -16.233  &lt; 2e-16 ***
+(Intercept) -20.84803    0.33203 -62.790  &lt; 2e-16 ***
+env.bio_10    0.19990    0.03730   5.359 8.38e-08 ***
+env.bio_13   -0.49783    0.09523  -5.228 1.72e-07 ***
+env.npp       0.60349    0.04525  13.337  &lt; 2e-16 ***
+env.nontree   0.33929    0.05453   6.222 4.92e-10 ***
+expert      -46.80762    2.19666 -21.309  &lt; 2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Approximate significance of smooth terms:
                           edf Ref.df Chi.sq p-value    
-s(X,Y):as.factor(time)1 7.994      8  429.1  &lt;2e-16 ***
-s(X,Y):as.factor(time)2 7.992      8 1867.9  &lt;2e-16 ***
+s(X,Y):as.factor(time)1 4.966  4.999  234.1  &lt;2e-16 ***
+s(X,Y):as.factor(time)2 4.978  5.000 1523.5  &lt;2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-R-sq.(adj) =  0.0548   Deviance explained = 37.5%
-UBRE = 1.3836  Scale est. = 1         n = 4360</code></pre>
+R-sq.(adj) =  0.0442   Deviance explained = 33.7%
+UBRE =  1.523  Scale est. = 1         n = 4360</code></pre>
 </div>
 </div>
 <ul>
@@ -2765,11 +2765,11 @@ UBRE = 1.3836  Scale est. = 1         n = 4360</code></pre>
   ## Parametric effect priors CHECK tau=1/95^2 is appropriate!
   for (i in 1:6) { b[i] ~ dnorm(0,0.00011) }
   ## prior for s(X,Y):as.factor(time)1... 
-  K1 &lt;- S1[1:8,1:8] * lambda[1]  + S1[1:8,9:16] * lambda[2]
-  b[7:14] ~ dmnorm(zero[7:14],K1) 
+  K1 &lt;- S1[1:5,1:5] * lambda[1]  + S1[1:5,6:10] * lambda[2]
+  b[7:11] ~ dmnorm(zero[7:11],K1) 
   ## prior for s(X,Y):as.factor(time)2... 
-  K2 &lt;- S2[1:8,1:8] * lambda[3]  + S2[1:8,9:16] * lambda[4]
-  b[15:22] ~ dmnorm(zero[15:22],K2) 
+  K2 &lt;- S2[1:5,1:5] * lambda[3]  + S2[1:5,6:10] * lambda[4]
+  b[12:16] ~ dmnorm(zero[12:16],K2) 
   ## smoothing parameter priors CHECK...
   for (i in 1:4) {
     lambda[i] ~ dgamma(.05,.005)
@@ -3055,7 +3055,7 @@ UBRE = 1.3836  Scale est. = 1         n = 4360</code></pre>
 Graph information:
    Observed stochastic nodes: 5358
    Unobserved stochastic nodes: 4400
-   Total graph size: 212313
+   Total graph size: 180003
 
 Initializing model</code></pre>
 </div>
@@ -3066,7 +3066,7 @@ Initializing model</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>time.taken</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 15.4165 hours</code></pre>
+<pre><code>Time difference of 15.95753 hours</code></pre>
 </div>
 <details>
 <summary>Code</summary>

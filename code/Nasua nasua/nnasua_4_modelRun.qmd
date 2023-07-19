@@ -72,7 +72,7 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| message: false
 #| warning: false
 
-k = 9
+k = 6
 
 gam.formula <- formula(count ~ env.bio_10 + 
                                env.bio_13 + 
