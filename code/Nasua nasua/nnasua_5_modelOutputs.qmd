@@ -132,7 +132,7 @@ L.fitted.model.b <- plab("b",
                                             'env.npp', 
                                             'env.nontree', 
                                             'expert',
-                                            sprintf('spline%i', 1:18)))) # changes with n.spl
+                                            sprintf('spline%i', 1:10)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
