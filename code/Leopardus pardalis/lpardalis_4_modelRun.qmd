@@ -42,20 +42,20 @@ lpardalis_expert_blob_time2 <- readRDS('data/lpardalis_expert_blob_time2.rds')
 
 PA_time1 <- readRDS('data/data_lpardalis_PA_time1.rds') %>%
   cbind(expert=lpardalis_expert_blob_time1) %>%
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.tree) & !is.na(env.woodysavanna) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_lpardalis_PA_time2.rds') %>%
   cbind(expert=lpardalis_expert_blob_time2) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.tree) & !is.na(env.woodysavanna) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 lpardalis_expert_gridcell <- readRDS('data/lpardalis_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_lpardalis_PO_time1.rds') %>%
   cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.tree) & !is.na(env.woodysavanna) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds')  %>%
   cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.tree) & !is.na(env.woodysavanna) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.tree) & !is.na(env.npp) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)) 
@@ -74,10 +74,10 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 
 k = 7
 
-gam.formula <- formula(count ~ env.bio_12 + 
-                               env.bio_14 + 
+gam.formula <- formula(count ~ env.bio_10 + 
+                               env.bio_17 + 
                                env.tree + 
-                               env.woodysavanna +
+                               env.npp +
                                expert +
                                offset(log(area)) +
                                s(X, Y, by=as.factor(time), k=k))
@@ -121,19 +121,19 @@ jagam.PA.time2 <- mgcv::PredictMat(object = smooth2, data = PA_time1_time2)
 #| warning: false
 
 PA.X <- cbind('(Intercept)'= 1, 
-              'env.bio_12' = PA_time1_time2$env.bio_12,
-              'env.bio_14' = PA_time1_time2$env.bio_14,
+              'env.bio_10' = PA_time1_time2$env.bio_10,
+              'env.bio_17' = PA_time1_time2$env.bio_17,
               'env.tree' = PA_time1_time2$env.tree,
-              'env.woodysavanna' = PA_time1_time2$env.woodysavanna,
+              'env.npp' = PA_time1_time2$env.npp,
               'expert' = PA_time1_time2$expert,
               jagam.PA.time1, 
               jagam.PA.time2)
 
 PO.X <- cbind('(Intercept)'= 1, 
-              'env.bio_12' = PO_time1_time2$env.bio_12,
-              'env.bio_14' = PO_time1_time2$env.bio_14,
+              'env.bio_10' = PO_time1_time2$env.bio_10,
+              'env.bio_17' = PO_time1_time2$env.bio_17,
               'env.tree' = PO_time1_time2$env.tree,
-              'env.woodysavanna' = PO_time1_time2$env.woodysavanna,
+              'env.npp' = PO_time1_time2$env.npp,
               'expert' = PO_time1_time2$expert,
               jagam.PO.time1, 
               jagam.PO.time2)

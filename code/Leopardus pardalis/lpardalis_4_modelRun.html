@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-07-19">
+<meta name="dcterms.date" content="2023-07-20">
 
 <title>Leopardus pardalis Model Run</title>
 <style>
@@ -2640,7 +2640,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 19, 2023</p>
+      <p class="date">July 20, 2023</p>
     </div>
   </div>
   
@@ -2668,20 +2668,20 @@ vertical-align: -.125em;
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_lpardalis_PA_time1.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lpardalis_expert_blob_time1) <span class="sc">%&gt;%</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_12) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.woodysavanna) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_17) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_lpardalis_PA_time2.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lpardalis_expert_blob_time2) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_12) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.woodysavanna) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_17) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>lpardalis_expert_gridcell <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/lpardalis_expert_gridcell.rds&#39;</span>)</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_lpardalis_PO_time1.rds&#39;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lpardalis_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_12) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.woodysavanna) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_17) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&#39;data/data_lpardalis_PO_time2.rds&#39;</span>)  <span class="sc">%&gt;%</span></span>
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>lpardalis_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_12) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.woodysavanna) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_17) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.tree) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.npp) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA&#39;s</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>PA_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PA_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PA_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span>
 <span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>PO_time1_time2 <span class="ot">&lt;-</span> <span class="fu">rbind</span>(PO_time1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">1</span>), PO_time2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">time=</span><span class="dv">2</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2701,10 +2701,10 @@ vertical-align: -.125em;
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">7</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>gam.formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(count <span class="sc">~</span> env.bio_12 <span class="sc">+</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                               env.bio_14 <span class="sc">+</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>gam.formula <span class="ot">&lt;-</span> <span class="fu">formula</span>(count <span class="sc">~</span> env.bio_10 <span class="sc">+</span> </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                               env.bio_17 <span class="sc">+</span> </span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                               env.tree <span class="sc">+</span> </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                               env.woodysavanna <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                               env.npp <span class="sc">+</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                               expert <span class="sc">+</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">offset</span>(<span class="fu">log</span>(area)) <span class="sc">+</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">s</span>(X, Y, <span class="at">by=</span><span class="fu">as.factor</span>(time), <span class="at">k=</span>k))</span>
@@ -2721,30 +2721,29 @@ Family: poisson
 Link function: log 
 
 Formula:
-count ~ env.bio_12 + env.bio_14 + env.tree + env.woodysavanna + 
-    expert + offset(log(area)) + s(X, Y, by = as.factor(time), 
-    k = k)
+count ~ env.bio_10 + env.bio_17 + env.tree + env.npp + expert + 
+    offset(log(area)) + s(X, Y, by = as.factor(time), k = k)
 
 Parametric coefficients:
-                  Estimate Std. Error  z value Pr(&gt;|z|)    
-(Intercept)      -24.00750    0.07161 -335.235  &lt; 2e-16 ***
-env.bio_12        -0.18383    0.04957   -3.708 0.000208 ***
-env.bio_14         0.49083    0.13573    3.616 0.000299 ***
-env.tree           0.36599    0.03803    9.623  &lt; 2e-16 ***
-env.woodysavanna   0.21362    0.02092   10.210  &lt; 2e-16 ***
-expert           -22.37973    1.60691  -13.927  &lt; 2e-16 ***
+             Estimate Std. Error  z value Pr(&gt;|z|)    
+(Intercept) -24.08790    0.07435 -323.983  &lt; 2e-16 ***
+env.bio_10    0.27106    0.02664   10.175  &lt; 2e-16 ***
+env.bio_17   -0.16640    0.10907   -1.526  0.12711    
+env.tree      0.14436    0.04480    3.222  0.00127 ** 
+env.npp       0.15812    0.03545    4.461 8.17e-06 ***
+expert      -20.14807    1.60857  -12.525  &lt; 2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
 Approximate significance of smooth terms:
                           edf Ref.df Chi.sq p-value    
-s(X,Y):as.factor(time)1 5.885  5.994  230.5  &lt;2e-16 ***
-s(X,Y):as.factor(time)2 5.991  6.000 1251.7  &lt;2e-16 ***
+s(X,Y):as.factor(time)1 5.912  5.996  435.5  &lt;2e-16 ***
+s(X,Y):as.factor(time)2 5.994  6.000 1515.5  &lt;2e-16 ***
 ---
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 
-R-sq.(adj) =  0.0178   Deviance explained = 30.2%
-UBRE = 2.0316  Scale est. = 1         n = 4360</code></pre>
+R-sq.(adj) =  0.0143   Deviance explained = 30.4%
+UBRE = 2.0222  Scale est. = 1         n = 4360</code></pre>
 </div>
 </div>
 <ul>
@@ -2763,8 +2762,8 @@ UBRE = 2.0316  Scale est. = 1         n = 4360</code></pre>
   eta &lt;- X %*% b + offset ## linear predictor
   for (i in 1:n) { mu[i] &lt;-  exp(eta[i]) } ## expected response
   for (i in 1:n) { y[i] ~ dpois(mu[i]) } ## response 
-  ## Parametric effect priors CHECK tau=1/71^2 is appropriate!
-  for (i in 1:6) { b[i] ~ dnorm(0,2e-04) }
+  ## Parametric effect priors CHECK tau=1/53^2 is appropriate!
+  for (i in 1:6) { b[i] ~ dnorm(0,0.00035) }
   ## prior for s(X,Y):as.factor(time)1... 
   K1 &lt;- S1[1:6,1:6] * lambda[1]  + S1[1:6,7:12] * lambda[2]
   b[7:12] ~ dmnorm(zero[7:12],K1) 
@@ -2799,19 +2798,19 @@ UBRE = 2.0316  Scale est. = 1         n = 4360</code></pre>
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>PA.X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="st">&#39;(Intercept)&#39;</span><span class="ot">=</span> <span class="dv">1</span>, </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_12&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.bio_12,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_14&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.bio_14,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_10&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.bio_10,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_17&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.bio_17,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.tree&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.tree,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.woodysavanna&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.woodysavanna,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.npp&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>env.npp,</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;expert&#39;</span> <span class="ot">=</span> PA_time1_time2<span class="sc">$</span>expert,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time1, </span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>              jagam.PA.time2)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>PO.X <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="st">&#39;(Intercept)&#39;</span><span class="ot">=</span> <span class="dv">1</span>, </span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_12&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_12,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_14&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_14,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_10&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_10,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.bio_17&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.bio_17,</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.tree&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.tree,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.woodysavanna&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.woodysavanna,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;env.npp&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>env.npp,</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>              <span class="st">&#39;expert&#39;</span> <span class="ot">=</span> PO_time1_time2<span class="sc">$</span>expert,</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time1, </span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>              jagam.PO.time2)</span>
@@ -3067,7 +3066,7 @@ Initializing model</code></pre>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>time.taken</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 15.82929 hours</code></pre>
+<pre><code>Time difference of 15.7962 hours</code></pre>
 </div>
 <details>
 <summary>Code</summary>

@@ -81,20 +81,20 @@ lpardalis_expert_blob_time2 <- readRDS('data/lpardalis_expert_blob_time2.rds')
 
 PA_time1 <- readRDS('data/data_lpardalis_PA_time1.rds') %>%
   cbind(expert=lpardalis_expert_blob_time1) %>%
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.woodysavanna) & !is.na(env.tree) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 PA_time2 <- readRDS('data/data_lpardalis_PA_time2.rds') %>%
   cbind(expert=lpardalis_expert_blob_time2) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.woodysavanna) & !is.na(env.tree) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
 lpardalis_expert_gridcell <- readRDS('data/lpardalis_expert_gridcell.rds')
 
 PO_time1 <- readRDS('data/data_lpardalis_PO_time1.rds') %>%
   cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.woodysavanna) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 PO_time2  <- readRDS('data/data_lpardalis_PO_time2.rds')  %>%
   cbind(expert=lpardalis_expert_gridcell$dist_exprt) %>% 
-  filter(!is.na(env.bio_12) &!is.na(env.bio_14) & !is.na(env.woodysavanna) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
+  filter(!is.na(env.bio_10) &!is.na(env.bio_17) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
 PA_time1_time2 <- rbind(PA_time1 %>% mutate(time=1), PA_time2 %>% mutate(time=2)) 
 PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2))  
@@ -127,10 +127,10 @@ The `fitted.model` is an object of class `rjags`.
 # labels for the linear predictor `b`
 L.fitted.model.b <- plab("b", 
                          list(Covariate = c('Intercept', 
-                                            'env.bio_12',
-                                            'env.bio_14',
-                                            'env.woodysavanna', 
+                                            'env.bio_10',
+                                            'env.bio_17',
                                             'env.tree', 
+                                            'env.npp', 
                                             'expert',
                                             sprintf('spline%i', 1:12)))) # changes with n.spl
 
@@ -458,10 +458,10 @@ acce_allcountries
 
 caterpiller.params <- fitted.model.ggs.b %>%
   filter(grepl('env', Parameter)) %>% 
-  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_12', 'annual precipitation',
+  mutate(Parameter=as.factor(ifelse(Parameter=='env.bio_10', 'mean temperature of warmest quarter',
                                     ifelse(Parameter=='env.tree', 'percentage of tree cover',
-                                           ifelse(Parameter=='env.woodysavanna', 'percentage of woody savanna',
-                                                  ifelse(Parameter=='env.bio_14', 'precipitation of driest month', Parameter)))))) %>% 
+                                           ifelse(Parameter=='env.npp', 'npp',
+                                                  ifelse(Parameter=='env.bio_17', 'precipitation of driest quarter', Parameter)))))) %>% 
   ggs_caterpillar(line=0) + 
   theme_light() + 
   labs(y='', x='posterior densities')
