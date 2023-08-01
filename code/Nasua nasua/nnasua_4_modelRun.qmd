@@ -373,9 +373,9 @@ nnasua_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=200000,
+                                n.iter=220000,
                                 n.thin=10,
-                                n.burnin=20000,
+                                n.burnin=22000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
