@@ -364,7 +364,6 @@ jags.inits <- function(model = model.gam)
 #| label: run
 #| message: false
 #| warning: false
-#| eval: true
 
 start.time <- Sys.time()
 
@@ -379,14 +378,14 @@ cthous_model <- R2jags::jags(data=jags.data,
                                             'delta.Grid'),
                                 inits = jags.inits,
                                 n.chains=3,
-                                n.iter=200000,
+                                n.iter=300000,
                                 n.thin=10,
-                                n.burnin=20000,
+                                n.burnin=30000,
                                 DIC = FALSE)
 
 end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(cthous_model, 'D:/Flo/JAGS_models/cthous_model.rds')
+saveRDS(cthous_model, 'models/JAGS_models/cthous_model.rds')
 ```

@@ -108,7 +108,8 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-fitted.model <- readRDS('D:/Flo/JAGS_models/cthous_model.rds') # deleted after model output
+# fitted.model <- readRDS('D:/Flo/JAGS_models/cthous_model.rds') # deleted after model output
+fitted.model <- readRDS('models/JAGS_models/cthous_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
