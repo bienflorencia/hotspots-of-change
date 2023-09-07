@@ -535,7 +535,6 @@ delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
 
 delta.A.plot
 ggsave(delta.A.plot, filename='docs/figs/delta_A_cbrachyurus.svg', device = 'svg', dpi=300)
-
 ```
 
 

@@ -382,6 +382,7 @@ diffMAP.SD <- tm_graticules(alpha = 0.3) +
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 diffMAP.SD
+tmap::tmap_save(tm = diffMAP.SD, filename = 'docs/figs/diffMAP_SD_pbrasiliensis.svg', device = svglite::svglite)
 ```
 
 ### Countries thinning
@@ -533,6 +534,7 @@ delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
     labs(y='Probability density', x=expression(Delta*'Area'))
 
 delta.A.plot
+ggsave(delta.A.plot, filename='docs/figs/delta_A_pbrasiliensis.svg', device = 'svg', dpi=300)
 ```
 
 
