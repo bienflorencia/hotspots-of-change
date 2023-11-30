@@ -1,10 +1,10 @@
 # Hotspots of change - Neotropical carnivores
 
-## Assessing hotspots of geographic range changes for eight charismatic Neotropical carnivores using integrated species distribution models
+## A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores
 
-*Florencia Grattarola, Diana Bowler, (...) & Petr Keil*
+*Florencia Grattarola, Kateřina Tschernosterová & Petr Keil*
 
-This repository includes the data, code, model and outputs for our work on the use of integrated species distribution models (ISDMs) to study the change in the geograhic distribution range of eight charismatic Neotropical carnivores.
+This repository includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the spatial and temporal dissimilarity. 
 
 
 ### Species
