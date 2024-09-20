@@ -1,0 +1,359 @@
+---
+title: "Species data visualisation"
+format: 
+  html:
+    toc: true
+    toc-location: right
+    smooth-scroll: true
+    html-math-method: katex
+    code-fold: true
+self-contained: true
+editor: source
+author: 'Florencia Grattarola'
+date: "`r format(Sys.time(), '%Y-%m-%d')`"
+---
+
+  - R Libraries
+
+```{r}
+#| label: libraries
+#| message: false
+#| warning: false
+#| code-fold: false
+
+library(patchwork)
+library(sf)
+library(tidyverse)
+```
+
+  - Basemaps
+
+```{r}
+#| label: basemaps
+#| message: false
+#| warning: false
+#| code-fold: false
+
+equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
+
+latam <- st_read('data/latam.gpkg', layer = 'latam', quiet = T)
+countries <- st_read('data/latam.gpkg', layer = 'countries', quiet = T)
+```
+
+# Data
+
+Load the IUCN range, the PO grid-cells with counts and the PA blobs with presences and absences  
+
+```{r}
+#| label: PA-PO-data
+#| message: false
+#| warning: false
+#| code-fold: false
+
+hyagouaroundi_IUCN <- st_read('big_data/hyagouaroundi_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_hyagouaroundi_PA <- readRDS('data/species_POPA_data/data_hyagouaroundi_PA.rds')
+data_hyagouaroundi_PO <- readRDS('data/species_POPA_data/data_hyagouaroundi_PO.rds')
+
+lpardalis_IUCN <- st_read('big_data/lpardalis_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_lpardalis_PA <- readRDS('data/species_POPA_data/data_lpardalis_PA.rds')
+data_lpardalis_PO <- readRDS('data/species_POPA_data/data_lpardalis_PO.rds')
+
+lwiedii_IUCN <- st_read('big_data/lwiedii_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_lwiedii_PA <- readRDS('data/species_POPA_data/data_lwiedii_PA.rds')
+data_lwiedii_PO <- readRDS('data/species_POPA_data/data_lwiedii_PO.rds')
+
+nnasua_IUCN <- st_read('big_data/nnasua_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_nnasua_PA <- readRDS('data/species_POPA_data/data_nnasua_PA.rds')
+data_nnasua_PO <- readRDS('data/species_POPA_data/data_nnasua_PO.rds')
+
+cthous_IUCN <- st_read('big_data/cthous_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_cthous_PA <- readRDS('data/species_POPA_data/data_cthous_PA.rds')
+data_cthous_PO <- readRDS('data/species_POPA_data/data_cthous_PO.rds')
+
+cbrachyurus_IUCN <- st_read('big_data/cbrachyurus_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_cbrachyurus_PA <- readRDS('data/species_POPA_data/data_cbrachyurus_PA.rds')
+data_cbrachyurus_PO <- readRDS('data/species_POPA_data/data_cbrachyurus_PO.rds')
+
+ebarbara_IUCN <- st_read('big_data/ebarbara_IUCN.shp', quiet = T) %>% st_transform(crs=equalareaCRS)
+data_ebarbara_PA <- readRDS('data/species_POPA_data/data_ebarbara_PA.rds')
+data_ebarbara_PO <- readRDS('data/species_POPA_data/data_ebarbara_PO.rds')
+
+pbrasiliensis_IUCN <- sf::st_read('big_data/pbrasiliensis_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
+data_pbrasiliensis_PA <- readRDS('data/species_POPA_data/data_pbrasiliensis_PA.rds')
+data_pbrasiliensis_PO <- readRDS('data/species_POPA_data/data_pbrasiliensis_PO.rds')
+```
+
+
+
+# Plots per species
+
+## *Herpailurus yagouaroundi* (jaguarundi)
+
+```{r}
+#| label: plot-jaguarundi
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_hyagouaroundi_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=hyagouaroundi_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_hyagouaroundi_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Herpailurus yagouaroundi', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_hyagouaroundi_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=hyagouaroundi_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_hyagouaroundi_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Herpailurus yagouaroundi', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_hyagouaroundi_PO | plot_hyagouaroundi_PA
+```
+
+## *Leopardus pardalis* (ocelot)
+
+```{r}
+#| label: plot-ocelot
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_lpardalis_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=lpardalis_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_lpardalis_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Leopardus pardalis', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_lpardalis_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=lpardalis_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_lpardalis_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Leopardus pardalis', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_lpardalis_PO | plot_lpardalis_PA
+```
+
+## *Leopardus wiedii* (margay)
+
+```{r}
+#| label: plot-margay
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_lwiedii_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=lwiedii_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_lwiedii_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Leopardus wiedii', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_lwiedii_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=lwiedii_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_lwiedii_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Leopardus wiedii', subtitle='presence-only', col='') +
+  theme_bw()
+
+plot_lwiedii_PO | plot_lwiedii_PA
+```
+
+## *Nasua nasua* (coati)
+
+```{r}
+#| label: plot-coati
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_nnasua_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_nnasua_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Nasua nasua', subtitle='presence-absence', col='') +
+  theme_bw()
+
+plot_nnasua_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_nnasua_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Nasua nasua', subtitle='presence-only', col='') +
+  theme_bw()
+
+plot_nnasua_PO | plot_nnasua_PA
+```
+
+## *Cerdocyon thous* (crab-eating fox)
+
+```{r}
+#| label: plot-crab-eating-fox
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_cthous_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=cthous_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_cthous_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(cthous_IUCN)
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Cerdocyon thous', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_cthous_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=cthous_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_cthous_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(cthous_IUCN)
+  labs(title='Cerdocyon thous', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_cthous_PO | plot_cthous_PA
+```
+
+## *Chrysocyon brachyurus* (maned wolf)
+
+```{r}
+#| label: plot-maned-wolf
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_cbrachyurus_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=cbrachyurus_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_cbrachyurus_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Chrysocyon brachyurus', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_cbrachyurus_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=cbrachyurus_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_cbrachyurus_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Chrysocyon brachyurus', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_cbrachyurus_PO | plot_cbrachyurus_PA
+```
+
+## *Eira barbara* (tayra)
+
+```{r}
+#| label: plot-tayra
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_ebarbara_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=ebarbara_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_ebarbara_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Eira barbara', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_ebarbara_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=ebarbara_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_ebarbara_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) +
+  labs(title='Eira barbara', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_ebarbara_PO | plot_ebarbara_PA
+```
+
+## *Pteronura brasiliensis* (giant otter)
+
+```{r}
+#| label: plot-giant-otter
+#| message: false
+#| warning: false
+#| eval: true
+#| echo: true
+
+plot_pbrasiliensis_PA <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=pbrasiliensis_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_pbrasiliensis_PA %>% st_buffer(20000), 
+          aes(fill=factor(presence)), col=NA, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) +
+  scale_fill_manual(values = c("#434445","#4dac26"))+
+  scale_color_manual(values = c("#434445","#4dac26")) +
+  labs(title='Pteronura brasiliensis', subtitle='presence-absence', col='') +
+  theme_bw() 
+
+plot_pbrasiliensis_PO <- ggplot() + 
+  geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+  geom_sf(data=pbrasiliensis_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
+  geom_sf(data=data_pbrasiliensis_PO, col="#d01c8b", size=0.5, show.legend = F) +
+  coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + 
+  labs(title='Pteronura brasiliensis', subtitle='presence-only', col='') +
+  theme_bw() 
+
+plot_pbrasiliensis_PO | plot_pbrasiliensis_PA
+```
+
+
+# Save plots 
+
+```{r}
+#| label: save-plots
+#| message: false
+#| warning: false
+#| eval: false
+#| echo: true
+
+
+PO_plot <- (plot_hyagouaroundi_PO | plot_lpardalis_PO | plot_lwiedii_PO  | plot_nnasua_PO ) /
+  (plot_cthous_PO | plot_cbrachyurus_PO | plot_ebarbara_PO | plot_pbrasiliensis_PO)
+
+ggsave(PO_plot, filename='docs/figs/PO_plot.svg', device = 'svg', width=18, height=10, dpi=300)
+
+PA_plot <- (plot_hyagouaroundi_PA | plot_lpardalis_PA | plot_lwiedii_PA  | plot_nnasua_PA ) /
+  (plot_cthous_PA | plot_cbrachyurus_PA | plot_ebarbara_PA | plot_pbrasiliensis_PA)
+
+ggsave(PA_plot, filename='docs/figs/PA_plot.svg', device = 'svg', width=18, height=10, dpi=300)
+
+```
