@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this data or code, please cite it as below."
+authors:
+- family-names: "Grattarola"
+  given-names: "Florencia"
+  orcid: "https://orcid.org/0000-0001-8282-5732"
+title: "My Research Software"
+version: 2.0.4
+doi: 10.5281/zenodo.1234
+date-released: 2017-12-18
+url: "https://github.com/bienflorencia/hotspots-neotropical-carnivores"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Grattarola"
+    given-names: "Florencia"
+    orcid: "https://orcid.org/0000-0001-8282-5732"
+  - family-names: "Tschernosterová"
+    given-names: "Kateřina"
+    orcid: ""
+  - family-names: "Keil"
+    given-names: "Petr"
+    orcid: "https://orcid.org/0000-0003-3017-1858"
+  doi: "10.0000/00000"
+  journal: "Global Ecology and Conservation"
+  month: 
+  start: 1 # First page number
+  end: 10 # Last page number
+  title: "A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores"
+  issue: 
+  volume: 
+  year: 2024
