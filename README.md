@@ -7,7 +7,7 @@
 This repository includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the spatial and temporal dissimilarity. 
 
 ```mermaid
-  flowchart TD
+  flowchart TR
     subgraph prepare data
     a1("`clean PO and PA for all species`")-->a2("`create range maps distance to the edge`")
     a2("`create range maps distance to the edge`")-->a3("`visualise PO grid-cells and PA blobs`")
@@ -22,7 +22,7 @@ This repository includes the data, code, model and outputs for our work on mappi
     c1("`sample from the posterior`")-->c2("`species richness, change and beta diversity`")
     end
     a3 --> b1
-    b4 --> c1
+    b5 --> c1
 ```
 
 ### Species
