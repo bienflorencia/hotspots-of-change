@@ -4,11 +4,11 @@ authors:
 - family-names: "Grattarola"
   given-names: "Florencia"
   orcid: "https://orcid.org/0000-0001-8282-5732"
-title: "My Research Software"
-version: 2.0.4
+title: "Hotspots of change - Neotropical carnivores"
+version: 1.0.0
 doi: 10.5281/zenodo.1234
-date-released: 2017-12-18
-url: "https://github.com/bienflorencia/hotspots-neotropical-carnivores"
+date-released: 2024-09-20
+url: "https://github.com/bienflorencia/hotspots-of-change"
 preferred-citation:
   type: article
   authors:
@@ -22,10 +22,11 @@ preferred-citation:
     given-names: "Petr"
     orcid: "https://orcid.org/0000-0003-3017-1858"
   doi: "10.0000/00000"
-  journal: "Global Ecology and Conservation"
+  url: "https://ssrn.com/abstract=4916634"
+  journal: "SSRN"
   month: 
-  start: 1 # First page number
-  end: 10 # Last page number
+  start:  # First page number
+  end: # Last page number
   title: "A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores"
   issue: 
   volume: 
