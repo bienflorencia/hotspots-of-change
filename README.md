@@ -8,19 +8,19 @@ This repository includes the data, code, model and outputs for our work on mappi
 
 ### Code workflow
 
-  1. Prepare data
-    - Clean PO and PA for all species
-    - Create range maps distance to the edge
-    - Visualise PO grid-cells and PA blobs
-  2. Analyse species by species (see species folders)
-    - Data Generation
-    - Variable Selection
-    - Data preparation for modelling
-    - Model run
-    - Model outputs
-   3. Calculate hotspots of change
-    - Sample from the posterior
-    - Species richness, change and beta diversity
+1. Prepare data
+   - Clean PO and PA for all species
+   - Create range maps distance to the edge
+   - Visualise PO grid-cells and PA blobs
+2. Analyse species by species (see species folders)
+   - Data Generation
+   - Variable Selection
+   - Data preparation for modelling
+   - Model run
+   - Model outputs
+3. Calculate hotspots of change
+   - Sample from the posterior
+   - Species richness, change and beta diversity
 
 
 
