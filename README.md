@@ -11,9 +11,9 @@ This repository includes the data, code, model and outputs for our work on mappi
   journey
     title Code workflow
     section Prepare data
-      clean PO and PA for all species
-      create range maps distance to the edge
-      visualise PO grid-cells and PA blobs
+      Clean PO and PA for all species
+      Create range maps distance to the edge
+      Visualise PO grid-cells and PA blobs
     section Analyses species by species
       Data Generation
       Variable Selection
@@ -24,7 +24,6 @@ This repository includes the data, code, model and outputs for our work on mappi
       Sample from the posterior
       Species richness, change and beta diversity
 ```
-
 
 ### Species
 
