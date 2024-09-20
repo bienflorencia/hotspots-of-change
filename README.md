@@ -21,8 +21,6 @@ This repository includes the data, code, model and outputs for our work on mappi
     subgraph caluclate hotspots of change
     c1("`sample from the posterior`")-->c2("`species richness, change and beta diversity`")
     end
-    [prepare data] --> [analyse species by species]
-    [analyse species by species] --> [caluclate hotspots of change]
 ```
 
 ### Species
