@@ -7,6 +7,25 @@
 This repository includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the spatial and temporal dissimilarity. 
 
 
+```mermaid
+  journey
+    title Code workflow
+    section Prepare data
+      clean PO and PA for all species
+      create range maps distance to the edge
+      visualise PO grid-cells and PA blobs
+    section Analyses species by species
+      Data Generation
+      Variable Selection
+      Data preparation for modelling
+      Model run
+      Model outputs
+    section Hotspots of change
+      Sample from the posterior
+      Species richness, change and beta diversity
+```
+
+
 ### Species
 
 ![](/docs/readme.png)
