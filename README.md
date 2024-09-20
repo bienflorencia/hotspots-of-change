@@ -43,12 +43,12 @@ For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *H
    1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd)
    2. Create range maps distance to the edge as a covariate: [`code/1_2_create_range_map_covariate.qmd`]()
    3. Visualise PO grid-cells and PA blobs
-2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](Chrysocyon brachyurus), [*Eira barbara*](Eira barbara), [*Herpailurus yagouaroundi*](Herpailurus yagouaroundi), [*Leopardus pardalis*](Leopardus pardalis), [*Leopardus wiedii*](Leopardus wiedii), [*Nasua nasua*](Nasua nasua), and [*Pteronura brasiliensis*](Pteronura brasiliensis).)
+2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](code/Chrysocyon%20brachyurus), [*Eira barbara*](code/Eira%20barbara), [*Herpailurus yagouaroundi*](code/Herpailurus%20yagouaroundi), [*Leopardus pardalis*](code/Leopardus%20pardalis), [*Leopardus wiedii*](code/Leopardus%20wiedii), [*Nasua nasua*](code/Nasua%20nasua), and [*Pteronura brasiliensis*](code/Pteronura%20brasiliensis).)
    1. Data Generation: `*species*_1_dataGeneration.qmd`
-   2. Variable Selection: *species*`_2_variableSelection.qmd`
-   3. Data preparation for modelling: [*species*`_3_dataPreparation.qmd`]()
-   4. Model run: [*species*`_4_modelRun.qmd`]()
-   5. Model outputs: [*species*`_5_modelOutputs.qmd`]()
+   2. Variable Selection: `*species*_2_variableSelection.qmd`
+   3. Data preparation for modelling: `*species*_3_dataPreparation.qmd`
+   4. Model run: `*species*_4_modelRun.qmd`
+   5. Model outputs: `*species*_5_modelOutputs.qmd`
 3. Calculate hotspots of change
    1. Sample from the posterior: [`3_1_sampling_from_posterior.R`](code/3_1_sampling_from_posterior.R)
    2. Species richness, change and beta diversity: [`3_2_species_richness_change_and_beta_diversity.qmd`](code/3_2_species_richness_change_and_beta_diversity.qmd)
