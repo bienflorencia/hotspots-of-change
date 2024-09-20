@@ -1,6 +1,6 @@
 # Data process
 
-See species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](code/Chrysocyon%20brachyurus), [*Eira barbara*](code/Eira%20barbara), [*Herpailurus yagouaroundi*](code/Herpailurus%20yagouaroundi), [*Leopardus pardalis*](code/Leopardus%20pardalis), [*Leopardus wiedii*](code/Leopardus%20wiedii), [*Nasua nasua*](code/Nasua%20nasua), and [*Pteronura brasiliensis*](code/Pteronura%20brasiliensis).
+See species folders: [*Cerdocyon thous*](Cerdocyon%20thous), [*Chrysocyon brachyurus*](Chrysocyon%20brachyurus), [*Eira barbara*](Eira%20barbara), [*Herpailurus yagouaroundi*](Herpailurus%20yagouaroundi), [*Leopardus pardalis*](Leopardus%20pardalis), [*Leopardus wiedii*](Leopardus%20wiedii), [*Nasua nasua*](Nasua%20nasua), and [*Pteronura brasiliensis*](Pteronura%20brasiliensis).
 
 For each species, the following order to run the code should be followed:
 
@@ -19,5 +19,5 @@ For each species, the following order to run the code should be followed:
   - The model output (`*species*_model.rds`)   
   
   5. And, finally, create the output figures with `*species*_5_modelOutputs.qmd`. The html output will show all the results, plus a new file will be created:    
-  - The model diagnostics (`*species*_model_diagnostics.pdf`).  
+  - The model diagnostics (`docs/*species*_model_diagnostics.pdf`).  
 
