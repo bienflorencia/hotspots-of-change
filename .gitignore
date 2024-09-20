@@ -57,12 +57,7 @@ models/JAGS_models/
 docs/A1 - used papers overview.xlsx
 
 # data to share
-data/*
-!data/Latam_vector.*
-!data/Latam_vector_countries.*
-!data/Latam_raster.tif
-!data/Latam_raster_countries.tif
-!data/MDD_Carnivora_List.csv
-!data/data_Kaca.csv
-!data/NEOTROPICAL_CARNIVORES_DATASET_2020-04.csv
-!data/0240776-230224095556074_CLEAN.csv
+data/_draft
+!data/raw/0240776-230224095556074_CLEAN.csv
+!data/raw/0240776-230224095556074.csv
+!data/raw/data/raw/NEOTROPICAL_CARNIVORES_DATASET_2020-04.csv
