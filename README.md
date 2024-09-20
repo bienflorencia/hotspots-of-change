@@ -7,12 +7,11 @@
 This repository includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the spatial and temporal dissimilarity. 
 
 
-
 ```mermaid
   flowchart TB
     subgraph prepare data
-    clean PO and PA for all species-->create range maps distance to the edge
-    create range maps distance to the edge-->visualise PO grid-cells and PA blobs
+    a("`clean PO and PA for all species`")-->b{{"`create range maps distance to the edge`"}}
+    b{{"`create range maps distance to the edge`"}}-->b{{"`visualise PO grid-cells and PA blobs`"}}
     end
     subgraph analyse species by species
     b1-->b2
@@ -20,8 +19,6 @@ This repository includes the data, code, model and outputs for our work on mappi
     subgraph caluclate hotspots of change
     c1-->c2
     end
-    prepare data --> analyse species by species
-    analyse species by species --> caluclate hotspots of change
 ```
 
 ### Species
