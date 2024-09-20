@@ -31,11 +31,12 @@ Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @h
 ### Spatial files
 
 - [`data/latam_raster.tif`](data/latam_raster.tif): a raster file with 2 layers; `latam` a raster of 100x100 km cell resolution of Latin America, and `countries`: a raster of 100x100 km cell resolution of the countries of Latin America.  
-- [`data/latam.gpkg`](data/latam.gpkg): a geopackage with 3 layers; `countries`: a multi polygon sf file for the 21 landmass countries of Latin America (excluding islands), `latam` a single polygon that combines all countries of Latin America, and `latam_land` a single polygon that combines all the landmass countries of Latin America.  
+- [`data/latam.gpkg`](data/latam.gpkg): a geopackage with 3 layers; `countries`: a multi polygon sf file for the 56 countries of Latin America, `latam` a single polygon that combines all countries of Latin America, and `latam_land` a single polygon that combines all the landmass countries of Latin America (excluding islands).  
 
 ### Other files
 
-- [`docs/literature_digitised_references.bib`](metadata/literature_digitised_references.bib): BibTeX bibliographical database file with the 32 literature references digitised and included in our database.  
+- [`docs/literature_digitised_references.bib`](docs/literature_digitised_references.bib): BibTeX bibliographical database file with the 32 literature references digitised and included in our database.  
+- `docs/*species*_model_diagnostics.pdf`: PDF files with the model diagnostics output.
 
 ## 3) **Extended Data**: the code we used to process the data
 
@@ -45,7 +46,7 @@ For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *H
    1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd)
    2. Create range maps distance to the edge as a covariate: [`code/1_2_create_range_map_covariate.qmd`]()
    3. Visualise PO grid-cells and PA blobs
-2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](code/Chrysocyon%20brachyurus), [*Eira barbara*](code/Eira%20barbara), [*Herpailurus yagouaroundi*](code/Herpailurus%20yagouaroundi), [*Leopardus pardalis*](code/Leopardus%20pardalis), [*Leopardus wiedii*](code/Leopardus%20wiedii), [*Nasua nasua*](code/Nasua%20nasua), and [*Pteronura brasiliensis*](code/Pteronura%20brasiliensis).)
+2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](code/Chrysocyon%20brachyurus), [*Eira barbara*](code/Eira%20barbara), [*Herpailurus yagouaroundi*](code/Herpailurus%20yagouaroundi), [*Leopardus pardalis*](code/Leopardus%20pardalis), [*Leopardus wiedii*](code/Leopardus%20wiedii), [*Nasua nasua*](code/Nasua%20nasua), and [*Pteronura brasiliensis*](code/Pteronura%20brasiliensis)
    1. Data Generation: `*species*_1_dataGeneration.qmd`
    2. Variable Selection: `*species*_2_variableSelection.qmd`
    3. Data preparation for modelling: `*species*_3_dataPreparation.qmd`
