@@ -7,10 +7,19 @@
 This repository includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the spatial and temporal dissimilarity. 
 
 
+
 ```mermaid
-  flowchart LR
-    Prepare data --> Analyse species by species
-    Analyse species by species --> Caluclate hotspots of change
+  flowchart TB
+    c1-->a2
+    subgraph Prepare data
+    a1-->a2
+    end
+    subgraph Analyse species by species
+    b1-->b2
+    end
+    subgraph Caluclate hotspots of change
+    c1-->c2
+    end
 ```
 
 ### Species
