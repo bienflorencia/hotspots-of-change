@@ -23,7 +23,9 @@ Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @h
 ### Tables
 
 - [`data/data_PO.csv`](data/data_PO.csv): a csv file with the cleaned, standardised and harmonised presence-only data.  
+- [`data/data_PO.rds`](data/data_PO.rds): an RDS file with the cleaned, standardised and harmonised presence-only data.  
 - [`data/data_PA.csv`](data/data_PA.csv): a csv file with the cleaned, standardised and harmonised presence-absence data.  
+- [`data/data_PA.rds`](data/data_PA.rds): an RDS file with the cleaned, standardised and harmonised presence-absence data.  
 - [`data/carnivores.csv`](data/carnivores.csv): a csv file with the carnivore species list extracted from the [Mammal Diversity Database](https://doi.org/10.5281/zenodo.5945626), including the family, taxon key from GBIF and IUCN conservation status.  
 
 ### Spatial files
