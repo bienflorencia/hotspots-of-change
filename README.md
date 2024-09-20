@@ -43,8 +43,8 @@ For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *H
    1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd)
    2. Create range maps distance to the edge as a covariate: [`code/1_2_create_range_map_covariate.qmd`]()
    3. Visualise PO grid-cells and PA blobs
-2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon thous/), [*Chrysocyon brachyurus*](Chrysocyon brachyurus), [*Eira barbara*](Eira barbara), [*Herpailurus yagouaroundi*](Herpailurus yagouaroundi), [*Leopardus pardalis*](Leopardus pardalis), [*Leopardus wiedii*](Leopardus wiedii), [*Nasua nasua*](Nasua nasua), and [*Pteronura brasiliensis*](Pteronura brasiliensis).)
-   1. Data Generation: *species*`_1_dataGeneration.qmd`
+2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](Chrysocyon brachyurus), [*Eira barbara*](Eira barbara), [*Herpailurus yagouaroundi*](Herpailurus yagouaroundi), [*Leopardus pardalis*](Leopardus pardalis), [*Leopardus wiedii*](Leopardus wiedii), [*Nasua nasua*](Nasua nasua), and [*Pteronura brasiliensis*](Pteronura brasiliensis).)
+   1. Data Generation: `*species*_1_dataGeneration.qmd`
    2. Variable Selection: *species*`_2_variableSelection.qmd`
    3. Data preparation for modelling: [*species*`_3_dataPreparation.qmd`]()
    4. Model run: [*species*`_4_modelRun.qmd`]()
