@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Florencia Grattarola">
-<meta name="dcterms.date" content="2023-07-14">
+<meta name="dcterms.date" content="2024-09-23">
 
 <title>Chrysocyon brachyurus Model Outputs</title>
 <style>
@@ -153,7 +153,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 14, 2023</p>
+      <p class="date">September 23, 2024</p>
     </div>
   </div>
   
@@ -186,48 +186,36 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>equalareaCRS <span class="ot">&lt;-</span>  <span class="st">'+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Latam_projected <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">'data/Latam_vector.shp'</span>, <span class="at">quiet =</span> T)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Latam_countries <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="st">'data/Latam_vector_countries.shp'</span>, <span class="at">quiet =</span> T) <span class="sc">%&gt;%</span> sf<span class="sc">::</span><span class="fu">st_transform</span>(<span class="at">crs=</span>equalareaCRS)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Latam <span class="ot">&lt;-</span> <span class="fu">st_union</span>(<span class="fu">st_make_valid</span>(Latam_projected))</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Latam_no_islands <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">list</span>(Latam_countries <span class="sc">%&gt;%</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">filter</span>(type<span class="sc">!=</span><span class="st">'Indeterminate'</span> <span class="sc">&amp;</span> type<span class="sc">!=</span><span class="st">'Dependency'</span> <span class="sc">&amp;</span> type<span class="sc">!=</span><span class="st">'Lease'</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">mutate</span>(<span class="at">iso_a2=</span><span class="fu">ifelse</span>(name_en<span class="sc">==</span><span class="st">'France'</span>, <span class="st">'GF'</span>, iso_a2)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">mutate</span>(<span class="at">name_en=</span><span class="fu">ifelse</span>(name_en<span class="sc">==</span><span class="st">'France'</span>, <span class="st">'French Guiana'</span>, name_en)) <span class="sc">%&gt;%</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">filter</span>(<span class="sc">!</span>iso_a2 <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">'EC'</span>,<span class="st">'SX'</span>, <span class="st">'NL'</span>, <span class="st">'HT'</span>, <span class="st">'DO'</span>, <span class="st">'CU'</span>, <span class="st">'CW'</span>, <span class="st">'AW'</span>,<span class="st">'BS'</span>, </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                                                           <span class="st">'TT'</span>, <span class="st">'GD'</span>, <span class="st">'VC'</span>, <span class="st">'BB'</span>, <span class="st">'LC'</span>, <span class="st">'DM'</span>, <span class="st">'AG'</span>, <span class="st">'KN'</span>, <span class="st">'JM'</span>)),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                   Latam_countries <span class="sc">%&gt;%</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">filter</span>(name<span class="sc">==</span><span class="st">'Ecuador'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">st_cast</span>(<span class="st">'POLYGON'</span>, <span class="at">quiet=</span>T) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">mutate</span>(<span class="at">area=</span><span class="fu">st_area</span>(.)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(area)) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">head</span>(<span class="at">n=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>area))) <span class="sc">%&gt;%</span> <span class="fu">st_union</span>()</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>cbrachyurus_IUCN <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="st">'big_data/cbrachyurus_IUCN.shp'</span>, <span class="at">quiet =</span> T) <span class="sc">%&gt;%</span> sf<span class="sc">::</span><span class="fu">st_transform</span>(<span class="at">crs=</span>equalareaCRS)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>Latam.raster <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">'data/Latam_raster.tif'</span>)</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>Latam.raster.countries <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">'data/Latam_raster_countries.tif'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>latam <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">'data/latam.gpkg'</span>, <span class="at">layer =</span> <span class="st">'latam'</span>, <span class="at">quiet =</span> T)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">'data/latam.gpkg'</span>, <span class="at">layer =</span> <span class="st">'countries'</span>, <span class="at">quiet =</span> T)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>latam_land <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="st">'data/latam.gpkg'</span>, <span class="at">layer =</span> <span class="st">'latam_land'</span>, <span class="at">quiet =</span> T)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>latam_raster <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'data/latam_raster.tif'</span>, <span class="at">lyrs=</span><span class="st">'latam'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>latam_countries <span class="ot">&lt;-</span> <span class="fu">rast</span>(<span class="st">'data/latam_raster.tif'</span>, <span class="at">lyrs=</span><span class="st">'countries'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>cbrachyurus_IUCN <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="st">'big_data/cbrachyurus_IUCN.shp'</span>, <span class="at">quiet =</span> T) <span class="sc">%&gt;%</span> sf<span class="sc">::</span><span class="fu">st_transform</span>(<span class="at">crs=</span>equalareaCRS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Species data and covariates</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-absence data</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_blob_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/cbrachyurus_expert_blob_time1.rds'</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_blob_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/cbrachyurus_expert_blob_time2.rds'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_blob_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/cbrachyurus_expert_blob_time1.rds'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_blob_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/cbrachyurus_expert_blob_time2.rds'</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_cbrachyurus_PA_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>PA_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/data_cbrachyurus_PA_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>cbrachyurus_expert_blob_time1) <span class="sc">%&gt;%</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.grass) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_cbrachyurus_PA_time2.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>PA_time2 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/data_cbrachyurus_PA_time2.rds'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>cbrachyurus_expert_blob_time2) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.grass) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Presence-only data</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_gridcell <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/cbrachyurus_expert_gridcell.rds'</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>cbrachyurus_expert_gridcell <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/cbrachyurus_expert_gridcell.rds'</span>)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_cbrachyurus_PO_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>PO_time1 <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/data_cbrachyurus_PO_time1.rds'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>cbrachyurus_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.grass) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/data_cbrachyurus_PO_time2.rds'</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>PO_time2  <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">'data/species_POPA_data/data_cbrachyurus_PO_time2.rds'</span>)  <span class="sc">%&gt;%</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">expert=</span>cbrachyurus_expert_gridcell<span class="sc">$</span>dist_exprt) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(env.bio_10) <span class="sc">&amp;!</span><span class="fu">is.na</span>(env.bio_14) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.elev) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(env.grass) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(acce) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(count) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(expert)) <span class="co"># remove NA's</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
@@ -304,7 +292,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>Plotting caterpillar plot</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time taken to generate the report: 37 seconds.</code></pre>
+<pre><code>Time taken to generate the report: 38 seconds.</code></pre>
 </div>
 </div>
 <section id="traceplot" class="level3">
@@ -342,31 +330,31 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>preds1 <span class="ot">&lt;-</span> preds[preds<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>,]</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>preds2 <span class="ot">&lt;-</span> preds[preds<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>,]</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>rast <span class="ot">&lt;-</span> Latam.raster</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>rast <span class="ot">&lt;-</span> latam_raster</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>rast[] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>rast1 <span class="ot">&lt;-</span> rast2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(rast)</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>rast1[preds1<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds1<span class="sc">$</span>P.pred</span>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>rast2[preds2<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds2<span class="sc">$</span>P.pred</span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>rast1 <span class="ot">&lt;-</span> rast1 <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(Latam_no_islands))</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>rast2 <span class="ot">&lt;-</span> rast2 <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(Latam_no_islands))</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>rast1 <span class="ot">&lt;-</span> rast1 <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(latam_land))</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>rast2 <span class="ot">&lt;-</span> rast2 <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(latam_land))</span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast1) <span class="ot">&lt;-</span> <span class="st">'time1'</span></span>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast2) <span class="ot">&lt;-</span> <span class="st">'time2'</span></span>
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the of the probability of occurrence in the first period (time1: 2000-2013)</span></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>time1MAP <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
 <span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast1) <span class="sc">+</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Reds'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Oranges'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
 <span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">col=</span><span class="st">'grey60'</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
 <span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the of the probability of occurrence in the second period (time2: 2014-2021)</span></span>
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>time2MAP <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast2) <span class="sc">+</span></span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Blues'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Purples'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">col=</span><span class="st">'grey60'</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
 <span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
 <span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a></span>
@@ -374,7 +362,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>diffMAP <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
 <span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast2 <span class="sc">-</span> rast1) <span class="sc">+</span></span>
 <span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'PiYG'</span>, <span class="at">midpoint =</span> <span class="dv">0</span>, <span class="at">style=</span> <span class="st">"cont"</span>, ) <span class="sc">+</span></span>
-<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
 <span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">col=</span><span class="st">'grey60'</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
 <span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
 <span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a></span>
@@ -397,6 +385,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/predictions-map-3.png" class="img-fluid" width="672"></p>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tmap<span class="sc">::</span><span class="fu">tmap_save</span>(<span class="at">tm =</span> time1MAP, <span class="at">filename =</span> <span class="st">'docs/figs/time1MAP_SR_cbrachyurus.svg'</span>, <span class="at">device =</span> svglite<span class="sc">::</span>svglite)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>tmap<span class="sc">::</span><span class="fu">tmap_save</span>(<span class="at">tm =</span> time2MAP, <span class="at">filename =</span> <span class="st">'docs/figs/time2MAP_SR_cbrachyurus.svg'</span>, <span class="at">device =</span> svglite<span class="sc">::</span>svglite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="standard-deviation-sd-of-the-probability-of-occurrence-of-chrysocyon-brachyurus" class="level3">
@@ -404,48 +397,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>P.pred.sd <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sd<span class="sc">$</span>P.pred</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>preds.sd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(PO_time1_time2, P.pred.sd)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>preds1.sd <span class="ot">&lt;-</span> preds.sd[preds.sd<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>,]</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>preds2.sd <span class="ot">&lt;-</span> preds.sd[preds.sd<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>,]</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(Latam.raster)</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>rast.sd[] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>rast1.sd <span class="ot">&lt;-</span> rast2.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(rast.sd)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>rast1.sd[preds1.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds1.sd<span class="sc">$</span>P.pred.sd</span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>rast2.sd[preds2.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds2.sd<span class="sc">$</span>P.pred.sd</span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>rast1.sd <span class="ot">&lt;-</span> rast1.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(Latam_no_islands))</span>
-<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>rast2.sd <span class="ot">&lt;-</span> rast2.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(Latam_no_islands))</span>
-<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast1.sd) <span class="ot">&lt;-</span> <span class="st">'time1.sd'</span></span>
-<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast2.sd) <span class="ot">&lt;-</span> <span class="st">'time2.sd'</span></span>
-<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time1 </span></span>
-<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>time1MAP.sd <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
-<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast1.sd) <span class="sc">+</span></span>
-<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Reds'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
-<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
-<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
-<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time2</span></span>
-<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>time2MAP.sd <span class="ot">&lt;-</span>  <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
-<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast2.sd) <span class="sc">+</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Blues'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>time1MAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>P.pred.sd <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sd<span class="sc">$</span>P.pred</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>preds.sd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(PO_time1_time2, P.pred.sd)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>preds1.sd <span class="ot">&lt;-</span> preds.sd[preds.sd<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">1</span>,]</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>preds2.sd <span class="ot">&lt;-</span> preds.sd[preds.sd<span class="sc">$</span>time <span class="sc">==</span> <span class="dv">2</span>,]</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(latam_raster)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>rast.sd[] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>rast1.sd <span class="ot">&lt;-</span> rast2.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(rast.sd)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>rast1.sd[preds1.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds1.sd<span class="sc">$</span>P.pred.sd</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>rast2.sd[preds2.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds2.sd<span class="sc">$</span>P.pred.sd</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>rast1.sd <span class="ot">&lt;-</span> rast1.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(latam_land))</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>rast2.sd <span class="ot">&lt;-</span> rast2.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(latam_land))</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast1.sd) <span class="ot">&lt;-</span> <span class="st">'time1.sd'</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast2.sd) <span class="ot">&lt;-</span> <span class="st">'time2.sd'</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time1 </span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>time1MAP.sd <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast1.sd) <span class="sc">+</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Oranges'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time2</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>time2MAP.sd <span class="ot">&lt;-</span>  <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast2.sd) <span class="sc">+</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Purples'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>time1MAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/sd-maps-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>time2MAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>time2MAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/sd-maps-2.png" class="img-fluid" width="672"></p>
@@ -458,122 +451,126 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cols4all)</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pals)</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(classInt)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>bivcol <span class="ot">=</span> <span class="cf">function</span>(pal, <span class="at">nx =</span> <span class="dv">3</span>, <span class="at">ny =</span> <span class="dv">3</span>){</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  tit <span class="ot">=</span> <span class="fu">substitute</span>(pal)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.function</span>(pal))</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    pal <span class="ot">=</span> <span class="fu">pal</span>()</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  ncol <span class="ot">=</span> <span class="fu">length</span>(pal)</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(nx))</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    nx <span class="ot">=</span> <span class="fu">sqrt</span>(ncol)</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(ny))</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    ny <span class="ot">=</span> nx</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span>ncol, <span class="at">nrow =</span> ny), <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> pal, <span class="at">asp =</span> <span class="dv">1</span>)</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtext</span>(tit)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>cbrachyurus.pal.pu_gn_bivd <span class="ot">&lt;-</span> <span class="fu">c4a</span>(<span class="st">"pu_gn_bivd"</span>, <span class="at">n=</span><span class="dv">3</span>, <span class="at">m=</span><span class="dv">5</span>)</span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>cbrachyurus.pal <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">t</span>(<span class="fu">apply</span>(cbrachyurus.pal.pu_gn_bivd, <span class="dv">2</span>, rev)))</span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="do">###</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>pred.P.sd <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sd<span class="sc">$</span>delta.Grid</span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>preds.sd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(PO_time1_time2, <span class="at">pred.P.sd=</span><span class="fu">rep</span>(pred.P.sd, <span class="dv">2</span>))</span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(Latam.raster)</span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>rast.sd[] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(rast.sd)</span>
-<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>rast.sd[preds.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds.sd<span class="sc">$</span>pred.P.sd</span>
-<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> rast.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(Latam_no_islands))</span>
-<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast.sd) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'diff'</span>)</span>
-<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time2</span></span>
-<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>delta.GridMAP.sd <span class="ot">&lt;-</span>  <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
-<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast.sd) <span class="sc">+</span></span>
-<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Greys'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
-<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
-<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
-<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
-<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a>delta.GridMAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cols4all)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pals)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(classInt)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stars)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>bivcol <span class="ot">=</span> <span class="cf">function</span>(pal, <span class="at">nx =</span> <span class="dv">3</span>, <span class="at">ny =</span> <span class="dv">3</span>){</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  tit <span class="ot">=</span> <span class="fu">substitute</span>(pal)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.function</span>(pal))</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    pal <span class="ot">=</span> <span class="fu">pal</span>()</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  ncol <span class="ot">=</span> <span class="fu">length</span>(pal)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(nx))</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    nx <span class="ot">=</span> <span class="fu">sqrt</span>(ncol)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">missing</span>(ny))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    ny <span class="ot">=</span> nx</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">image</span>(<span class="fu">matrix</span>(<span class="dv">1</span><span class="sc">:</span>ncol, <span class="at">nrow =</span> ny), <span class="at">axes =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> pal, <span class="at">asp =</span> <span class="dv">1</span>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mtext</span>(tit)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>cbrachyurus.pal.pu_gn_bivd <span class="ot">&lt;-</span> <span class="fu">c4a</span>(<span class="st">"pu_gn_bivd"</span>, <span class="at">n=</span><span class="dv">3</span>, <span class="at">m=</span><span class="dv">5</span>)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>cbrachyurus.pal <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">t</span>(<span class="fu">apply</span>(cbrachyurus.pal.pu_gn_bivd, <span class="dv">2</span>, rev)))</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="do">###</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>pred.P.sd <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sd<span class="sc">$</span>delta.Grid</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>preds.sd <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(PO_time1_time2, <span class="at">pred.P.sd=</span><span class="fu">rep</span>(pred.P.sd, <span class="dv">2</span>))</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(latam_raster)</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>rast.sd[] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(rast.sd)</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>rast.sd[preds.sd<span class="sc">$</span>pixel] <span class="ot">&lt;-</span> preds.sd<span class="sc">$</span>pred.P.sd</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>rast.sd <span class="ot">&lt;-</span> rast.sd <span class="sc">%&gt;%</span> terra<span class="sc">::</span><span class="fu">mask</span>(., <span class="fu">vect</span>(latam_land))</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast.sd) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'diff'</span>)</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the SD of the probability of occurrence of the area time2</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>delta.GridMAP.sd <span class="ot">&lt;-</span>  <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span>  </span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(rast.sd) <span class="sc">+</span></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_raster</span>(<span class="at">palette =</span> <span class="st">'Greys'</span>, <span class="at">midpoint =</span> <span class="cn">NA</span>, <span class="at">style=</span> <span class="st">"cont"</span>)  <span class="sc">+</span> </span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_borders</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>delta.GridMAP.sd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/SD-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rast.stars <span class="ot">&lt;-</span> <span class="fu">c</span>(stars<span class="sc">::</span><span class="fu">st_as_stars</span>(rast2<span class="sc">-</span>rast1), stars<span class="sc">::</span><span class="fu">st_as_stars</span>(rast.sd))</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast.stars) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'diff'</span>, <span class="st">'sd'</span>)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast1)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast2)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast.stars[<span class="st">'diff'</span>])</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast.stars[<span class="st">'sd'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rast.stars <span class="ot">&lt;-</span> <span class="fu">c</span>(stars<span class="sc">::</span><span class="fu">st_as_stars</span>(rast2<span class="sc">-</span>rast1), stars<span class="sc">::</span><span class="fu">st_as_stars</span>(rast.sd))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rast.stars) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'diff'</span>, <span class="st">'sd'</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast1)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast2)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast.stars[<span class="st">'diff'</span>])</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rast.stars[<span class="st">'sd'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/SD-2.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>add_new_var <span class="ot">=</span> <span class="cf">function</span>(x, var1, var2, nbins1, nbins2, style1, style2,fixedBreaks1, fixedBreaks2){</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  class1 <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">findCols</span>(<span class="fu">classIntervals</span>(<span class="fu">c</span>(x[[var1]]), </span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">n =</span> nbins1, </span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">style =</span> style1,</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">fixedBreaks1=</span>fixedBreaks1)))</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  class2 <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">findCols</span>(<span class="fu">classIntervals</span>(<span class="fu">c</span>(x[[var2]]), </span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">n =</span> nbins2, </span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">style =</span> style2,</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">fixedBreaks=</span>fixedBreaks2)))</span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  x<span class="sc">$</span>new_var <span class="ot">=</span> class1 <span class="sc">+</span> nbins1 <span class="sc">*</span> (class2 <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>rast.bivariate <span class="ot">=</span> <span class="fu">add_new_var</span>(rast.stars,</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>                             <span class="at">var1 =</span> <span class="st">"diff"</span>, </span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>                             <span class="at">var2 =</span> <span class="st">"sd"</span>,</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nbins1 =</span> <span class="dv">3</span>, </span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nbins2 =</span> <span class="dv">5</span>, </span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style1 =</span> <span class="st">"fixed"</span>,</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>                             <span class="at">fixedBreaks1=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="dv">1</span>),</span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style2 =</span> <span class="st">"fixed"</span>,</span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>                             <span class="at">fixedBreaks2=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.15</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>))</span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a><span class="co"># See missing classes and update palette</span></span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>all_classes <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">15</span>,<span class="dv">1</span>)</span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>rast_classes <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast.bivariate[<span class="st">'new_var'</span>]) <span class="sc">%&gt;%</span> </span>
-<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(new_var) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new_var)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>()</span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>absent_classes <span class="ot">&lt;-</span> all_classes[<span class="sc">!</span>(all_classes <span class="sc">%in%</span> rast_classes)]</span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(absent_classes)<span class="sc">==</span><span class="dv">0</span>){</span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>  cbrachyurus.new.pal <span class="ot">&lt;-</span> cbrachyurus.pal</span>
-<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> cbrachyurus.new.pal <span class="ot">&lt;-</span> cbrachyurus.pal[<span class="sc">-</span><span class="fu">c</span>(absent_classes)]</span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the of the change in the probability of occurrence (time2 - time1)</span></span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a><span class="co"># according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))</span></span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>diffMAP.SD <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
-<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(rast.bivariate) <span class="sc">+</span></span>
-<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="st">"new_var"</span>, <span class="at">style=</span> <span class="st">"cat"</span>, <span class="at">palette =</span> cbrachyurus.new.pal) <span class="sc">+</span></span>
-<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(Latam_countries) <span class="sc">+</span></span>
-<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">col=</span><span class="st">'grey60'</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
-<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
-<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>diffMAP.SD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>add_new_var <span class="ot">=</span> <span class="cf">function</span>(x, var1, var2, nbins1, nbins2, style1, style2,fixedBreaks1, fixedBreaks2){</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  class1 <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">findCols</span>(<span class="fu">classIntervals</span>(<span class="fu">c</span>(x[[var1]]), </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">n =</span> nbins1, </span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">style =</span> style1,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">fixedBreaks1=</span>fixedBreaks1)))</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  class2 <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">findCols</span>(<span class="fu">classIntervals</span>(<span class="fu">c</span>(x[[var2]]), </span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">n =</span> nbins2, </span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">style =</span> style2,</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>                                                    <span class="at">fixedBreaks=</span>fixedBreaks2)))</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  x<span class="sc">$</span>new_var <span class="ot">=</span> class1 <span class="sc">+</span> nbins1 <span class="sc">*</span> (class2 <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(x)</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>rast.bivariate <span class="ot">=</span> <span class="fu">add_new_var</span>(rast.stars,</span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>                             <span class="at">var1 =</span> <span class="st">"diff"</span>, </span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>                             <span class="at">var2 =</span> <span class="st">"sd"</span>,</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nbins1 =</span> <span class="dv">3</span>, </span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">nbins2 =</span> <span class="dv">5</span>, </span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style1 =</span> <span class="st">"fixed"</span>,</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>                             <span class="at">fixedBreaks1=</span><span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="dv">1</span>),</span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>                             <span class="at">style2 =</span> <span class="st">"fixed"</span>,</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>                             <span class="at">fixedBreaks2=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.15</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>))</span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="co"># See missing classes and update palette</span></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>all_classes <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">15</span>,<span class="dv">1</span>)</span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>rast_classes <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast.bivariate[<span class="st">'new_var'</span>]) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(new_var) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(new_var)) <span class="sc">%&gt;%</span> <span class="fu">pull</span>()</span>
+<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a>absent_classes <span class="ot">&lt;-</span> all_classes[<span class="sc">!</span>(all_classes <span class="sc">%in%</span> rast_classes)]</span>
+<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(absent_classes)<span class="sc">==</span><span class="dv">0</span>){</span>
+<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>  cbrachyurus.new.pal <span class="ot">&lt;-</span> cbrachyurus.pal</span>
+<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> cbrachyurus.new.pal <span class="ot">&lt;-</span> cbrachyurus.pal[<span class="sc">-</span><span class="fu">c</span>(absent_classes)]</span>
+<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Map of the of the change in the probability of occurrence (time2 - time1)</span></span>
+<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a><span class="co"># according to the mean SD of the probability of occurrence  (mean(time2.sd, time1.sd))</span></span>
+<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a>diffMAP.SD <span class="ot">&lt;-</span> <span class="fu">tm_graticules</span>(<span class="at">alpha =</span> <span class="fl">0.3</span>) <span class="sc">+</span> </span>
+<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(rast.bivariate) <span class="sc">+</span></span>
+<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>(<span class="st">"new_var"</span>, <span class="at">style=</span> <span class="st">"cat"</span>, <span class="at">palette =</span> cbrachyurus.new.pal) <span class="sc">+</span></span>
+<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(countries) <span class="sc">+</span></span>
+<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">col=</span><span class="st">'grey60'</span>, <span class="at">alpha =</span> <span class="fl">0.4</span>) <span class="sc">+</span> </span>
+<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_layout</span>(<span class="at">legend.outside =</span> T, <span class="at">frame.lwd =</span> <span class="fl">0.3</span>, <span class="at">scale=</span><span class="fl">1.2</span>, <span class="at">legend.outside.size =</span> <span class="fl">0.1</span>)</span>
+<span id="cb29-48"><a href="#cb29-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-49"><a href="#cb29-49" aria-hidden="true" tabindex="-1"></a>diffMAP.SD</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/SD-3.png" class="img-fluid" width="672"></p>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tmap<span class="sc">::</span><span class="fu">tmap_save</span>(<span class="at">tm =</span> diffMAP.SD, <span class="at">filename =</span> <span class="st">'docs/figs/diffMAP_SD_cbrachyurus.svg'</span>, <span class="at">device =</span> svglite<span class="sc">::</span>svglite)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 <section id="countries-thinning" class="level3">
@@ -581,67 +578,68 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>countryLevels <span class="ot">&lt;-</span> <span class="fu">cats</span>(Latam.raster.countries)[[<span class="dv">1</span>]] <span class="co">#%&gt;% mutate(value=value+1)</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>rasterLevels <span class="ot">&lt;-</span> <span class="fu">levels</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>country))</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>countries <span class="ot">&lt;-</span> countryLevels <span class="sc">%&gt;%</span> <span class="fu">filter</span>(value <span class="sc">%in%</span> rasterLevels) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">numLevel=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels))</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.alpha <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, <span class="at">family=</span><span class="st">"^alpha"</span>)</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>ci.alpha <span class="ot">&lt;-</span> <span class="fu">ci</span>(fitted.model.ggs.alpha)</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>country_acce <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(ci.alpha[<span class="fu">length</span>(rasterLevels)<span class="sc">+</span><span class="dv">1</span>,], </span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tibble</span>(countries, ci.alpha[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels),])) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(value, numLevel))</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co">#accessibility range for predictions</span></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>accessValues <span class="ot">&lt;-</span> <span class="fu">seq</span> (<span class="dv">0</span>,<span class="fl">0.5</span>,<span class="at">by=</span><span class="fl">0.01</span>)</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co">#get common steepness</span></span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>commonSlope <span class="ot">&lt;-</span> country_acce<span class="sc">$</span>median[country_acce<span class="sc">$</span>Parameter<span class="sc">==</span><span class="st">"alpha1"</span>]</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="co">#write function to get predictions for a given country</span></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>getPreds <span class="ot">&lt;-</span> <span class="cf">function</span>(country){</span>
-<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get country intercept</span></span>
-<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>  countryIntercept <span class="ot">=</span> country_acce<span class="sc">$</span>median[country_acce<span class="sc">$</span>country<span class="sc">==</span>country <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(country_acce<span class="sc">$</span>country)]</span>
-<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  <span class="co">#return all info</span></span>
-<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">country =</span> country,</span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">access =</span> accessValues,</span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">preds=</span> countryIntercept <span class="sc">*</span> <span class="fu">exp</span>(((<span class="sc">-</span><span class="dv">1</span> <span class="sc">*</span> commonSlope)<span class="sc">*</span>accessValues)))</span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>allPredictions <span class="ot">&lt;-</span> country_acce <span class="sc">%&gt;%</span></span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(country)) <span class="sc">%&gt;%</span></span>
-<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">filter</span>(country <span class="sc">%in%</span> Latam_countries<span class="sc">$</span>iso_a2) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">pull</span>(country) <span class="sc">%&gt;%</span></span>
-<span id="cb29-32"><a href="#cb29-32" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">map_dfr</span>(getPreds)</span>
-<span id="cb29-33"><a href="#cb29-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-34"><a href="#cb29-34" aria-hidden="true" tabindex="-1"></a>allPredictions <span class="ot">&lt;-</span> <span class="fu">left_join</span>(<span class="fu">as_tibble</span>(allPredictions), </span>
-<span id="cb29-35"><a href="#cb29-35" aria-hidden="true" tabindex="-1"></a>                            Latam_countries <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="at">country=</span>iso_a2, name_en) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-36"><a href="#cb29-36" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">st_drop_geometry</span>(), <span class="at">by=</span><span class="st">'country'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb29-37"><a href="#cb29-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country<span class="sc">!=</span><span class="st">'VG'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span> <span class="st">'TT'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span> <span class="st">'FK'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span><span class="st">'AW'</span>)</span>
-<span id="cb29-38"><a href="#cb29-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-39"><a href="#cb29-39" aria-hidden="true" tabindex="-1"></a><span class="co"># just for exploration - easier to see which county is doing which</span></span>
-<span id="cb29-40"><a href="#cb29-40" aria-hidden="true" tabindex="-1"></a>acce_country <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allPredictions)<span class="sc">+</span></span>
-<span id="cb29-41"><a href="#cb29-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> access, <span class="at">y  =</span> preds, <span class="at">colour =</span> name_en), <span class="at">show.legend =</span> F) <span class="sc">+</span> </span>
-<span id="cb29-42"><a href="#cb29-42" aria-hidden="true" tabindex="-1"></a>    viridis<span class="sc">::</span><span class="fu">scale_color_viridis</span>(<span class="at">option =</span> <span class="st">'turbo'</span>, <span class="at">discrete=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb29-43"><a href="#cb29-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb29-44"><a href="#cb29-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>name_en, <span class="at">ncol =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb29-45"><a href="#cb29-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"Probability of retention"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Accessibility"</span>)</span>
-<span id="cb29-46"><a href="#cb29-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-47"><a href="#cb29-47" aria-hidden="true" tabindex="-1"></a>acce_country</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>countryLevels <span class="ot">&lt;-</span> <span class="fu">cats</span>(latam_countries)[[<span class="dv">1</span>]] <span class="co">#%&gt;% mutate(value=value+1)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>rasterLevels <span class="ot">&lt;-</span> <span class="fu">levels</span>(<span class="fu">as.factor</span>(PO_time1_time2<span class="sc">$</span>country))</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>countries_latam <span class="ot">&lt;-</span> countryLevels <span class="sc">%&gt;%</span> <span class="fu">filter</span>(value <span class="sc">%in%</span> rasterLevels) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">numLevel=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels)) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">country=</span>countries)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.alpha <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc, <span class="at">family=</span><span class="st">"^alpha"</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>ci.alpha <span class="ot">&lt;-</span> <span class="fu">ci</span>(fitted.model.ggs.alpha)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>country_acce <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(ci.alpha[<span class="fu">length</span>(rasterLevels)<span class="sc">+</span><span class="dv">1</span>,], </span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tibble</span>(countries_latam, ci.alpha[<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(rasterLevels),])) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(value, numLevel))</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">#accessibility range for predictions</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>accessValues <span class="ot">&lt;-</span> <span class="fu">seq</span> (<span class="dv">0</span>,<span class="fl">0.5</span>,<span class="at">by=</span><span class="fl">0.01</span>)</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="co">#get common steepness</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>commonSlope <span class="ot">&lt;-</span> country_acce<span class="sc">$</span>median[country_acce<span class="sc">$</span>Parameter<span class="sc">==</span><span class="st">"alpha1"</span>]</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co">#write function to get predictions for a given country</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>getPreds <span class="ot">&lt;-</span> <span class="cf">function</span>(country){</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">#get country intercept</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>  countryIntercept <span class="ot">=</span> country_acce<span class="sc">$</span>median[country_acce<span class="sc">$</span>country<span class="sc">==</span>country <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(country_acce<span class="sc">$</span>country)]</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">#return all info</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">country =</span> country,</span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">access =</span> accessValues,</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">preds=</span> countryIntercept <span class="sc">*</span> <span class="fu">exp</span>(((<span class="sc">-</span><span class="dv">1</span> <span class="sc">*</span> commonSlope)<span class="sc">*</span>accessValues)))</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>allPredictions <span class="ot">&lt;-</span> country_acce <span class="sc">%&gt;%</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(country)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">filter</span>(country <span class="sc">%in%</span> countries<span class="sc">$</span>iso_a2) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">pull</span>(country) <span class="sc">%&gt;%</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">map_dfr</span>(getPreds)</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>allPredictions <span class="ot">&lt;-</span> <span class="fu">left_join</span>(<span class="fu">as_tibble</span>(allPredictions), </span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>                            countries <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="at">country=</span>iso_a2, name_en) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">st_drop_geometry</span>(), <span class="at">by=</span><span class="st">'country'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(country<span class="sc">!=</span><span class="st">'VG'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span> <span class="st">'TT'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span> <span class="st">'FK'</span> <span class="sc">&amp;</span> country<span class="sc">!=</span><span class="st">'AW'</span>)</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a><span class="co"># just for exploration - easier to see which county is doing which</span></span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>acce_country <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allPredictions)<span class="sc">+</span></span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> access, <span class="at">y  =</span> preds, <span class="at">colour =</span> name_en), <span class="at">show.legend =</span> F) <span class="sc">+</span> </span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a>    viridis<span class="sc">::</span><span class="fu">scale_color_viridis</span>(<span class="at">option =</span> <span class="st">'turbo'</span>, <span class="at">discrete=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>name_en, <span class="at">ncol =</span> <span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"Probability of retention"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Accessibility"</span>)</span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>acce_country</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/country-thining-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all countries</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>acce_allcountries <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allPredictions) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> access, <span class="at">y  =</span> preds, <span class="at">colour =</span> name_en), <span class="at">show.legend =</span> F)<span class="sc">+</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  viridis<span class="sc">::</span><span class="fu">scale_color_viridis</span>(<span class="at">option =</span> <span class="st">'turbo'</span>, <span class="at">discrete=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Probability of retention"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Accessibility"</span>)</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>acce_allcountries</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all countries</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>acce_allcountries <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(allPredictions) <span class="sc">+</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x =</span> access, <span class="at">y  =</span> preds, <span class="at">colour =</span> name_en), <span class="at">show.legend =</span> F)<span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  viridis<span class="sc">::</span><span class="fu">scale_color_viridis</span>(<span class="at">option =</span> <span class="st">'turbo'</span>, <span class="at">discrete=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Probability of retention"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Accessibility"</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>acce_allcountries</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/country-thining-2.png" class="img-fluid" width="672"></p>
@@ -653,17 +651,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>caterpiller.params <span class="ot">&lt;-</span> fitted.model.ggs.b <span class="sc">%&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">'env'</span>, Parameter)) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'mean temperature of warmest quarter'</span>,</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_14'</span>, <span class="st">'precipitation of driest month'</span>,</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.elev'</span>, <span class="st">'elevation'</span>,</span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.grass'</span>, <span class="st">'grasslands'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggs_caterpillar</span>(<span class="at">line=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'posterior densities'</span>)</span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>caterpiller.params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>caterpiller.params <span class="ot">&lt;-</span> fitted.model.ggs.b <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">'env'</span>, Parameter)) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Parameter=</span><span class="fu">as.factor</span>(<span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_10'</span>, <span class="st">'mean temperature of warmest quarter'</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.bio_14'</span>, <span class="st">'precipitation of driest month'</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.elev'</span>, <span class="st">'elevation'</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                                                  <span class="fu">ifelse</span>(Parameter<span class="sc">==</span><span class="st">'env.grass'</span>, <span class="st">'grasslands'</span>, Parameter)))))) <span class="sc">%&gt;%</span> </span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggs_caterpillar</span>(<span class="at">line=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_light</span>() <span class="sc">+</span> </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'posterior densities'</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>caterpiller.params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/parameters-caterpillar-plot-1.png" class="img-fluid" width="672"></p>
@@ -675,10 +673,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.A <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc,  <span class="at">family=</span><span class="st">"^A"</span>)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CI</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.A <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc,  <span class="at">family=</span><span class="st">"^A"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CI</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 x 6
@@ -689,7 +687,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time2'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time2'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      mean         sd       2.5%        25%        50%        75%      97.5% 
@@ -699,8 +697,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$mean$A.time2</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time1'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$mean$A.time2</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'A.time1'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>      mean         sd       2.5%        25%        50%        75%      97.5% 
@@ -710,30 +708,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$mean$A.time1</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co"># boxplot</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>range.boxplot <span class="ot">&lt;-</span> <span class="fu">ggs_caterpillar</span>(fitted.model.ggs.A, <span class="at">horizontal=</span><span class="cn">FALSE</span>, ) <span class="sc">+</span> <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'Area (number of 100x100 km grid-cells)'</span>)</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>range.boxplot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$mean$A.time1</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co"># boxplot</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>range.boxplot <span class="ot">&lt;-</span> <span class="fu">ggs_caterpillar</span>(fitted.model.ggs.A, <span class="at">horizontal=</span><span class="cn">FALSE</span>, ) <span class="sc">+</span> <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y=</span><span class="st">''</span>, <span class="at">x=</span><span class="st">'Area (number of 100x100 km grid-cells)'</span>)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>range.boxplot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/areas-boxplots-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CI </span></span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>range.ci <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.A) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Parameter =</span> <span class="fu">fct_rev</span>(Parameter)) <span class="sc">%&gt;%</span> </span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Parameter, <span class="at">y =</span> median, <span class="at">ymin =</span> low, <span class="at">ymax =</span> high)) <span class="sc">+</span> </span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">orientation =</span> <span class="st">'y'</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">fun=</span>mean, <span class="at">geom=</span><span class="st">"point"</span>, </span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shape=</span><span class="dv">19</span>, <span class="at">size=</span><span class="dv">4</span>, <span class="at">show.legend=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">''</span>, <span class="at">y=</span><span class="st">'Area (number of 100x100 km grid-cells)'</span>)</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>range.ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CI </span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>range.ci <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.A) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Parameter =</span> <span class="fu">fct_rev</span>(Parameter)) <span class="sc">%&gt;%</span> </span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Parameter, <span class="at">y =</span> median, <span class="at">ymin =</span> low, <span class="at">ymax =</span> high)) <span class="sc">+</span> </span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">orientation =</span> <span class="st">'y'</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(<span class="at">fun=</span>mean, <span class="at">geom=</span><span class="st">"point"</span>, </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">shape=</span><span class="dv">19</span>, <span class="at">size=</span><span class="dv">4</span>, <span class="at">show.legend=</span><span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">''</span>, <span class="at">y=</span><span class="st">'Area (number of 100x100 km grid-cells)'</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>range.ci</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/areas-boxplots-2.png" class="img-fluid" width="672"></p>
@@ -745,10 +743,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.delta.A <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc,  <span class="at">family=</span><span class="st">"^delta.A"</span>)</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CI</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.delta.A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fitted.model.ggs.delta.A <span class="ot">&lt;-</span> ggmcmc<span class="sc">::</span><span class="fu">ggs</span>(fitted.model.mcmc,  <span class="at">family=</span><span class="st">"^delta.A"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="co"># CI</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>ggmcmc<span class="sc">::</span><span class="fu">ci</span>(fitted.model.ggs.delta.A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 x 6
@@ -758,7 +756,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'delta.A'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'delta.A'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       mean          sd        2.5%         25%         50%         75% 
@@ -768,25 +766,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">#densitiy</span></span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>delta.A.plot <span class="ot">&lt;-</span> fitted.model.ggs.delta.A <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Iteration) <span class="sc">%&gt;%</span></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">area=</span><span class="fu">median</span>(value)) <span class="sc">%&gt;%</span> </span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(area)) <span class="sc">+</span> </span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">col=</span><span class="st">'grey30'</span>, <span class="at">fill=</span><span class="st">'black'</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.0025</span>,<span class="fl">0.005</span>, <span class="fl">0.0075</span>, <span class="fl">0.01</span>, <span class="fl">0.0125</span>)) <span class="sc">+</span></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope=</span><span class="dv">1</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vertical lines at 95% CI</span></span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmax..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmiddle..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmin..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>, <span class="at">base_line_size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
-<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Probability density'</span>, <span class="at">x=</span><span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">'Area'</span>))</span>
-<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>delta.A.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">#densitiy</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>delta.A.plot <span class="ot">&lt;-</span> fitted.model.ggs.delta.A <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Iteration) <span class="sc">%&gt;%</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">area=</span><span class="fu">median</span>(value)) <span class="sc">%&gt;%</span> </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(area)) <span class="sc">+</span> </span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">col=</span><span class="st">'grey30'</span>, <span class="at">fill=</span><span class="st">'black'</span>, <span class="at">alpha =</span> <span class="fl">0.3</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#scale_y_continuous(breaks=c(0,0.0025,0.005, 0.0075, 0.01, 0.0125)) +</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope=</span><span class="dv">1</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># vertical lines at 95% CI</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmax..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmiddle..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_boxplot</span>(<span class="at">geom =</span> <span class="st">"vline"</span>, <span class="fu">aes</span>(<span class="at">xintercept =</span> ..xmin..), <span class="at">size=</span><span class="fl">0.5</span>, <span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_light</span>(<span class="at">base_size =</span> <span class="dv">14</span>, <span class="at">base_line_size =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y=</span><span class="st">'Probability density'</span>, <span class="at">x=</span><span class="fu">expression</span>(Delta<span class="sc">*</span><span class="st">'Area'</span>))</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>delta.A.plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/hpd-range-change-1.png" class="img-fluid" width="672"></p>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(delta.A.plot, <span class="at">filename=</span><span class="st">'docs/figs/delta_A_cbrachyurus.svg'</span>, <span class="at">device =</span> <span class="st">'svg'</span>, <span class="at">dpi=</span><span class="dv">300</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
 </section>
@@ -799,32 +801,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> PO_time1_time2<span class="sc">$</span>count</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>counts.new <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>y.PO.new</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>lambda</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>pred.PO <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(counts, counts.new, lambda)</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$summary['fit.PO',]</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$summary['fit.PO.new',]</span></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>pp.PO <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PO, <span class="fu">aes</span>(<span class="at">x=</span>counts, <span class="at">y=</span>lambda), <span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="at">shape=</span><span class="dv">21</span>)  <span class="sc">+</span> </span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span>  </span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>)) <span class="sc">+</span></span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(lambda), <span class="at">title=</span><span class="st">'Presence-only'</span>) <span class="sc">+</span></span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() </span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>pp.PO.log10 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PO, <span class="fu">aes</span>(<span class="at">x=</span>counts, <span class="at">y=</span>lambda), <span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="at">shape=</span><span class="dv">21</span>)  <span class="sc">+</span> </span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>(<span class="at">ratio=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed (log scale)'</span>, <span class="at">y=</span><span class="fu">expression</span>(lambda<span class="sc">*</span><span class="st">'(log scale)'</span>), <span class="at">title=</span><span class="st">'log10 scale'</span>) <span class="sc">+</span></span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() </span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>pp.PO <span class="sc">|</span> pp.PO.log10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> PO_time1_time2<span class="sc">$</span>count</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>counts.new <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>y.PO.new</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>lambda</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>pred.PO <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(counts, counts.new, lambda)</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$summary['fit.PO',]</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted.model$BUGSoutput$summary['fit.PO.new',]</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>pp.PO <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PO, <span class="fu">aes</span>(<span class="at">x=</span>counts, <span class="at">y=</span>lambda), <span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="at">shape=</span><span class="dv">21</span>)  <span class="sc">+</span> </span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>)) <span class="sc">+</span>  </span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>)) <span class="sc">+</span></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(lambda), <span class="at">title=</span><span class="st">'Presence-only'</span>) <span class="sc">+</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() </span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>pp.PO.log10 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PO, <span class="fu">aes</span>(<span class="at">x=</span>counts, <span class="at">y=</span>lambda), <span class="at">fill=</span><span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">size=</span><span class="dv">3</span>, <span class="at">shape=</span><span class="dv">21</span>)  <span class="sc">+</span> </span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_log10</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_log10</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="fl">0.01</span>, <span class="dv">100</span>)) <span class="sc">+</span> </span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_fixed</span>(<span class="at">ratio=</span><span class="dv">1</span>) <span class="sc">+</span> </span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed (log scale)'</span>, <span class="at">y=</span><span class="fu">expression</span>(lambda<span class="sc">*</span><span class="st">'(log scale)'</span>), <span class="at">title=</span><span class="st">'log10 scale'</span>) <span class="sc">+</span></span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">col=</span><span class="st">'red'</span>) <span class="sc">+</span></span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() </span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>pp.PO <span class="sc">|</span> pp.PO.log10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/posterior-predictive-PO-1.png" class="img-fluid" width="672"></p>
@@ -836,18 +838,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>simulations <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>y.PO.new</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>lambda, <span class="dv">2</span>, median)</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(simulations)</span></span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>simulations <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>y.PO.new</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">apply</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>sims.list<span class="sc">$</span>lambda, <span class="dv">2</span>, median)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(simulations)</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">createDHARMa</span>(<span class="at">simulatedResponse =</span> <span class="fu">t</span>(simulations),</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">observedResponse =</span> PO_time1_time2<span class="sc">$</span>count,</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fittedPredictedResponse =</span> pred,</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">integerResponse =</span> T)</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="fu">plotSimulatedResiduals</span>(sim)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/residual-diagnostics-PO-1.png" class="img-fluid" width="672"></p>
@@ -860,21 +862,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>range_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(rast2[PO_time2<span class="sc">$</span>pixel] <span class="sc">-</span> rast1[PO_time2<span class="sc">$</span>pixel]) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">range=</span>time2)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>numRecord_change <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(PO_time2<span class="sc">$</span>count <span class="sc">-</span> PO_time1<span class="sc">$</span>count) <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">numRecord=</span>value)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>grid.level.change <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(range_change, numRecord_change) <span class="sc">%&gt;%</span> </span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">nonzero=</span><span class="fu">ifelse</span>(numRecord<span class="sc">==</span><span class="dv">0</span>, <span class="st">'0'</span>, <span class="st">'&gt;=1'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y=</span>range, <span class="at">x=</span>numRecord, <span class="at">col=</span>nonzero), <span class="at">size=</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="dv">2</span>, <span class="at">size=</span><span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">y =</span> <span class="fu">expression</span>(<span class="st">'Predicted grid-level range change (Ppred'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Ppred'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>         <span class="at">x=</span> <span class="fu">expression</span>(<span class="st">'Grid-level range change in number of records (Nrecords'</span>[<span class="st">'time2'</span>]<span class="sc">*</span><span class="st">'-Nrecords'</span>[<span class="st">'time1'</span>]<span class="sc">*</span><span class="st">')'</span>),</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>         <span class="at">col =</span> <span class="st">'Number of records</span><span class="sc">\n</span><span class="st">per grid cell'</span>) <span class="sc">+</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>grid.level.change</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/grid-level-change-1.png" class="img-fluid" width="672"></p>
@@ -888,12 +890,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>presabs <span class="ot">&lt;-</span> PA_time1_time2<span class="sc">$</span>presabs</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>psi</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>pred.PA <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(presabs, psi)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>r2_tjur <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>r2_tjur, <span class="dv">3</span>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'r2_tjur'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         mean            sd          2.5%           25%           50% 
@@ -903,20 +905,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
-<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
-<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
-<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>pp.PA <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pred.PA, <span class="fu">aes</span>(<span class="at">x=</span>presabs, <span class="at">y=</span>psi, <span class="at">col=</span>presabs)) <span class="sc">+</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_jitter</span>(<span class="at">height =</span> <span class="dv">0</span>, <span class="at">width =</span> .<span class="dv">05</span>, <span class="at">size=</span><span class="dv">1</span>)  <span class="sc">+</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.25</span>)) <span class="sc">+</span> <span class="fu">scale_colour_binned</span>() <span class="sc">+</span></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'observed'</span>, <span class="at">y=</span><span class="fu">expression</span>(psi), <span class="at">title=</span><span class="st">'Presence-absence'</span>) <span class="sc">+</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_summary</span>(</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">fun =</span> mean,</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">geom =</span> <span class="st">"errorbar"</span>,</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">ymax =</span> ..y.., <span class="at">ymin =</span> ..y..),</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">width =</span> <span class="fl">0.2</span>, <span class="at">size=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">'none'</span>)<span class="sc">+</span></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'Tjur R-squared = '</span>, r2_tjur))</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a>pp.PA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/tjur2-PA-1.png" class="img-fluid" width="672"></p>
@@ -928,24 +930,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>auc.sens.fpr <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">sens=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>sens, </span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fpr=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>fpr) </span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>auc.value <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>auc, <span class="dv">3</span>)</span>
-<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(auc.sens.fpr, <span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span></span>
-<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
-<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
-<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, auc.value)) <span class="sc">+</span></span>
-<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>auc.sens.fpr <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(<span class="at">sens=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>sens, </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">fpr=</span>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>fpr) </span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>auc.value <span class="ot">&lt;-</span> <span class="fu">round</span>(fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>mean<span class="sc">$</span>auc, <span class="dv">3</span>)</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(auc.sens.fpr, <span class="fu">aes</span>(fpr, sens)) <span class="sc">+</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">'1 - Specificity'</span>, <span class="at">y=</span><span class="st">'Sensitivity'</span>) <span class="sc">+</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">x=</span><span class="fl">0.5</span>, <span class="at">y=</span><span class="fl">0.5</span>,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">label=</span><span class="fu">paste</span>(<span class="st">'AUC = '</span>, auc.value)) <span class="sc">+</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="cbrachyurus_5_modelOutputs_files/figure-html/AUC-PA-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'auc'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>fitted.model<span class="sc">$</span>BUGSoutput<span class="sc">$</span>summary[<span class="st">'auc'</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>         mean            sd          2.5%           25%           50% 

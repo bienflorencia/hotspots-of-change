@@ -46,25 +46,13 @@ options(scipen = 999)
 #| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
-Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
-Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-Latam <- st_union(st_make_valid(Latam_projected))
-
-Latam_no_islands <- bind_rows(list(Latam_countries %>%
-                                     filter(type!='Indeterminate' & type!='Dependency' & type!='Lease') %>%
-                                     mutate(iso_a2=ifelse(name_en=='France', 'GF', iso_a2)) %>%
-                                     mutate(name_en=ifelse(name_en=='France', 'French Guiana', name_en)) %>%
-                                     filter(!iso_a2 %in% c('EC','SX', 'NL', 'HT', 'DO', 'CU', 'CW', 'AW','BS', 
-                                                           'TT', 'GD', 'VC', 'BB', 'LC', 'DM', 'AG', 'KN', 'JM')),
-                                   Latam_countries %>%
-                                     filter(name=='Ecuador') %>% 
-                                     st_cast('POLYGON', quiet=T) %>% 
-                                     mutate(area=st_area(.)) %>% arrange(desc(area)) %>% 
-                                     head(n=1) %>% dplyr::select(-area))) %>% st_union()
+latam <- st_read('data/latam.gpkg', layer = 'latam', quiet = T)
+countries <- st_read('data/latam.gpkg', layer = 'countries', quiet = T)
+latam_land <- st_read('data/latam.gpkg', layer = 'latam_land', quiet = T)
+latam_raster <- rast('data/latam_raster.tif', lyrs='latam')
+latam_countries <- rast('data/latam_raster.tif', lyrs='countries')
 
 cbrachyurus_IUCN <- sf::st_read('big_data/cbrachyurus_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-Latam.raster <- terra::rast('data/Latam_raster.tif')
-Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 ```
 
   - Species data and covariates
@@ -76,23 +64,23 @@ Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
 #| code-fold: false
 
 # Presence-absence data
-cbrachyurus_expert_blob_time1 <- readRDS('data/cbrachyurus_expert_blob_time1.rds')
-cbrachyurus_expert_blob_time2 <- readRDS('data/cbrachyurus_expert_blob_time2.rds')
+cbrachyurus_expert_blob_time1 <- readRDS('data/species_POPA_data/cbrachyurus_expert_blob_time1.rds')
+cbrachyurus_expert_blob_time2 <- readRDS('data/species_POPA_data/cbrachyurus_expert_blob_time2.rds')
 
-PA_time1 <- readRDS('data/data_cbrachyurus_PA_time1.rds') %>%
+PA_time1 <- readRDS('data/species_POPA_data/data_cbrachyurus_PA_time1.rds') %>%
   cbind(expert=cbrachyurus_expert_blob_time1) %>%
   filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
-PA_time2 <- readRDS('data/data_cbrachyurus_PA_time2.rds') %>%
+PA_time2 <- readRDS('data/species_POPA_data/data_cbrachyurus_PA_time2.rds') %>%
   cbind(expert=cbrachyurus_expert_blob_time2) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(expert)) # remove NA's
 
 # Presence-only data
-cbrachyurus_expert_gridcell <- readRDS('data/cbrachyurus_expert_gridcell.rds')
+cbrachyurus_expert_gridcell <- readRDS('data/species_POPA_data/cbrachyurus_expert_gridcell.rds')
 
-PO_time1 <- readRDS('data/data_cbrachyurus_PO_time1.rds') %>%
+PO_time1 <- readRDS('data/species_POPA_data/data_cbrachyurus_PO_time1.rds') %>%
   cbind(expert=cbrachyurus_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
-PO_time2  <- readRDS('data/data_cbrachyurus_PO_time2.rds')  %>%
+PO_time2  <- readRDS('data/species_POPA_data/data_cbrachyurus_PO_time2.rds')  %>%
   cbind(expert=cbrachyurus_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_14) & !is.na(env.elev) & !is.na(env.grass) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
@@ -181,31 +169,31 @@ preds <- data.frame(PO_time1_time2, P.pred)
 preds1 <- preds[preds$time == 1,]
 preds2 <- preds[preds$time == 2,]
 
-rast <- Latam.raster
+rast <- latam_raster
 rast[] <- NA
 rast1 <- rast2 <- terra::rast(rast)
 
 rast1[preds1$pixel] <- preds1$P.pred
 rast2[preds2$pixel] <- preds2$P.pred
 
-rast1 <- rast1 %>% terra::mask(., vect(Latam_no_islands))
-rast2 <- rast2 %>% terra::mask(., vect(Latam_no_islands))
+rast1 <- rast1 %>% terra::mask(., vect(latam_land))
+rast2 <- rast2 %>% terra::mask(., vect(latam_land))
 names(rast1) <- 'time1'
 names(rast2) <- 'time2'
 
 # Map of the of the probability of occurrence in the first period (time1: 2000-2013)
 time1MAP <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast1) +
-    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_countries) +
+    tm_raster(palette = 'Oranges', midpoint = NA, style= "cont")  + 
+    tm_shape(countries) +
     tm_borders(col='grey60', alpha = 0.4) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 # Map of the of the probability of occurrence in the second period (time2: 2014-2021)
 time2MAP <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast2) +
-    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_countries) +
+    tm_raster(palette = 'Purples', midpoint = NA, style= "cont")  + 
+    tm_shape(countries) +
     tm_borders(col='grey60', alpha = 0.4) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -213,13 +201,17 @@ time2MAP <- tm_graticules(alpha = 0.3) +
 diffMAP <- tm_graticules(alpha = 0.3) + 
     tm_shape(rast2 - rast1) +
     tm_raster(palette = 'PiYG', midpoint = 0, style= "cont", ) +
-    tm_shape(Latam_countries) +
+    tm_shape(countries) +
     tm_borders(col='grey60', alpha = 0.4) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 time1MAP
 time2MAP
 diffMAP
+
+tmap::tmap_save(tm = time1MAP, filename = 'docs/figs/time1MAP_SR_cbrachyurus.svg', device = svglite::svglite)
+tmap::tmap_save(tm = time2MAP, filename = 'docs/figs/time2MAP_SR_cbrachyurus.svg', device = svglite::svglite)
+
 ```
 
 ### Standard deviation (SD) of the probability of occurrence of *Chrysocyon brachyurus*
@@ -237,31 +229,31 @@ preds.sd <- data.frame(PO_time1_time2, P.pred.sd)
 preds1.sd <- preds.sd[preds.sd$time == 1,]
 preds2.sd <- preds.sd[preds.sd$time == 2,]
 
-rast.sd <- terra::rast(Latam.raster)
+rast.sd <- terra::rast(latam_raster)
 rast.sd[] <- NA
 rast1.sd <- rast2.sd <- terra::rast(rast.sd)
 
 rast1.sd[preds1.sd$pixel] <- preds1.sd$P.pred.sd
 rast2.sd[preds2.sd$pixel] <- preds2.sd$P.pred.sd
 
-rast1.sd <- rast1.sd %>% terra::mask(., vect(Latam_no_islands))
-rast2.sd <- rast2.sd %>% terra::mask(., vect(Latam_no_islands))
+rast1.sd <- rast1.sd %>% terra::mask(., vect(latam_land))
+rast2.sd <- rast2.sd %>% terra::mask(., vect(latam_land))
 names(rast1.sd) <- 'time1.sd'
 names(rast2.sd) <- 'time2.sd'
 
 # Map of the SD of the probability of occurrence of the area time1 
 time1MAP.sd <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast1.sd) +
-    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_countries) +
+    tm_raster(palette = 'Oranges', midpoint = NA, style= "cont")  + 
+    tm_shape(countries) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 # Map of the SD of the probability of occurrence of the area time2
 time2MAP.sd <-  tm_graticules(alpha = 0.3) +  
     tm_shape(rast2.sd) +
-    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_countries) +
+    tm_raster(palette = 'Purples', midpoint = NA, style= "cont")  + 
+    tm_shape(countries) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -306,19 +298,19 @@ cbrachyurus.pal <- c(t(apply(cbrachyurus.pal.pu_gn_bivd, 2, rev)))
 pred.P.sd <- fitted.model$BUGSoutput$sd$delta.Grid
 preds.sd <- data.frame(PO_time1_time2, pred.P.sd=rep(pred.P.sd, 2))
 
-rast.sd <- terra::rast(Latam.raster)
+rast.sd <- terra::rast(latam_raster)
 rast.sd[] <- NA
 rast.sd <- terra::rast(rast.sd)
 
 rast.sd[preds.sd$pixel] <- preds.sd$pred.P.sd
-rast.sd <- rast.sd %>% terra::mask(., vect(Latam_no_islands))
+rast.sd <- rast.sd %>% terra::mask(., vect(latam_land))
 names(rast.sd) <- c('diff')
 
 # Map of the SD of the probability of occurrence of the area time2
 delta.GridMAP.sd <-  tm_graticules(alpha = 0.3) +  
     tm_shape(rast.sd) +
     tm_raster(palette = 'Greys', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_countries) +
+    tm_shape(countries) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -377,7 +369,7 @@ if (length(absent_classes)==0){
 diffMAP.SD <- tm_graticules(alpha = 0.3) + 
   tm_shape(rast.bivariate) +
   tm_raster("new_var", style= "cat", palette = cbrachyurus.new.pal) +
-  tm_shape(Latam_countries) +
+  tm_shape(countries) +
   tm_borders(col='grey60', alpha = 0.4) + 
   tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -392,15 +384,16 @@ tmap::tmap_save(tm = diffMAP.SD, filename = 'docs/figs/diffMAP_SD_cbrachyurus.sv
 #| message: false
 #| warning: false
 
-countryLevels <- cats(Latam.raster.countries)[[1]] #%>% mutate(value=value+1)
+countryLevels <- cats(latam_countries)[[1]] #%>% mutate(value=value+1)
 rasterLevels <- levels(as.factor(PO_time1_time2$country))
-countries <- countryLevels %>% filter(value %in% rasterLevels) %>% mutate(numLevel=1:length(rasterLevels))
+countries_latam <- countryLevels %>% filter(value %in% rasterLevels) %>% 
+  mutate(numLevel=1:length(rasterLevels)) %>% rename(country=countries)
 
 fitted.model.ggs.alpha <- ggmcmc::ggs(fitted.model.mcmc, family="^alpha")
 ci.alpha <- ci(fitted.model.ggs.alpha)
 
 country_acce <- bind_rows(ci.alpha[length(rasterLevels)+1,], 
-          tibble(countries, ci.alpha[1:length(rasterLevels),])) %>% 
+          tibble(countries_latam, ci.alpha[1:length(rasterLevels),])) %>% 
   dplyr::select(-c(value, numLevel))
 
 #accessibility range for predictions
@@ -421,12 +414,12 @@ getPreds <- function(country){
 
 allPredictions <- country_acce %>%
                   filter(!is.na(country)) %>%
-                  filter(country %in% Latam_countries$iso_a2) %>% 
+                  filter(country %in% countries$iso_a2) %>% 
                   pull(country) %>%
                   map_dfr(getPreds)
 
 allPredictions <- left_join(as_tibble(allPredictions), 
-                            Latam_countries %>% select(country=iso_a2, name_en) %>% 
+                            countries %>% select(country=iso_a2, name_en) %>% 
                               st_drop_geometry(), by='country') %>% 
   filter(country!='VG' & country!= 'TT' & country!= 'FK' & country!='AW')
 
@@ -524,7 +517,7 @@ delta.A.plot <- fitted.model.ggs.delta.A %>% group_by(Iteration) %>%
     summarise(area=median(value)) %>% 
     ggplot(aes(area)) + 
     geom_density(col='grey30', fill='black', alpha = 0.3, size=1) + 
-    scale_y_continuous(breaks=c(0,0.0025,0.005, 0.0075, 0.01, 0.0125)) +
+    #scale_y_continuous(breaks=c(0,0.0025,0.005, 0.0075, 0.01, 0.0125)) +
     geom_abline(intercept = 0, slope=1, linetype=2, size=1) + 
     # vertical lines at 95% CI
     stat_boxplot(geom = "vline", aes(xintercept = ..xmax..), size=0.5, col='red') +
