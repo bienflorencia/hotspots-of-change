@@ -96,8 +96,8 @@ PO_time1_time2 <- rbind(PO_time1 %>% mutate(time=1), PO_time2 %>% mutate(time=2)
 #| warning: false
 #| code-fold: false
 
-# fitted.model <- readRDS('D:/Flo/JAGS_models/cthous_model.rds') # deleted after model output
-fitted.model <- readRDS('models/JAGS_models/cthous_model.rds') # deleted after model output
+fitted.model <- readRDS('D:/Flo/JAGS_models/cthous_model.rds') # deleted after model output
+# fitted.model <- readRDS('big_data/cthous_model.rds') # deleted after model output
 
 # as.mcmc.rjags converts an rjags Object to an mcmc or mcmc.list Object.
 fitted.model.mcmc <- mcmcplots::as.mcmc.rjags(fitted.model)
@@ -121,7 +121,7 @@ L.fitted.model.b <- plab("b",
                                             'env.npp', 
                                             'env.tree', 
                                             'expert',
-                                            sprintf('spline%i', 1:10)))) # changes with n.spl
+                                            sprintf('spline%i', 1:16)))) # changes with n.spl
 
 # tibble object for the linear predictor `b` extracted from the rjags fitted model
 fitted.model.ggs.b <- ggmcmc::ggs(fitted.model.mcmc, 
@@ -185,7 +185,7 @@ names(rast2) <- 'time2'
 # Map of the of the probability of occurrence in the first period (time1: 2000-2013)
 time1MAP <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast1) +
-    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'Oranges', midpoint = NA, style= "cont")  + 
     tm_shape(countries) +
     tm_borders(col='grey60', alpha = 0.4) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -193,7 +193,7 @@ time1MAP <- tm_graticules(alpha = 0.3) +
 # Map of the of the probability of occurrence in the second period (time2: 2014-2021)
 time2MAP <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast2) +
-    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'Purples', midpoint = NA, style= "cont")  + 
     tm_shape(countries) +
     tm_borders(col='grey60', alpha = 0.4) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -209,6 +209,9 @@ diffMAP <- tm_graticules(alpha = 0.3) +
 time1MAP
 time2MAP
 diffMAP
+
+tmap::tmap_save(tm = time1MAP, filename = 'docs/figs/time1MAP_SR_cthous.svg', device = svglite::svglite)
+tmap::tmap_save(tm = time2MAP, filename = 'docs/figs/time2MAP_SR_cthous.svg', device = svglite::svglite)
 ```
 
 ### Standard deviation (SD) of the probability of occurrence of *Cerdocyon thous*
@@ -241,7 +244,7 @@ names(rast2.sd) <- 'time2.sd'
 # Map of the SD of the probability of occurrence of the area time1 
 time1MAP.sd <- tm_graticules(alpha = 0.3) +  
     tm_shape(rast1.sd) +
-    tm_raster(palette = 'Reds', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'Oranges', midpoint = NA, style= "cont")  + 
     tm_shape(countries) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -249,7 +252,7 @@ time1MAP.sd <- tm_graticules(alpha = 0.3) +
 # Map of the SD of the probability of occurrence of the area time2
 time2MAP.sd <-  tm_graticules(alpha = 0.3) +  
     tm_shape(rast2.sd) +
-    tm_raster(palette = 'Blues', midpoint = NA, style= "cont")  + 
+    tm_raster(palette = 'Purples', midpoint = NA, style= "cont")  + 
     tm_shape(countries) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
@@ -383,13 +386,14 @@ tmap::tmap_save(tm = diffMAP.SD, filename = 'docs/figs/diffMAP_SD_cthous.svg', d
 
 countryLevels <- cats(latam_countries)[[1]] #%>% mutate(value=value+1)
 rasterLevels <- levels(as.factor(PO_time1_time2$country))
-countries <- countryLevels %>% filter(value %in% rasterLevels) %>% mutate(numLevel=1:length(rasterLevels))
+countries_latam <- countryLevels %>% filter(value %in% rasterLevels) %>% 
+  mutate(numLevel=1:length(rasterLevels)) %>% rename(country=countries)
 
 fitted.model.ggs.alpha <- ggmcmc::ggs(fitted.model.mcmc, family="^alpha")
 ci.alpha <- ci(fitted.model.ggs.alpha)
 
 country_acce <- bind_rows(ci.alpha[length(rasterLevels)+1,], 
-          tibble(countries, ci.alpha[1:length(rasterLevels),])) %>% 
+          tibble(countries_latam, ci.alpha[1:length(rasterLevels),])) %>% 
   dplyr::select(-c(value, numLevel))
 
 #accessibility range for predictions
