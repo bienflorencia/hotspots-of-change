@@ -35,8 +35,8 @@ Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @h
 
 ### Other files
 
-- [`docs/literature_digitised_references.bib`](docs/literature_digitised_references.bib): BibTeX bibliographical database file with the 32 literature references digitised and included in our database.  
-- `docs/*species*_model_diagnostics.pdf`: PDF files with the model diagnostics output.
+- [`docs/digitised_references.bib`](docs/literature_digitised_references.bib): BibTeX bibliographical database file with the 32 literature references digitised and included in our database.  
+- `docs/*species*_model_diagnostics.pdf`: PDF files with the JAGS model diagnostics output (one per *species*).
 
 ## 3) **Extended Data**: the code we used to process the data
 
