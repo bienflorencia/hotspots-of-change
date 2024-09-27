@@ -16,7 +16,7 @@ For each species, the following order to run the code should be followed:
   
   4. Run the model with `*species*_4_modelRun.qmd`. Two new files will be created:    
   - The JAGS model(`*species*_model.txt`)  
-  - The model output (`*species*_model.rds`) *caution* this is a >5GB file.  
+  - The model output (`*species*_model.rds`) - ***caution** this is a >5GB file*  
   
   5. And, finally, create the output figures with `*species*_5_modelOutputs.qmd`. The html output will show all the results, plus a new file will be created:    
   - The model diagnostics (`docs/*species*_model_diagnostics.pdf`).  
