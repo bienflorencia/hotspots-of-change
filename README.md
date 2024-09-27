@@ -1,6 +1,6 @@
 # Hotspots of change - Neotropical carnivores
 
-## A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores
+## A continental-wide decline of occupancy and diversity in five Neotropical carnivores
 
 *Florencia Grattarola <a dir="ltr" href="http://orcid.org/0000-0001-8282-5732" target="_blank"><img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" width="15"></a>, Kateřina Tschernosterová, Petr Keil <a dir="ltr" href="http://orcid.org/0000-0003-3017-1858" target="_blank"><img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" width="15"></a>*
 
@@ -40,7 +40,7 @@ Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @h
 
 ## 3) **Extended Data**: the code we used to process the data
 
-For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *Herpailurus yagouaroundi*, *Leopardus pardalis*, *Leopardus wiedii*, *Nasua nasua*, and *Pteronura brasiliensis*.  
+For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *Herpailurus yagouaroundi*, *Leopardus pardalis*, *Leopardus wiedii*, *Nasua nasua*, and *Pteronura brasiliensis*, these are the steps in the workflow:   
 
 1. Prepare data
    1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd)
@@ -66,8 +66,8 @@ Also, finde here the JAGS models used for each species: [`models`](models/).
 
 ## CITATION
 
-> Grattarola F. (2024) A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores. Zenodo. [DOI from Zenodo provided once the GitHub repository is archived]. [Data/Code]
+> Grattarola F. (2024) A continental-wide decline of occupancy and diversity in five Neotropical carnivores. *Zenodo*. [DOI from Zenodo provided once the GitHub repository is archived]. [Data/Code]
 
-> Grattarola F., Tschernosterová K., & Keil P. (2024) A continental-wide decline of occupancy and diversity in five charismatic Neotropical carnivores. Global Ecology and Conservation.
+> Grattarola F., Tschernosterová K., & Keil P. (2024) A continental-wide decline of occupancy and diversity in five Neotropical carnivores. *Global Ecology and Conservation*. [DOI]
 
 If you use our underlying data, please cite the **source** data as well.
