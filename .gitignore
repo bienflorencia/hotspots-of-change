@@ -52,6 +52,7 @@ rsconnect/
 # temporary rasters from big_data
 /big_data/
 /code/_draft/
+/code/html_ignore/
 docs/figs/
 models/JAGS_models/
 docs/A1 - used papers overview.xlsx
