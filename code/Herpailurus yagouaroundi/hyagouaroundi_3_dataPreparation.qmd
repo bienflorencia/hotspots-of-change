@@ -43,17 +43,17 @@ library(tidyverse)
 #| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
-Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
-Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-Latam <- st_union(st_make_valid(Latam_projected))
-Latam.raster <- terra::rast('data/Latam_raster.tif')
-Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+latam <- st_read('data/latam.gpkg', layer = 'latam', quiet = T)
+countries <- st_read('data/latam.gpkg', layer = 'countries', quiet = T)
+latam_land <- st_read('data/latam.gpkg', layer = 'latam_land', quiet = T)
+latam_raster <- rast('data/latam_raster.tif', lyrs='latam')
+latam_countries <- rast('data/latam_raster.tif', lyrs='countries')
 
 # IUCN range distribution
 hyagouaroundi_IUCN <- sf::st_read('big_data/hyagouaroundi_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 
 MAP.IUCN <- tm_graticules(alpha = 0.3) +
-    tm_shape(Latam_countries) +
+    tm_shape(countries) +
     tm_fill(col='grey90') +
     tm_borders(col='grey60', alpha = 0.4) +
     tm_shape(hyagouaroundi_IUCN) +
@@ -74,12 +74,12 @@ MAP.IUCN
 #| code-fold: false
 
 # presence-only rasters
-PO_hyagouaroundi_time1_raster <- terra::rast('data/PO_hyagouaroundi_time1_raster.tif')
-PO_hyagouaroundi_time2_raster <- terra::rast('data/PO_hyagouaroundi_time2_raster.tif')
+PO_hyagouaroundi_time1_raster <- terra::rast('data/species_POPA_data/PO_hyagouaroundi_time1_raster.tif')
+PO_hyagouaroundi_time2_raster <- terra::rast('data/species_POPA_data/PO_hyagouaroundi_time2_raster.tif')
 
 # blobs
-PA_hyagouaroundi_time1_blobs <- readRDS('data/PA_hyagouaroundi_time1_blobs.rds')
-PA_hyagouaroundi_time2_blobs <- readRDS('data/PA_hyagouaroundi_time2_blobs.rds')
+PA_hyagouaroundi_time1_blobs <- readRDS('data/species_POPA_data/PA_hyagouaroundi_time1_blobs.rds')
+PA_hyagouaroundi_time2_blobs <- readRDS('data/species_POPA_data/PA_hyagouaroundi_time2_blobs.rds')
 ```
 
 
@@ -110,7 +110,7 @@ env <- c(bio[[c('bio_7','bio_15')]], npp, elev) %>%
   classify(cbind(NaN, NA))
 
 # resample and scaled values for PO
-env_100k_unscaled <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+env_100k_unscaled <- terra::resample(env, latam_raster, method='bilinear') %>% 
   classify(cbind(NaN, NA))
 
 env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean and sd of 1
@@ -129,28 +129,28 @@ env_100k_resampled <- env_100k_unscaled %>% scale() # scaled values to 0 mean an
 elev.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["elev"]]) +
     tm_raster(palette = 'BrBG', midpoint = NA, style= "cont", n=10)  + 
-    tm_shape(Latam_projected) +
+    tm_shape(latam) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 npp.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["npp"]]) +
     tm_raster(palette = 'BuGn', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_projected) +
+    tm_shape(latam) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_7.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["bio_7"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_projected) +
+    tm_shape(latam) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
 bio_15.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(env_100k_unscaled[["bio_15"]]) +
     tm_raster(palette = 'PuOr', midpoint = NA, style= "cont")  + 
-    tm_shape(Latam_projected) +
+    tm_shape(latam) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -189,7 +189,7 @@ acce_100k_resampled <- terra::rast('big_data/acce.tif') %>%
 acce.plot <- tm_graticules(alpha = 0.3) +  
     tm_shape(acce_100k_resampled[["acce"]]) +
     tm_raster(palette = 'RdYlBu', midpoint = NA, style= "cont", n=10)  + 
-    tm_shape(Latam_projected) +
+    tm_shape(latam) +
     tm_borders(alpha = 0.3) + 
     tm_layout(legend.outside = T, frame.lwd = 0.3, scale=1.2, legend.outside.size = 0.1)
 
@@ -233,7 +233,7 @@ PO_hyagouaroundi_time2.count <- PO_hyagouaroundi_time2_raster %>%
     classify(cbind(NaN, NA)) %>% terra::values() %>% as_tibble %>% 
   dplyr::select(count)
 
-PO_hyagouaroundi.countries <- Latam.raster.countries %>% classify(cbind(NaN, NA))
+PO_hyagouaroundi.countries <- latam_countries %>% classify(cbind(NaN, NA))
 
 # save time1 and time2 datasets 
 PO_hyagouaroundi_time1.model.data <- data.frame(PO_hyagouaroundi.coords,
@@ -339,10 +339,10 @@ head(PA_hyagouaroundi_time2.model.data) %>% kable()
 #| warning: false
 #| code-fold: false
 
-saveRDS(PO_hyagouaroundi_time1.model.data, 'data/data_hyagouaroundi_PO_time1.rds')
-saveRDS(PO_hyagouaroundi_time2.model.data, 'data/data_hyagouaroundi_PO_time2.rds')
-saveRDS(PA_hyagouaroundi_time1.model.data, 'data/data_hyagouaroundi_PA_time1.rds')
-saveRDS(PA_hyagouaroundi_time2.model.data, 'data/data_hyagouaroundi_PA_time2.rds')
+saveRDS(PO_hyagouaroundi_time1.model.data, 'data/species_POPA_data/data_hyagouaroundi_PO_time1.rds')
+saveRDS(PO_hyagouaroundi_time2.model.data, 'data/species_POPA_data/data_hyagouaroundi_PO_time2.rds')
+saveRDS(PA_hyagouaroundi_time1.model.data, 'data/species_POPA_data/data_hyagouaroundi_PA_time1.rds')
+saveRDS(PA_hyagouaroundi_time2.model.data, 'data/species_POPA_data/data_hyagouaroundi_PA_time2.rds')
 ```
 
 
@@ -390,7 +390,7 @@ for (i in 2:ncol(env_PA)){
 }
 
 # covariates layers for PO
-env_PO <- terra::resample(env, Latam.raster, method='bilinear') %>% 
+env_PO <- terra::resample(env, latam_raster, method='bilinear') %>% 
   classify(cbind(NaN, NA)) %>% as.data.frame()
 
 summary(env_PO)

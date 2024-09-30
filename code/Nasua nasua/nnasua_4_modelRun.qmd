@@ -37,23 +37,23 @@ library(tidyverse)
 #| code-fold: false
 
 # Presence-absence data
-nnasua_expert_blob_time1 <- readRDS('data/nnasua_expert_blob_time1.rds')
-nnasua_expert_blob_time2 <- readRDS('data/nnasua_expert_blob_time2.rds')
+nnasua_expert_blob_time1 <- readRDS('data/species_POPA_data/nnasua_expert_blob_time1.rds')
+nnasua_expert_blob_time2 <- readRDS('data/species_POPA_data/nnasua_expert_blob_time2.rds')
 
-PA_time1 <- readRDS('data/data_nnasua_PA_time1.rds') %>%
+PA_time1 <- readRDS('data/species_POPA_data/data_nnasua_PA_time1.rds') %>%
   cbind(expert=nnasua_expert_blob_time1) %>%
   filter(!is.na(env.bio_10) &!is.na(env.bio_13) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(expert)) # remove NA's
-PA_time2 <- readRDS('data/data_nnasua_PA_time2.rds') %>%
+PA_time2 <- readRDS('data/species_POPA_data/data_nnasua_PA_time2.rds') %>%
   cbind(expert=nnasua_expert_blob_time2) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_13) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
-nnasua_expert_gridcell <- readRDS('data/nnasua_expert_gridcell.rds')
+nnasua_expert_gridcell <- readRDS('data/species_POPA_data/nnasua_expert_gridcell.rds')
 
-PO_time1 <- readRDS('data/data_nnasua_PO_time1.rds') %>%
+PO_time1 <- readRDS('data/species_POPA_data/data_nnasua_PO_time1.rds') %>%
   cbind(expert=nnasua_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_13) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
-PO_time2  <- readRDS('data/data_nnasua_PO_time2.rds')  %>%
+PO_time2  <- readRDS('data/species_POPA_data/data_nnasua_PO_time2.rds')  %>%
   cbind(expert=nnasua_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_10) &!is.na(env.bio_13) & !is.na(env.npp) & !is.na(env.nontree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
@@ -382,5 +382,5 @@ end.time <- Sys.time()
 time.taken <- end.time - start.time
 time.taken
 
-saveRDS(nnasua_model, 'D:/Flo/JAGS_models/nnasua_model.rds')
+saveRDS(nnasua_model, 'models/JAGS_models/nnasua_model.rds')
 ```

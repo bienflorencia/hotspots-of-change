@@ -111,8 +111,8 @@ We will use the data from both periods
 #| message: false
 #| tbl-cap: Presence-absence data for the second period
 
-PA_time1 <- readRDS('data/PA_pbrasiliensis_time1_blobs.rds')%>% ungroup()
-PA_time2 <- readRDS('data/PA_pbrasiliensis_time2_blobs.rds')%>% ungroup()
+PA_time1 <- readRDS('data/species_POPA_data/PA_pbrasiliensis_time1_blobs.rds')%>% ungroup()
+PA_time2 <- readRDS('data/species_POPA_data/PA_pbrasiliensis_time2_blobs.rds')%>% ungroup()
 
 PA_time1 %>% st_drop_geometry() %>% head() %>% kable()
 PA_time2 %>% st_drop_geometry() %>% head() %>% kable()

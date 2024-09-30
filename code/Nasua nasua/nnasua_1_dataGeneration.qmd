@@ -41,11 +41,12 @@ library(tidyverse)
 #| code-fold: false
 
 equalareaCRS <-  '+proj=laea +lon_0=-73.125 +lat_0=0 +datum=WGS84 +units=m +no_defs'
-Latam_projected <- st_read('data/Latam_vector.shp', quiet = T)
-Latam_countries <- sf::st_read('data/Latam_vector_countries.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
-Latam <- st_union(st_make_valid(Latam_projected))
-Latam.raster <- terra::rast('data/Latam_raster.tif')
-Latam.raster.countries <- terra::rast('data/Latam_raster_countries.tif')
+latam <- st_read('data/latam.gpkg', layer = 'latam', quiet = T)
+countries <- st_read('data/latam.gpkg', layer = 'countries', quiet = T)
+latam_land <- st_read('data/latam.gpkg', layer = 'latam_land', quiet = T)
+latam_raster <- rast('data/latam_raster.tif', lyrs='latam')
+latam_countries <- rast('data/latam_raster.tif', lyrs='countries')
+
 nnasua_IUCN <- sf::st_read('big_data/nnasua_IUCN.shp', quiet = T) %>% sf::st_transform(crs=equalareaCRS)
 ```
 
@@ -215,7 +216,7 @@ data_PA_time1_time2 <- rbind(PA_nnasua_time1_blobs %>% mutate(period='time1'),
                              PA_nnasua_time2_blobs %>% mutate(period='time2'))
 
 gg_PA_time1 <- ggplot() + 
-    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
     geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PA_time1_time2 %>% filter(period=='time1') %>% st_buffer(20000), 
             aes(fill=factor(presence)), col=NA, show.legend = F) +
@@ -227,7 +228,7 @@ gg_PA_time1 <- ggplot() +
     theme(text=element_text(size = 14)) 
 
 gg_PA_time2 <- ggplot() + 
-    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
     geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PA_time1_time2 %>% filter(period=='time2') %>% st_buffer(20000), 
             aes(fill=factor(presence), col=factor(presence)), show.legend = F) +
@@ -291,8 +292,8 @@ calculate_PO_sp_period_raster <- function(PO, sp, raster, time){
 }
 
 # Nasua nasua
-PO_nnasua_time1_raster <- calculate_PO_sp_period_raster(PO, 'Nasua nasua', Latam.raster, 'time1')
-PO_nnasua_time2_raster <- calculate_PO_sp_period_raster(PO, 'Nasua nasua', Latam.raster, 'time2')
+PO_nnasua_time1_raster <- calculate_PO_sp_period_raster(PO, 'Nasua nasua', latam_raster, 'time1')
+PO_nnasua_time2_raster <- calculate_PO_sp_period_raster(PO, 'Nasua nasua', latam_raster, 'time2')
 ```
 
 ### Plots
@@ -308,7 +309,7 @@ data_PO_time1_time2 <- data_PO_GIS %>%
   mutate(period=ifelse(year>=2014 , 'time2', 'time1'), occurrence=1) 
 
 gg_PO_time1 <- ggplot() + 
-    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
     geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time1'), col="#E31A1C", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(nnasua_IUCN)
@@ -317,7 +318,7 @@ gg_PO_time1 <- ggplot() +
     theme(text=element_text(size = 14))
 
 gg_PO_time2 <- ggplot() + 
-    geom_sf(data=Latam_countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
+    geom_sf(data=countries, fill='#fafaf8', col='#bfc5c7', size=0.2) +
     geom_sf(data=nnasua_IUCN, fill='grey60', alpha=0.5, col='grey90', size=0.1) +
     geom_sf(data=data_PO_time1_time2 %>% filter(period=='time2'), col="#1F78B4", size=0.5, show.legend = F) +
     coord_sf(xlim = c(-3500000, 4100000), ylim = c(-4400000, 3000000)) + # st_bbox(nnasua_IUCN)
@@ -339,14 +340,14 @@ gg_PO_time1 + gg_PO_time2
 #| code-fold: false
 
 # blobs
-saveRDS(PA_nnasua_time1_blobs, 'data/PA_nnasua_time1_blobs.rds')
-saveRDS(PA_nnasua_time2_blobs, 'data/PA_nnasua_time2_blobs.rds')
+saveRDS(PA_nnasua_time1_blobs, 'data/species_POPA_data/PA_nnasua_time1_blobs.rds')
+saveRDS(PA_nnasua_time2_blobs, 'data/species_POPA_data/PA_nnasua_time2_blobs.rds')
 
 # presence-only rasters
-terra::writeRaster(PO_nnasua_time1_raster, 'data/PO_nnasua_time1_raster.tif', overwrite=TRUE)
-terra::writeRaster(PO_nnasua_time2_raster, 'data/PO_nnasua_time2_raster.tif', overwrite=TRUE)
+terra::writeRaster(PO_nnasua_time1_raster, 'data/species_POPA_data/PO_nnasua_time1_raster.tif', overwrite=TRUE)
+terra::writeRaster(PO_nnasua_time2_raster, 'data/species_POPA_data/PO_nnasua_time2_raster.tif', overwrite=TRUE)
 
-saveRDS(data_PA_time1_time2, 'data/data_nnasua_PA.rds')
-saveRDS(data_PO_time1_time2, 'data/data_nnasua_PO.rds')
+saveRDS(data_PA_time1_time2, 'data/species_POPA_data/data_nnasua_PA.rds')
+saveRDS(data_PO_time1_time2, 'data/species_POPA_data/data_nnasua_PO.rds')
 ```
 
