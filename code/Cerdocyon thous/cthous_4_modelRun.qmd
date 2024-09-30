@@ -37,23 +37,23 @@ library(tidyverse)
 #| code-fold: false
 
 # Presence-absence data
-cthous_expert_blob_time1 <- readRDS('data/cthous_expert_blob_time1.rds')
-cthous_expert_blob_time2 <- readRDS('data/cthous_expert_blob_time2.rds')
+cthous_expert_blob_time1 <- readRDS('data/species_POPA_data/cthous_expert_blob_time1.rds')
+cthous_expert_blob_time2 <- readRDS('data/species_POPA_data/cthous_expert_blob_time2.rds')
 
-PA_time1 <- readRDS('data/data_cthous_PA_time1.rds') %>%
+PA_time1 <- readRDS('data/species_POPA_data/data_cthous_PA_time1.rds') %>%
   cbind(expert=cthous_expert_blob_time1) %>%
   filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
-PA_time2 <- readRDS('data/data_cthous_PA_time2.rds') %>%
+PA_time2 <- readRDS('data/species_POPA_data/data_cthous_PA_time2.rds') %>%
   cbind(expert=cthous_expert_blob_time2) %>% 
   filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(expert)) # remove NA's
 
 # Presence-only data
-cthous_expert_gridcell <- readRDS('data/cthous_expert_gridcell.rds')
+cthous_expert_gridcell <- readRDS('data/species_POPA_data/cthous_expert_gridcell.rds')
 
-PO_time1 <- readRDS('data/data_cthous_PO_time1.rds') %>%
+PO_time1 <- readRDS('data/species_POPA_data/data_cthous_PO_time1.rds') %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
-PO_time2  <- readRDS('data/data_cthous_PO_time2.rds')  %>%
+PO_time2  <- readRDS('data/species_POPA_data/data_cthous_PO_time2.rds')  %>%
   cbind(expert=cthous_expert_gridcell$dist_exprt) %>% 
   filter(!is.na(env.bio_16) &!is.na(env.bio_19) & !is.na(env.npp) & !is.na(env.tree) & !is.na(acce) & !is.na(count) & !is.na(expert)) # remove NA's
 
