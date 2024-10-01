@@ -4,7 +4,7 @@
 
 *Florencia Grattarola <a dir="ltr" href="http://orcid.org/0000-0001-8282-5732" target="_blank"><img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" width="15"></a>, Kateřina Tschernosterová, Petr Keil <a dir="ltr" href="http://orcid.org/0000-0003-3017-1858" target="_blank"><img class="is-rounded" src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" width="15"></a>*
 
-This repository (https://github.com/bienflorencia/hotspots-of-change) includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the temporal species turnover and change in spatial turnover. 
+This repository ([https://github.com/bienflorencia/hotspots-of-change](https://github.com/bienflorencia/hotspots-of-change)) includes the data, code, model and outputs for our work on mapping the temporal change, the areas where gains and losses accumulated for all species (hotspots of change), and calculating the temporal species turnover and change in spatial turnover. 
 
 
 ### Species
@@ -45,9 +45,9 @@ Photo credits **iNaturalist.org**: jaguarundi (*Herpailurus yagouaroundi*) by @h
 For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *Herpailurus yagouaroundi*, *Leopardus pardalis*, *Leopardus wiedii*, *Nasua nasua*, and *Pteronura brasiliensis*, these are the steps in the workflow:   
 
 1. Prepare data
-   1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd) | [html](/hotspots-of-change/code/1_1_clean_PO_PA_data.html)
-   2. Create range maps distance to the edge as a covariate: [`code/1_2_create_range_map_covariate.qmd`](code/1_2_create_range_map_covariate.qmd) | [html](/hotspots-of-change/code/1_2_create_range_map_covariate.html) 
-   3. Visualise PO grid-cells and PA blobs: [`code/1_3_visualise_grids_and_blobs.qmd`](code/1_3_visualise_grids_and_blobs.qmd) | [html](/hotspots-of-change/code/1_3_visualise_grids_and_blobs.html)
+   1. Clean PO and PA data for all species: [`code/1_1_clean_PO_PA_data.qmd`](code/1_1_clean_PO_PA_data.qmd) / [html](/hotspots-of-change/code/1_1_clean_PO_PA_data.html)
+   2. Create range maps distance to the edge as a covariate: [`code/1_2_create_range_map_covariate.qmd`](code/1_2_create_range_map_covariate.qmd) / [html](/hotspots-of-change/code/1_2_create_range_map_covariate.html) 
+   3. Visualise PO grid-cells and PA blobs: [`code/1_3_visualise_grids_and_blobs.qmd`](code/1_3_visualise_grids_and_blobs.qmd) / [html](/hotspots-of-change/code/1_3_visualise_grids_and_blobs.html)
 2. Analyse species by species (see species folders: [*Cerdocyon thous*](code/Cerdocyon%20thous), [*Chrysocyon brachyurus*](code/Chrysocyon%20brachyurus), [*Eira barbara*](code/Eira%20barbara), [*Herpailurus yagouaroundi*](code/Herpailurus%20yagouaroundi), [*Leopardus pardalis*](code/Leopardus%20pardalis), [*Leopardus wiedii*](code/Leopardus%20wiedii), [*Nasua nasua*](code/Nasua%20nasua), and [*Pteronura brasiliensis*](code/Pteronura%20brasiliensis)
    1. Data Generation: `*species*_1_dataGeneration.qmd`
    2. Variable Selection: `*species*_2_variableSelection.qmd`
@@ -56,7 +56,7 @@ For each species: *Cerdocyon thous*, *Chrysocyon brachyurus*, *Eira barbara*, *H
    5. Model outputs: `*species*_5_modelOutputs.qmd`
 3. Calculate hotspots of change
    1. Sample from the posterior: [`3_1_sampling_from_posterior.R`](code/3_1_sampling_from_posterior.R)
-   2. Species richness, change and beta diversity: [`3_2_species_richness_change_and_beta_diversity.qmd`](code/3_2_species_richness_change_and_beta_diversity.qmd) | [html](/hotspots-of-change/code/3_2_species_richness_change_and_beta_diversity.html) 
+   2. Species richness, change and beta diversity: [`3_2_species_richness_change_and_beta_diversity.qmd`](code/3_2_species_richness_change_and_beta_diversity.qmd) / [html](/hotspots-of-change/code/3_2_species_richness_change_and_beta_diversity.html) 
 
 Also, finde here the JAGS models used for each species: [`models`](models/).
 
