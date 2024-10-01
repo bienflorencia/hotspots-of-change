@@ -69,5 +69,3 @@ Also, finde here the JAGS models used for each species: [`models`](models/).
 > Grattarola F. (2024) A continental-wide decline of occupancy and diversity in five Neotropical carnivores. *Zenodo*. [DOI from Zenodo provided once the GitHub repository is archived]. [Data/Code]
 
 > Grattarola F., Tschernosterová K., & Keil P. (2024) A continental-wide decline of occupancy and diversity in five Neotropical carnivores. *Global Ecology and Conservation*. https://doi.org/10.1016/j.gecco.2024.e03226
-
-If you use our underlying data, please cite the **source** data as well.
