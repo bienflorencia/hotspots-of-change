@@ -293,10 +293,14 @@ mode_raster  <- function(x, na.rm = FALSE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-PA_hyagouaroundi.env.time1 <- terra::extract(x = env, y = vect(PA_hyagouaroundi_time1_blobs), fun = mean, rm.na=T) %>% 
+PA_hyagouaroundi.env.time1 <- terra::extract(x = env, 
+                                             y = vect(PA_hyagouaroundi_time1_blobs), 
+                                             fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_hyagouaroundi.env.time2 <- terra::extract(x = env, y = vect(PA_hyagouaroundi_time2_blobs), fun = mean, rm.na=T) %>% 
+PA_hyagouaroundi.env.time2 <- terra::extract(x = env, 
+                                             y = vect(PA_hyagouaroundi_time2_blobs), 
+                                             fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
 PA_hyagouaroundi_time1.model.data <- data.frame(pixel = PA_hyagouaroundi.pixel.time1, 
@@ -333,7 +337,7 @@ head(PA_hyagouaroundi_time2.model.data) %>% kable()
 
 ```{r}
 #| echo: true
-#| eval: true
+#| eval: false
 #| label: save-data
 #| message: false
 #| warning: false
@@ -376,7 +380,7 @@ getRangeIQR <- function(env_PX){
 env_PA <- terra::extract(x = env, 
                          y = rbind(vect(PA_hyagouaroundi_time1_blobs), 
                                    vect(PA_hyagouaroundi_time2_blobs)), 
-                                     fun = mean, rm.na=T) %>% 
+                                     fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) 
 
 summary(env_PA[-1])

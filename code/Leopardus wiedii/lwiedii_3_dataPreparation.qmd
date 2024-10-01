@@ -296,10 +296,14 @@ mode_raster  <- function(x, na.rm = FALSE) {
   return(ux[which.max(tabulate(match(x, ux)))])
 }
 
-PA_lwiedii.env.time1 <- terra::extract(x = env, y = vect(PA_lwiedii_time1_blobs), fun = mean, rm.na=T) %>% 
+PA_lwiedii.env.time1 <- terra::extract(x = env, 
+                                       y = vect(PA_lwiedii_time1_blobs), 
+                                       fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
-PA_lwiedii.env.time2 <- terra::extract(x = env, y = vect(PA_lwiedii_time2_blobs), fun = mean, rm.na=T) %>% 
+PA_lwiedii.env.time2 <- terra::extract(x = env, 
+                                       y = vect(PA_lwiedii_time2_blobs), 
+                                       fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) %>% scale()
 
 PA_lwiedii_time1.model.data <- data.frame(pixel = PA_lwiedii.pixel.time1, 
@@ -379,7 +383,7 @@ getRangeIQR <- function(env_PX){
 env_PA <- terra::extract(x = env, 
                          y = rbind(vect(PA_lwiedii_time1_blobs), 
                                    vect(PA_lwiedii_time2_blobs)), 
-                                     fun = mean, rm.na=T) %>% 
+                                     fun = mean, na.rm=TRUE) %>% 
   mutate(across(where(is.numeric), ~ifelse(is.nan(.), NA, .))) 
 
 summary(env_PA[-1])
