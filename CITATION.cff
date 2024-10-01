@@ -21,8 +21,8 @@ preferred-citation:
   - family-names: "Keil"
     given-names: "Petr"
     orcid: "https://orcid.org/0000-0003-3017-1858"
-  doi: ""
-  url: ""
+  doi: "doi.org/10.1016/j.gecco.2024.e03226"
+  url: "https://doi.org/10.1016/j.gecco.2024.e03226"
   journal: "Global Ecology and Conservation"
   month: 
   start:  # First page number
