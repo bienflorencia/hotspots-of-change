@@ -268,16 +268,27 @@ calculate_PO_sp_period_raster <- function(PO, sp, raster, time){
     filter(year>=periodStart) %>% 
     mutate(period=ifelse(year>=periodEnd , 'time2', 'time1'),
            occurrence=1) %>% filter(period==time)
+  
+  df_period$countryCode <- as.factor(df_period$countryCode)
+  
   df_period_raster <- terra::rasterize(x = vect(df_period),
                                        y = raster,
                                        field = 'occurrence',
-                                       fun = 'length',
+                                       fun = 'count', na.rm=T,
                                        sum = T, background=0) %>% mask(., raster)
   
+  
   df_country_raster <- terra::rasterize(x = vect(df_period),
-                                       y = raster,
-                                       field = 'countryCode',
-                                       fun = 'first') %>% mask(., raster)
+                                        y = raster,
+                                        field = 'countryCode',
+                                        fun = first) %>% mask(., raster)
+  
+  df_country_raster <- as.factor(df_country_raster)
+  
+  levels(df_country_raster) <- data.frame(
+    ID = 0:(length(levels(df_period$countryCode))-1),
+    countryCode = levels(df_period$countryCode)
+  )
   
   names(df_period_raster) <- 'count'
   names(df_country_raster) <- 'country'
@@ -328,7 +339,7 @@ gg_PO_time1 + gg_PO_time2
 
 ```{r}
 #| label: save-data
-#| eval: true
+#| eval: false
 #| message: false
 #| warning: false
 #| code-fold: false
